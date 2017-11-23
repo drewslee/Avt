@@ -53,7 +53,7 @@ class Race(models.Model):
     id_race = models.AutoField(primary_key=True)
     name_race = models.CharField(max_length=5)
     race_date = models.DateField()
-    id_car = models.ForeignKey(Car)
+    car = models.ForeignKey(Car)
     type_ship = models.BooleanField(default=0)
     supplier = models.ForeignKey(Supplier)
     customer = models.ForeignKey(Customer)

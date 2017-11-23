@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
-from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils import timezone
 from .models import Car
 from .models import Driver
 from .models import Customer
@@ -16,11 +16,12 @@ from .forms import CarForm
 
 
 def index(req):
-    return render(request=req, template_name='index.html')
+    current_race = Race.objects.all().filter(race_date=timezone.now().date())
+    return render(request=req, template_name='index.html', context={'current_race': current_race})
 
 
 def catalog(req):
-    return render(request=req, template_name='catalog.html')
+    return render(request=req, template_name='index.html')
 
 
 def car(req):

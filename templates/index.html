@@ -3,15 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Main</title>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!-- Latest compiled JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Авторегион</a>
+    </div>
+	  <form method="post" action="/catalog/">
+		{% csrf_token %}
+		<button id="Race" name="Race" class="btn btn-danger navbar-btn">Рейсы</button>
+    <button id="Car" name="Car" class="btn btn-danger navbar-btn">Машины</button>
+	  <button id="Driver" name="Driver" class="btn btn-danger navbar-btn">Водители</button>
+	  <button id="Supplier" name="Supplier" class="btn btn-danger navbar-btn">Поставщики</button>
+	  <button id="Customer" name="Customer" class="btn btn-danger navbar-btn">Клиенты</button>
+	  <button id="Product" name="Product" class="btn btn-danger navbar-btn">Товары</button>
+	  </form>
+  </div>
+</nav>
 <body>
-
-<form>
-  {%  csrf_token %}
-	<input type="button" onclick="window.location.href='/catalog/'" value="Справочник">
-</form>
-
-<form action="/add_race/" method="post">
+{% if current_race  %}
+	<table class="results">
+	{% for race in current_race %}
+		<tr>
+			<td>
+			race
+		  </td>
+		</tr>
+	{% endfor %}
+</table>
+{% endif %}
+<form action="/add/" method="post">
     {% csrf_token %}
     {{ form.as_table }}
     <input type="submit" value="OK" />
