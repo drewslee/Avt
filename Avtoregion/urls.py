@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='index'),
     url(r'^catalog/', views.catalog, name='catalog'),
+    url(r'^catalog/car', views.car, name='car'),
 ]

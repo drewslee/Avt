@@ -20,11 +20,15 @@ def index(req):
 
 
 def catalog(req):
+    return render(request=req, template_name='catalog.html')
+
+
+def car(req):
     if req.method == 'POST':
-       form = CarForm(req.POST)
-       if form.is_valid():
-           Car.objects.create(number=form.cleaned_data['number'], pts=form.cleaned_data['pts'])
-           return HttpResponseRedirect(redirect_to='/index')
+        form = CarForm(req.POST)
+        if form.is_valid():
+            Car.objects.create(number=form.cleaned_data['number'], pts=form.cleaned_data['pts'])
+            return HttpResponseRedirect(redirect_to='/catalog/')
     else:
         form = CarForm()
     return render(request=req, template_name='catalog.html', context={'form': form})

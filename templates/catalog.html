@@ -1,14 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Some stuff</title>
 </head>
 
  <body>
+
+ <form>
+    {%  csrf_token %}
+    <input type="button" onclick="window.location.href='/catalog/car'" value="Справочник Машин"/>
+ </form>
+
+ <form>
+		 {% csrf_token %}
+    <input type="button" value="Справочник поставщиков"/>
+ </form>
+
+ <form>
+    {% csrf_token %}
+    <input type="button" value="Справочник клиентов"/>
+ </form>
+
+ <form>
+    {% csrf_token %}
+    <input type="button" value="Справочник водителей"/>
+ </form>
+
+ <form>
+    {% csrf_token %}
+    <input type="button" onclick="" value="Справочник товаров"/>
+ </form>
+
  <form action="/number/" method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_table }}
     <input type="submit" value="OK" />
 </form>
 

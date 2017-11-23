@@ -37,8 +37,6 @@ class Milage(models.Model):
     end_milage = models.IntegerField()
 
 
-
-
 class Trailer(models.Model):
     id_trailer = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10)
@@ -56,7 +54,7 @@ class Race(models.Model):
     name_race = models.CharField(max_length=5)
     race_date = models.DateField()
     id_car = models.ForeignKey(Car)
-    type = models.BooleanField(default=0)
+    type_ship = models.BooleanField(default=0)
     supplier = models.ForeignKey(Supplier)
     customer = models.ForeignKey(Customer)
     product = models.ForeignKey(Product)

@@ -5,10 +5,18 @@
     <title>Main</title>
 </head>
 <body>
-<header></header>
-<nav></nav>
-<aside></aside>
-<footer></footer>
+
+<form>
+  {%  csrf_token %}
+	<input type="button" onclick="window.location.href='/catalog/'" value="Справочник">
+</form>
+
+<form action="/add_race/" method="post">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <input type="submit" value="OK" />
+</form>
+
 
 </body>
 </html>
