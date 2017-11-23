@@ -17,7 +17,10 @@ from .forms import CarForm
 
 def index(req):
     current_race = Race.objects.all().filter(race_date=timezone.now().date())
-    return render(request=req, template_name='index.html', context={'current_race': current_race})
+    if current_race.count() != 0:
+        return render(request=req, template_name='index.html', context={'current_race': current_race})
+    else:
+        return render(request=req, template_name='index.html')
 
 
 def catalog(req):
