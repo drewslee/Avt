@@ -15,14 +15,14 @@
     <div class="navbar-header">
       <a class="navbar-brand" href="#">Авторегион</a>
     </div>
-	  <form method="post" action="/catalog/">
+	  <form method="get" action="/catalog/">
 		{% csrf_token %}
-      <button id="Race" name="Race" class="btn btn-danger navbar-btn">Рейсы</button>
-      <button id="Car" name="Car" class="btn btn-danger navbar-btn">Машины</button>
-	  <button id="Driver" name="Driver" class="btn btn-danger navbar-btn">Водители</button>
-	  <button id="Supplier" name="Supplier" class="btn btn-danger navbar-btn">Поставщики</button>
-	  <button id="Customer" name="Customer" class="btn btn-danger navbar-btn">Клиенты</button>
-	  <button id="Product" name="Product" class="btn btn-danger navbar-btn">Товары</button>
+      <button id="Race" name="Race" value="get" class="btn btn-danger navbar-btn">Рейсы</button>
+      <button id="Car" name="Car" value="get" class="btn btn-danger navbar-btn">Машины</button>
+	  <button id="Driver" name="Driver" value="get" class="btn btn-danger navbar-btn">Водители</button>
+	  <button id="Supplier" name="Supplier" value="get" class="btn btn-danger navbar-btn">Поставщики</button>
+	  <button id="Customer" name="Customer" value="get" class="btn btn-danger navbar-btn">Клиенты</button>
+	  <button id="Product" name="Product" value="get" class="btn btn-danger navbar-btn">Товары</button>
 	  </form>
   </div>
 </nav>
@@ -38,10 +38,26 @@
 	{% endfor %}
 </table>
 {% endif %}
+{% if qdb %}
+	<table class="results">
+		{% for q in qdb %}
+			<tr>
+				<td>
+					q.number
+				</td>
+				<td>
+					q.pts
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}
 <form action="/add/" method="post">
     {% csrf_token %}
-    {{ form.as_table }}
-    <input type="submit" value="OK" />
+    {{ form.as_ul }}
+    <input id="add" name="add" type="submit" value="добавить" />
+	  <input id="change" name="change" type="submit" value="изменить"/>
+	  <input id="delete" name="delete" type="submit" value="удалить" />
 </form>
 
 
