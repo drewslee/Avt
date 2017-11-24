@@ -11,7 +11,8 @@ MONTHS = {
 
 class CarForm(forms.Form):
     number = forms.CharField(label='Номер машины', max_length=10)
-    pts = forms.CharField(label='PTS', max_length=10)
+    pts = forms.CharField(label='ПТС', max_length=10, required=False)
+    trailer = forms.CharField(label='Номер прицепа', max_length=10, required=False)
 
 
 class SupplierForm(forms.Form):
