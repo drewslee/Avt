@@ -3,7 +3,7 @@ from django.db import models
 
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256, null=False)
+    name = models.CharField(max_length=256)
 
 
 class Product(models.Model):
@@ -13,12 +13,12 @@ class Product(models.Model):
 
 class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, default='')
+    name = models.CharField(max_length=100)
 
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256, null=False)
+    name = models.CharField(max_length=256)
 
 
 class Mediator(models.Model):
@@ -47,7 +47,7 @@ class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10, unique=True)
     pts = models.CharField(max_length=10, unique=True, blank=True)
-    trailer = models.ForeignKey(Trailer)
+    trailer = models.ForeignKey(Trailer, blank=True, null=True)
 
 
 class Race(models.Model):
@@ -59,7 +59,7 @@ class Race(models.Model):
     type_ship = models.BooleanField(default=0)
     supplier = models.ForeignKey(Supplier)
     customer = models.ForeignKey(Customer)
-    shipment = models.ForeignKey(Shipment, null=True)
+    shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)
     mediator = models.ForeignKey(Mediator)
     s_milage = models.FloatField(default=0)

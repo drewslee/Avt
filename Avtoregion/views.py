@@ -56,36 +56,36 @@ def CarView(req):
 def DriverView(req):
     qDriver = Driver.objects.all()
     if req.method == 'POST':
-        return render(request=req, template_name='index.html', context={'qDriver': qDriver})
+        return render(request=req, template_name='catalog.html', context={'qDriver': qDriver})
     else:
         form = DriverForm()
-        return render(request=req, template_name='index.html', context={'form': form})
+        return render(request=req, template_name='catalog.html', context={'form': form})
 
 def ProductView(req):
     qProduct = Product.objects.all()
     if req.method == 'POST':
-        return render(request=req, template_name='index.html', context={'qProduct': qProduct})
+        return render(request=req, template_name='catalog.html', context={'qProduct': qProduct})
     else:
         form = ProductForm()
-        return render(request=req, template_name='index.html', context={'form': form})
+        return render(request=req, template_name='catalog.html', context={'form': form})
 
 
 def CustomerView(req):
     qCustomer = Customer.objects.all()
     if req.method == 'POST':
-        return render(request=req, template_name='index.html', context={'qCustomer': qCustomer})
+        return render(request=req, template_name='catalog.html', context={'qCustomer': qCustomer})
     else:
         form = CustomerForm()
-        return render(request=req, template_name='index.html', context={'form': form})
+        return render(request=req, template_name='catalog.html', context={'form': form})
 
 
 def SupplierView(req):
     qSupplier = Supplier.objects.all()
     if req.method == 'POST':
-        return render(request=req, template_name='index.html', context={'qSupplier': qSupplier})
+        return render(request=req, template_name='catalog.html', context={'qSupplier': qSupplier})
     else:
         form = SupplierForm()
-        return render(request=req, template_name='index.html', context={'form': form})
+        return render(request=req, template_name='catalog.html', context={'form': form})
 
 
 def catalog(req):
