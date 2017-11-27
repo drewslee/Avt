@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
-from django import forms
-from .models import Car
+from django.forms import ModelForm
+from .models import *
 
 MONTHS = {
     1: 'jan', 2: 'feb', 3: 'mar', 4: 'apr',
@@ -9,49 +9,56 @@ MONTHS = {
 }
 
 
-class CarForm(forms.Form):
-    number = forms.CharField(label='Номер машины', max_length=10)
-    pts = forms.CharField(label='ПТС', max_length=10, required=False)
-    trailer = forms.CharField(label='Номер прицепа', max_length=10, required=False)
+class TrailerForm(ModelForm):
+    class Meta:
+        model = Trailer
+        fields = ['number']
 
 
-class SupplierForm(forms.Form):
-    name = forms.CharField(label='Поставщик:', max_length=256)
+class CarForm(ModelForm):
+    class Meta:
+        model = Car
+        fields = ['number', 'pts', 'trailer']
 
 
-class ProductForm(forms.Form):
-    name = forms.CharField(label='Товар:', max_length=100)
+class SupplierForm(ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ['name']
 
 
-class ShipmentForm(forms.Form):
-    name = forms.CharField(label='Место разгрузки', max_length=100)
+class ProductForm(ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name']
 
 
-class MediatorForm(forms.Form):
-    address = forms.CharField(label='Юр. адрес', max_length=256)
+class ShipmentForm(ModelForm):
+    class Meta:
+        model = Shipment
+        fields = ['name']
 
 
-class CustomerForm(forms.Form):
-    name = forms.CharField(label='Клиент', max_length=256)
-    shipment = forms.ChoiceField(label='Место разгрузки')
+class MediatorForm(ModelForm):
+    class Meta:
+        model = Mediator
+        fields = ['address']
 
 
-class DriverForm(forms.Form):
-    name = forms.CharField(label='Водитель', max_length=256)
+class CustomerForm(ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name']
 
 
-class RaceForm(forms.Form):
-    name_race = forms.CharField(label='Рейс', max_length=5)
-    race_date = forms.DateInput()
-    car = forms.ChoiceField()
-    driver = forms.ChoiceField()
-    type_ship = forms.BooleanField(label='Тип работы')
-    supplier = forms.ChoiceField()
-    customer = forms.ChoiceField()
-    shipment = forms.ChoiceField()
-    mediator = forms.ChoiceField()
-    s_milage = forms.FloatField()
-    e_milage = forms.FloatField()
-    weight_load = forms.FloatField()
-    weight_unload = forms.FloatField()
-    comm = forms.Textarea()
+class DriverForm(ModelForm):
+    class Meta:
+        model = Driver
+        fields = ['name']
+
+
+class RaceForm(ModelForm):
+    class Meta:
+        model = Race
+        fields = ['name_race', 'race_date', 'car', 'driver', 'type_ship', 'supplier', 'customer', 'shipment', 'mediator'
+        , 's_milage', 'e_milage', 'weight_load', 'weight_unload', 'comm', 'state']

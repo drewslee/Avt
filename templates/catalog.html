@@ -6,37 +6,44 @@
 </head>
 
  <body>
+ {% if qCar %}
+	 <table class="results">
+	 {% for q in qCar %}
+	 <tr>
+		 <td>
+			 q.name
+		 </td>
+		 <td>
+			 qCar.pts
+		 </td>
+	 </tr>
+	 {% endfor %}
+	 </table>
+ {% endif %}
+ <button name="change" class="btn btn-info">Изменить</button>
+ <button name="Удалить" class="btn btn-danger">Удалить</button>
 
- <form>
-    {%  csrf_token %}
-    <input type="button" onclick="window.location.href='/catalog/car'" value="Справочник Машин"/>
- </form>
+ {% if qdb %}
+	 <table class="results">
+		 {% for q in qdb %}
+			 <tr>
+				 <td>
+					 q.number
+				 </td>
+				 <td>
+					 q.pts
+				 </td>
+			 </tr>
+		 {% endfor %}
+	 </table>
+ {% endif %}
 
- <form>
-		 {% csrf_token %}
-    <input type="button" value="Справочник поставщиков"/>
- </form>
-
- <form>
-    {% csrf_token %}
-    <input type="button" value="Справочник клиентов"/>
- </form>
-
- <form>
-    {% csrf_token %}
-    <input type="button" value="Справочник водителей"/>
- </form>
-
- <form>
-    {% csrf_token %}
-    <input type="button" onclick="" value="Справочник товаров"/>
- </form>
-
- <form action="/number/" method="post">
+ <form action="" method="post">
     {% csrf_token %}
     {{ form.as_table }}
-    <input type="submit" value="OK" />
+    <button name="add" class="btn btn-success">Добавить</button>
 </form>
+
 
  </body>
 </html>

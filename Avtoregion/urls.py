@@ -20,5 +20,10 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='index'),
-    url(r'^catalog/', views.catalog, name='catalog'),
+    url(r'^catalog/Car$', views.CarView, name='Car'),
+    url(r'^catalog/Product$', views.ProductView, name='Product'),
+    url(r'^catalog/Race$', views.RaceView, name='Race'),
+    url(r'^catalog/Driver$', views.DriverView, name='Driver'),
+    url(r'^catalog/Supplier$', views.SupplierView, name='Supplier'),
+    url(r'^catalog/Customer$', views.CustomerView, name='Customer'),
 ]

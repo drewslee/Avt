@@ -13,12 +13,13 @@ class Product(models.Model):
 
 class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default='')
+
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, null=False)
-    id_shipment = models.ForeignKey(Shipment)
+
 
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
@@ -45,8 +46,8 @@ class Trailer(models.Model):
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10, unique=True)
-    id_trailer = models.ForeignKey(Trailer)
     pts = models.CharField(max_length=10, unique=True, blank=True)
+    trailer = models.ForeignKey(Trailer)
 
 
 class Race(models.Model):
@@ -54,15 +55,17 @@ class Race(models.Model):
     name_race = models.CharField(max_length=5)
     race_date = models.DateField()
     car = models.ForeignKey(Car)
+    driver = models.ForeignKey(Driver)
     type_ship = models.BooleanField(default=0)
     supplier = models.ForeignKey(Supplier)
     customer = models.ForeignKey(Customer)
+    shipment = models.ForeignKey(Shipment, null=True)
     product = models.ForeignKey(Product)
     mediator = models.ForeignKey(Mediator)
-    driver = models.ForeignKey(Driver)
-    milage = models.ForeignKey(Milage)
-    weight_load = models.FloatField()
-    weight_unload = models.FloatField()
+    s_milage = models.FloatField(default=0)
+    e_milage = models.FloatField(default=0)
+    weight_load = models.FloatField(default=0)
+    weight_unload = models.FloatField(default=0)
     comm = models.TextField()
     state = models.IntegerField(default=0)
     create_time = models.DateTimeField(auto_now=True)
