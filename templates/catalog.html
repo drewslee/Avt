@@ -14,14 +14,21 @@
 			 q.name
 		 </td>
 		 <td>
-			 qCar.pts
+			 q.pts
 		 </td>
+		 <td>
+			 q.trailer
+		 </td>
+		 <td>
+			<form action="edit">
+		    <button name="change" class="btn btn-info" value=q.id>Изменить</button>
+			  <button name="Удалить" class="btn btn-danger" value=q.id>Удалить</button>
+		  </form>
+	    </td>
 	 </tr>
 	 {% endfor %}
 	 </table>
  {% endif %}
- <button name="change" class="btn btn-info">Изменить</button>
- <button name="Удалить" class="btn btn-danger">Удалить</button>
 
  {% if qdb %}
 	 <table class="results">
