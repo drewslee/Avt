@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Main</title>
 		<!-- Latest compiled and minified CSS >
@@ -16,34 +17,28 @@
   <div class="container-fluid">
 	    <ul class="nav navbar-nav">
           <li><a href="index.html">Рейсы</a></li>
-	      <li class="dropdown">
-		      <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Справочники
-			      <span class="caret"></span></a>
-			    <ul class="dropdown-menu">
-						<li><a href="catalog/Race">Рейсы</a></li>
-						<li><a href="catalog/Car">Машины</a></li>
-						<li><a href="catalog/Driver">Водители</a></li>
-						<li><a href="catalog/Supplier">Поставщики</a></li>
-						<li><a href="catalog/Customer">Клиенты</a></li>
-						<li><a href="catalog/Product">Товары</a></li>
-			    </ul>
-	      </li>
+					<li><a href="catalog/Car">Машины</a></li>
+					<li><a href="catalog/Driver">Водители</a></li>
+					<li><a href="catalog/Supplier">Поставщики</a></li>
+					<li><a href="catalog/Customer">Клиенты</a></li>
+					<li><a href="catalog/Product">Товары</a></li>
+		      <li><a href="catalog/Trailer">Прицепы</a></li>
+		      <li><a href="catalog/Mediator">Посредники</a></li>
+		      <li><a href="catalog/Shipment">Место разгрузки</a></li>
+	        <li class="dropdown">
+		        <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+								<li><a href="catalog/Race">Рейсы</a></li>
+						</ul>
+	        </li>
 	    </ul>
 	  </div>
   </div>
 </nav>
 <body>
-{% if current_race  %}
-	<table class="results">
-	{% for race in current_race %}
-		<tr>
-			<td>
-			race
-		  </td>
-		</tr>
-	{% endfor %}
-</table>
-{% endif %}
-
+	<div id="content" >
+		{% block content %}
+		{% endblock %}
+	</div>
 </body>
 </html>
