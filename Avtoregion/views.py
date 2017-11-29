@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.shortcuts import get_object_or_404
+from django.views.generic.edit import CreateView,UpdateView, DeleteView
 from django.shortcuts import render, reverse
 from django.utils import timezone
 from .models import Car
@@ -26,16 +28,7 @@ from .forms import ShipmentForm
 def RaceView(req):
         date = timezone.now().date()
         current_race = Race.objects.all().filter(race_date=date)
-        if req.method == 'POST' and req.POST['name'] == 'add':
-            form = CarForm(req.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(reverse('Race'))
-            else:
-                return render(request=req, template_name='car.html', context={'form': form, 'current_race': current_race})
-        else:
-            form = RaceForm()
-            return render(request=req, template_name='race.html', context={'form': form, 'current_race': current_race})
+        return render(request=req, template_name='race.html', context={'current_race': current_race})
 
 
 def CarView(req):
@@ -51,7 +44,7 @@ def CarView(req):
 
 def TrailerView(req):
     qTrailer = Trailer.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = TrailerForm(req.POST)
         if form.is_valid():
             form.save()
@@ -129,3 +122,85 @@ def ShipmentView(req):
     else:
         form = ShipmentForm()
         return render(request=req, template_name='shipment.html', context={'form': form, 'qShipment': qShipment})
+
+
+class CarUpdate(UpdateView):
+    model = Car
+    success_url = '/Car'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class CarDelete(DeleteView):
+    model = Car
+    success_url = '/Car'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class TrailerUpdate(UpdateView):
+    model = Trailer
+    success_url = '/Trailer'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class TrailerDelete(DeleteView):
+    model = Trailer
+    success_url = '/Trailer'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class ShipmentUpdate(UpdateView):
+    model = Shipment
+    success_url = '/Shipment'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class ShipmentDelete(DeleteView):
+    model = Shipment
+    success_url = '/Shipment'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class MediatorUpdate(UpdateView):
+    model = Mediator
+    success_url = '/Mediator'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class RaceCreate(CreateView):
+    model = Race
+    success_url = '/Race'
+    fields = '__all__'
+
+
+class RaceUpdate(UpdateView):
+    model = Race
+    success_url = '/Race'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class RaceDelete(DeleteView):
+    model = Race
+    success_url = '/Race'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))

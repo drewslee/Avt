@@ -1,34 +1,54 @@
 from django.db import models
+import bootstrap3_datepicker.fields
+import bootstrap3_datepicker.widgets
 
 
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256)
 
+    def __str__(self):
+        return '%s' % self.name
+
 
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
     name = models.CharField(max_length=10)
+
+    def __str__(self):
+        return '%s' % self.name
 
 
 class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return '%s' % self.name
+
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256)
+
+    def __str__(self):
+        return '%s' % self.name
 
 
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
     address = models.CharField(max_length=256)
 
+    def __str__(self):
+        return '%s' % self.address
+
 
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return '%s' % self.name
 
 
 class Milage(models.Model):
@@ -42,6 +62,9 @@ class Trailer(models.Model):
     id_trailer = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10)
 
+    def __str__(self):
+        return '%s' % self.number
+
 
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
@@ -49,10 +72,13 @@ class Car(models.Model):
     pts = models.CharField(max_length=10, unique=True, blank=True)
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
 
+    def __str__(self):
+        return '%s' % self.number
+
 
 class Race(models.Model):
     id_race = models.AutoField(primary_key=True)
-    name_race = models.CharField(max_length=5)
+    name_race = models.CharField(max_length=5, default='Рейс')
     race_date = models.DateField()
     car = models.ForeignKey(Car)
     driver = models.ForeignKey(Driver)
@@ -69,3 +95,6 @@ class Race(models.Model):
     comm = models.TextField()
     state = models.IntegerField(default=0)
     create_time = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '%s' % self.name_race

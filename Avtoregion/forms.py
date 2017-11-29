@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from django.forms import ModelForm
 from .models import *
+from bootstrap3_datetime.widgets import DateTimePicker
 
 MONTHS = {
     1: 'jan', 2: 'feb', 3: 'mar', 4: 'apr',
@@ -60,5 +61,10 @@ class DriverForm(ModelForm):
 class RaceForm(ModelForm):
     class Meta:
         model = Race
-        fields = ['name_race', 'race_date', 'car', 'driver', 'type_ship', 'supplier', 'customer', 'shipment', 'mediator'
-        , 's_milage', 'e_milage', 'weight_load', 'weight_unload', 'comm', 'state']
+        fields = ['name_race', 'race_date', 'car', 'driver', 'type_ship', 'supplier', 'customer', 'shipment',
+                  'mediator', 's_milage', 'e_milage', 'weight_load', 'weight_unload', 'comm', 'state']
+        labels = {'name_race': 'Номер рейса',
+                  'car': 'Машина',
+                  'driver': 'Водитель',
+                  'type_ship': 'Реализация'}
+        widgets = {'race_date': DateTimePicker(options={'format': "YYYY-MM-DD"}), }
