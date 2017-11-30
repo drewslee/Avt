@@ -5,7 +5,14 @@
 
  <form action="" method="post">
     {% csrf_token %}
-    {% bootstrap_form form %}
+ {% for field in form %}
+	 <div class="row">
+	 <div class="form-group">
+	 {{ field.errors }}
+	 {{ field.label }} {{ field.label_tag }} {{ field }}
+	 </div>
+	 </div>
+ {% endfor %}
 	  {% buttons %}
         <button name="add" class="btn btn-success"> {% bootstrap_icon "star" %} Добавить</button>
 	  {% endbuttons %}

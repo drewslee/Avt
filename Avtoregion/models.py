@@ -1,6 +1,4 @@
 from django.db import models
-import bootstrap3_datepicker.fields
-import bootstrap3_datepicker.widgets
 
 
 class Supplier(models.Model):

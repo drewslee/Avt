@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
-from django.forms import ModelForm
+
+from django.forms import ModelForm, DateField
+from django.contrib.admin.widgets import AdminDateWidget
+from django.forms.widgets import SelectDateWidget
 from .models import *
-from bootstrap3_datetime.widgets import DateTimePicker
 
 MONTHS = {
     1: 'jan', 2: 'feb', 3: 'mar', 4: 'apr',
@@ -59,12 +61,14 @@ class DriverForm(ModelForm):
 
 
 class RaceForm(ModelForm):
+    race_date = DateField(widget=AdminDateWidget(), label='Дата рейса:')
+
     class Meta:
         model = Race
+        fields = '__all__'
         fields = ['name_race', 'race_date', 'car', 'driver', 'type_ship', 'supplier', 'customer', 'shipment',
                   'mediator', 's_milage', 'e_milage', 'weight_load', 'weight_unload', 'comm', 'state']
-        labels = {'name_race': 'Номер рейса',
+        labels = {
                   'car': 'Машина',
                   'driver': 'Водитель',
-                  'type_ship': 'Реализация'}
-        widgets = {'race_date': DateTimePicker(options={'format': "YYYY-MM-DD"}), }
+                  'type_ship': 'Реализация',}
