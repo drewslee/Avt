@@ -71,8 +71,12 @@
 		  </td>
 		 <td>
 			<form action="">
-              <button name="update" class="btn btn-info" value={{ q.pk }}>Изменить</button>
-			        <button name="delete" class="btn btn-danger" value={{ q.pk }}>Удалить</button>
+              <button name="update" class="btn btn-info">Изменить</button>
+							<input type="hidden" value="{{ q.pk }}" name="pk">
+			</form>
+			 <form action="">
+							<input type="hidden" value="{{ q.pk }}" name="pk">
+			        <button name="delete" class="btn btn-danger">Удалить</button>
 		  </form>
 	     </td>
 	    </tr>

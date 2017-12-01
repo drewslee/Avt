@@ -1,14 +1,14 @@
 # -*- coding:utf-8 -*-
 
-from django.forms import ModelForm, DateField
+from django.forms import ModelForm
 from django.contrib.admin.widgets import AdminDateWidget
 from django.forms.widgets import SelectDateWidget
 from .models import *
 
 MONTHS = {
-    1: 'jan', 2: 'feb', 3: 'mar', 4: 'apr',
-    5: 'may', 6: 'jun', 7: 'jul', 8: 'aug',
-    9: 'sep', 10: 'oct', 11: 'nov', 12: 'dec'
+    1: 'январь', 2: 'февраль', 3: 'март', 4: 'апрель',
+    5: 'май', 6: 'июнь', 7: 'июль', 8: 'август',
+    9: 'сентябрь', 10: 'октябрь', 11: 'ноябрь', 12: 'декабрь'
 }
 
 
@@ -61,14 +61,25 @@ class DriverForm(ModelForm):
 
 
 class RaceForm(ModelForm):
-    race_date = DateField(widget=AdminDateWidget(), label='Дата рейса:')
-
     class Meta:
         model = Race
         fields = '__all__'
-        fields = ['name_race', 'race_date', 'car', 'driver', 'type_ship', 'supplier', 'customer', 'shipment',
-                  'mediator', 's_milage', 'e_milage', 'weight_load', 'weight_unload', 'comm', 'state']
         labels = {
+                  'name_race': 'Номер рейса',
+                  'race_date': 'Дата рейса',
                   'car': 'Машина',
                   'driver': 'Водитель',
-                  'type_ship': 'Реализация',}
+                  'type_ship': 'Реализация',
+                  'supplier': 'Поставщик',
+                  'customer': 'Клиент',
+                  'shipment': 'Место разгрузки',
+                  'product': 'Груз',
+                  'mediator': 'Посредник',
+                  's_milage': 'Начало трeка',
+                  'e_milage': 'Конец трeка',
+                  'weight_unload': 'Разгружено',
+                  'weight_load': 'Загружено',
+                  'comm': 'Комментарий',
+                  'state': 'Состояние',
+        }
+        widgets = {'race_date': SelectDateWidget(months=MONTHS)}

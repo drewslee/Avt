@@ -185,14 +185,14 @@ class MediatorUpdate(UpdateView):
 
 class RaceCreate(CreateView):
     model = Race
+    form_class = RaceForm
     success_url = '/Race'
-    fields = '__all__'
 
 
 class RaceUpdate(UpdateView):
     model = Race
+    form_class = RaceForm
     success_url = '/Race'
-    fields = '__all__'
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
