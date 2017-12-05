@@ -17,17 +17,17 @@
 		 </td>
 		 <td>
 			<form action="Trailer/update" method="post">
-				{% csrf_token %}
+						 {% csrf_token %}
 							<input type="hidden" value="{{ q.pk }}" name="pk">
               <button name="update" class="btn btn-info">Изменить</button>
 			</form>
 		 </td>
 			 <td>
 				<form action="Trailer/delete" method="post">
-					{% csrf_token %}
+						 {% csrf_token %}
 					    <input type="hidden" value="{{ q.pk }}" name="pk">
 			        <button name="delete" class="btn btn-danger">Удалить</button>
-		  </form>
+		    </form>
 	     </td>
 	    </tr>
      </tbody>

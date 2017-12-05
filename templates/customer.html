@@ -6,7 +6,7 @@
 	 {% for q in qCustomer %}
          <thead>
 					 <tr>
-							 <th>Клиент</th>
+							 <th>{{q.label}}</th>
 					 </tr>
          </thead>
          <tbody>
@@ -15,11 +15,18 @@
 			{{ q.name }}
 		 </td>
 		 <td>
-			<form action="">
-				{% csrf_token %}
-        <button name="update" class="btn btn-info" value={{ q.pk }}>Изменить</button>
-			  <button name="delete" class="btn btn-danger" value={{ q.pk }}>Удалить</button>
-		  </form>
+			 <form action="Customer/update" method="post">
+				 {% csrf_token %}
+				 <input type="hidden" value="{{ q.pk }}" name="pk">
+				 <button name="update" class="btn btn-info">Изменить</button>
+			 </form>
+		 </td>
+		    <td>
+			    <form action="Customer/delete" method="post">
+				    {% csrf_token %}
+				    <input type="hidden" value="{{ q.pk }}" name="pk">
+				    <button name="delete" class="btn btn-danger">Удалить</button>
+			    </form>
 	     </td>
 	    </tr>
      </tbody>

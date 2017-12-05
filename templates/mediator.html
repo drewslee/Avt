@@ -15,11 +15,18 @@
 			{{ q.address}}
 		 </td>
 		 <td>
-			<form action="">
-				{% csrf_token %}
-        <button name="update" class="btn btn-info" value={{ q.pk }}>Изменить</button>
-			  <button name="delete" class="btn btn-danger" value={{ q.pk }}>Удалить</button>
-		  </form>
+			 <form action="Mediator/update" method="post">
+				 {% csrf_token %}
+				 <input type="hidden" value="{{ q.pk }}" name="pk">
+				 <button name="update" class="btn btn-info">Изменить</button>
+			 </form>
+		 </td>
+		    <td>
+			    <form action="Mediator/delete" method="post">
+				    {% csrf_token %}
+				    <input type="hidden" value="{{ q.pk }}" name="pk">
+				    <button name="delete" class="btn btn-danger">Удалить</button>
+			    </form>
 	     </td>
 	    </tr>
      </tbody>

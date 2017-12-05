@@ -124,6 +124,40 @@ def ShipmentView(req):
         return render(request=req, template_name='shipment.html', context={'form': form, 'qShipment': qShipment})
 
 
+class DriverUpdate(UpdateView):
+    model = Driver
+    success_url = '/Driver'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class DriverDelete(DeleteView):
+    model = Driver
+    success_url = '/Driver'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class SupplierUpdate(UpdateView):
+    model = Supplier
+    success_url = '/Supplier'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class SupplierDelete(DeleteView):
+    model = Supplier
+    success_url = '/Supplier'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
 class CarUpdate(UpdateView):
     model = Car
     success_url = '/Car'
@@ -136,6 +170,23 @@ class CarUpdate(UpdateView):
 class CarDelete(DeleteView):
     model = Car
     success_url = '/Car'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class ProductUpdate(UpdateView):
+    model = Product
+    success_url = '/Product'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class ProductDelete(DeleteView):
+    model = Product
+    success_url = '/Product'
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -178,6 +229,32 @@ class ShipmentDelete(DeleteView):
 class MediatorUpdate(UpdateView):
     model = Mediator
     success_url = '/Mediator'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class MediatorDelete(DeleteView):
+    model = Mediator
+    success_url = '/Mediator'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class CustomerUpdate(UpdateView):
+    model = Customer
+    success_url = '/Customer'
+    fields = '__all__'
+
+    def get_object(self, **kwargs):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class CustomerDelete(DeleteView):
+    model = Customer
+    success_url = '/Customer'
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
