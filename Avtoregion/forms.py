@@ -3,6 +3,8 @@
 from django.forms import ModelForm
 from django.contrib.admin.widgets import AdminDateWidget
 from django.forms.widgets import SelectDateWidget
+from django.forms import DateField
+from django.utils import timezone
 from .models import *
 
 MONTHS = {
@@ -61,12 +63,13 @@ class DriverForm(ModelForm):
 
 
 class RaceForm(ModelForm):
+    race_date = DateField(widget=SelectDateWidget(), initial=timezone.now, label='Дата:')
+
     class Meta:
         model = Race
         fields = '__all__'
         labels = {
                   'name_race': 'Номер рейса',
-                  'race_date': 'Дата рейса',
                   'car': 'Машина',
                   'driver': 'Водитель',
                   'type_ship': 'Реализация',
@@ -82,4 +85,3 @@ class RaceForm(ModelForm):
                   'comm': 'Комментарий',
                   'state': 'Состояние',
         }
-        widgets = {'race_date': SelectDateWidget(months=MONTHS)}

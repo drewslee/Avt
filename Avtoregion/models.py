@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 class Supplier(models.Model):
@@ -77,7 +78,7 @@ class Car(models.Model):
 class Race(models.Model):
     id_race = models.AutoField(primary_key=True)
     name_race = models.CharField(max_length=5, default='Рейс')
-    race_date = models.DateField()
+    race_date = models.DateField(default=date.today)
     car = models.ForeignKey(Car)
     driver = models.ForeignKey(Driver)
     type_ship = models.BooleanField(default=0)
