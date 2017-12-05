@@ -1,7 +1,6 @@
 # -*- coding:utf-8 -*-
 
 from django.forms import ModelForm
-from django.contrib.admin.widgets import AdminDateWidget
 from django.forms.widgets import SelectDateWidget
 from django.forms import DateField
 from django.utils import timezone
