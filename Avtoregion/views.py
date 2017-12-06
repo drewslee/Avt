@@ -27,13 +27,13 @@ from .forms import ShipmentForm
 
 def RaceView(req):
         date = timezone.now().date()
-        current_race = Race.objects.all().filter(race_date=date)
-        return render(request=req, template_name='race.html', context={'current_race': current_race})
+        qRace = Race.objects.all().filter(race_date=date)
+        return render(request=req, template_name='race.html', context={'qRace': qRace})
 
 
 def CarView(req):
     qCar = Car.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = CarForm(req.POST)
         if form.is_valid():
             form.save()
@@ -55,7 +55,7 @@ def TrailerView(req):
 
 def DriverView(req):
     qDriver = Driver.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = DriverForm(req.POST)
         if form.is_valid():
             form.save()
@@ -66,7 +66,7 @@ def DriverView(req):
 
 def ProductView(req):
     qProduct = Product.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = ProductForm(req.POST)
         if form.is_valid():
             form.save()
@@ -78,7 +78,7 @@ def ProductView(req):
 
 def CustomerView(req):
     qCustomer = Customer.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = CustomerForm(req.POST)
         if form.is_valid():
             form.save()
@@ -90,8 +90,8 @@ def CustomerView(req):
 
 def SupplierView(req):
     qSupplier = Supplier.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
-        form = Supplier(req.POST)
+    if req.method == 'POST':
+        form = SupplierForm(req.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('Supplier'))
@@ -102,7 +102,7 @@ def SupplierView(req):
 
 def MediatorView(req):
     qMediator= Mediator.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = MediatorForm(req.POST)
         if form.is_valid():
             form.save()
@@ -114,7 +114,7 @@ def MediatorView(req):
 
 def ShipmentView(req):
     qShipment= Shipment.objects.all()
-    if req.method == 'POST' and req.POST['name'] == 'add':
+    if req.method == 'POST':
         form = ShipmentForm(req.POST)
         if form.is_valid():
             form.save()
@@ -127,7 +127,7 @@ def ShipmentView(req):
 class DriverUpdate(UpdateView):
     model = Driver
     success_url = '/Driver'
-    fields = '__all__'
+    form_class = DriverForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -137,6 +137,7 @@ class DriverDelete(DeleteView):
     model = Driver
     success_url = '/Driver'
 
+
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
@@ -144,7 +145,7 @@ class DriverDelete(DeleteView):
 class SupplierUpdate(UpdateView):
     model = Supplier
     success_url = '/Supplier'
-    fields = '__all__'
+    form_class = SupplierForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -161,7 +162,7 @@ class SupplierDelete(DeleteView):
 class CarUpdate(UpdateView):
     model = Car
     success_url = '/Car'
-    fields = '__all__'
+    form_class = CarForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -178,7 +179,7 @@ class CarDelete(DeleteView):
 class ProductUpdate(UpdateView):
     model = Product
     success_url = '/Product'
-    fields = '__all__'
+    form_class = ProductForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -195,7 +196,7 @@ class ProductDelete(DeleteView):
 class TrailerUpdate(UpdateView):
     model = Trailer
     success_url = '/Trailer'
-    fields = '__all__'
+    form_class = TrailerForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -212,7 +213,7 @@ class TrailerDelete(DeleteView):
 class ShipmentUpdate(UpdateView):
     model = Shipment
     success_url = '/Shipment'
-    fields = '__all__'
+    form_class = ShipmentForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -229,7 +230,7 @@ class ShipmentDelete(DeleteView):
 class MediatorUpdate(UpdateView):
     model = Mediator
     success_url = '/Mediator'
-    fields = '__all__'
+    form_class = MediatorForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -246,7 +247,7 @@ class MediatorDelete(DeleteView):
 class CustomerUpdate(UpdateView):
     model = Customer
     success_url = '/Customer'
-    fields = '__all__'
+    form_class = CustomerForm
 
     def get_object(self, **kwargs):
         return self.model.objects.get(pk=self.request.POST.get('pk'))

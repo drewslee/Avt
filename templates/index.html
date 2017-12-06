@@ -4,28 +4,24 @@
 	  <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Main</title>
-		<!-- Latest compiled and minified CSS >
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<!-- jQuery library-->
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<!-- <link rel="stylesheet"
-	       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.standalone.css"
-	  integrity="sha256-yd4sWd8dVlNajunVaIaUk8OIp2yyS6GS1e25wIXXHmc=" crossorigin="anonymous" />
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.js"></script>
-		<!-- Latest compiled JavaScript
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
-		<link rel="stylesheet" href="/static/css/bootstrap.css">
-	<script type="text/javascript" src="/static/js/bootstrap.js"></script>
-	<!--<script type="text/javascript" src="/static/js/transition.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/css/bootstrap-datetimepicker.min.css">
+	<!-- jQuery library-->
+	<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="/static/js/collapse.js"></script>
-	<script type="text/javascript" src="/static/js/moment.js"></script>
-	-->
+	<script type="text/javascript" src="/static/js/transition.js"></script>
+	<script type="text/javascript" src="/static/js/dropdown.js"></script>
+	<script type="text/javascript" src="/static/js/moment-with-locales.min.js"></script>
+	<!--<script type="text/javascript" src="/static/js/ru.js"></script>-->
+	<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
 </head>
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
 	    <ul class="nav navbar-nav">
 		    <li class="dropdown">
-			    <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Рейсы<span class="caret"></span></a>
+			    <a class="dropdown-toggle" data-toggle="dropdown" href="/Race">Рейсы<span class="caret"></span></a>
 			    <ul class="dropdown-menu">
 				    <li><a href="/Race/add">Добавить Рейсы</a></li>
 			    </ul>
@@ -34,21 +30,42 @@
 					<li><a href="/Driver">Водители</a></li>
 					<li><a href="/Supplier">Поставщики</a></li>
 					<li><a href="/Customer">Клиенты</a></li>
-					<li><a href="/Product">Товары</a></li>
+					<li><a href="/Product">Груз</a></li>
 		      <li><a href="/Trailer">Прицепы</a></li>
 		      <li><a href="/Mediator">Посредники</a></li>
 		      <li><a href="/Shipment">Место разгрузки</a></li>
+		      <li>
+		      </li>
 	        <li class="dropdown">
 		        <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-								<li><a href="Driver/accumulate">По водителю</a></li>
-							  <li><a href="Driver/accumulate">По Поставщику</a></li>
-							  <li><a href="Driver/accumulate">По Клиенту</a></li>
+								<li><a href="/Driver/accumulate">По водителю</a></li>
+							  <li><a href="/Supplier/accumulate">По Поставщику</a></li>
+							  <li><a href="/Customer/accumulate">По Клиенту</a></li>
 						</ul>
 	        </li>
 	    </ul>
 	  </div>
   </div>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<div class="input-group date" id="datetimepicker2">
+							<input type="text" class="form-control" />
+									<span class="input-group-addon">
+												<span class="glyphicon glyphicon-calendar"></span>
+									</span>
+					</div>
+			</div>
+			<script type="text/javascript">
+					$(function () {
+							$('#datetimepicker').datetimepicker({locale: 'ru'});
+					});
+			</script>
+		</div>
+	</div>
+	</div>
 </nav>
 <body>
 	<div id="content" class="table-responsive" >

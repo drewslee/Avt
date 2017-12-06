@@ -17,30 +17,35 @@ class TrailerForm(ModelForm):
     class Meta:
         model = Trailer
         fields = ['number']
+        labels = {'number': 'Прицеп'}
 
 
 class CarForm(ModelForm):
     class Meta:
         model = Car
         fields = ['number', 'pts', 'trailer']
+        labels = {'number': 'Номер машины', 'pts': 'ПТС', 'trailer': 'Прицеп'}
 
 
 class SupplierForm(ModelForm):
     class Meta:
         model = Supplier
         fields = ['name']
+        labels = {'name': 'Поставщик'}
 
 
 class ProductForm(ModelForm):
     class Meta:
         model = Product
         fields = ['name']
+        labels = {'name': 'Груз'}
 
 
 class ShipmentForm(ModelForm):
     class Meta:
         model = Shipment
         fields = ['name']
+        labels = {'name': 'Место разгрузки'}
 
 
 class MediatorForm(ModelForm):
@@ -49,16 +54,19 @@ class MediatorForm(ModelForm):
         fields = ['address']
 
 
+
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
         fields = ['name']
+        labels = {'name': 'Клиент'}
 
 
 class DriverForm(ModelForm):
     class Meta:
         model = Driver
         fields = ['name']
+        labels = {'name': 'Водитель:'}
 
 
 class RaceForm(ModelForm):

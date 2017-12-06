@@ -6,12 +6,7 @@
  <form action="" method="post">
     {% csrf_token %}
  {% for field in form %}
-	 <div class="row">
-	 <div class="form-group">
-	 {{ field.errors }}
-	 {{ field.label }} {{ field }}
-	 </div>
-	 </div>
+	 {% bootstrap_field field %}
  {% endfor %}
 	  {% buttons %}
         <button name="add" class="btn btn-success"> {% bootstrap_icon "star" %} Добавить</button>
