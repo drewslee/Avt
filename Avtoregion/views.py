@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from django.views.generic.edit import CreateView,UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, reverse
 from django.utils import timezone
 from .models import Car
@@ -272,8 +272,9 @@ class RaceUpdate(UpdateView):
     form_class = RaceForm
     success_url = '/Race'
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
+
 
 
 class RaceDelete(DeleteView):

@@ -26,51 +26,51 @@
 				    <li><a href="/Race/add">Добавить Рейсы</a></li>
 			    </ul>
 		    </li>
-					<li><a href="/Car">Машины</a></li>
-					<li><a href="/Driver">Водители</a></li>
-					<li><a href="/Supplier">Поставщики</a></li>
-					<li><a href="/Customer">Клиенты</a></li>
-					<li><a href="/Product">Груз</a></li>
-		      <li><a href="/Trailer">Прицепы</a></li>
-		      <li><a href="/Mediator">Посредники</a></li>
-		      <li><a href="/Shipment">Место разгрузки</a></li>
-		      <li>
-		      </li>
-	        <li class="dropdown">
+		    <li class="dropdown">
+			    <a class="dropdown-toggle" href="index.html" data-toggle="dropdown">Справочники<span class="caret"></span></a>
+			    <ul class="dropdown-menu">
+				    <li><a href="/Car">Машины</a></li>
+				    <li><a href="/Driver">Водители</a></li>
+				    <li><a href="/Supplier">Поставщики</a></li>
+				    <li><a href="/Customer">Клиенты</a></li>
+				    <li><a href="/Product">Груз</a></li>
+				    <li><a href="/Trailer">Прицепы</a></li>
+				    <li><a href="/Mediator">Посредники</a></li>
+				    <li><a href="/Shipment">Место разгрузки</a></li>
+			    </ul>
+		    </li>
+	      <li class="dropdown">
 		        <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-								<li><a href="/Driver/accumulate">По водителю</a></li>
-							  <li><a href="/Supplier/accumulate">По Поставщику</a></li>
-							  <li><a href="/Customer/accumulate">По Клиенту</a></li>
+								<li><a href="/Driver/accumulate">Данные по водителю</a></li>
+							  <li><a href="/Supplier/accumulate">Реестр по поставщику</a></li>
+							  <li><a href="/Customer/accumulate">Реестр по покупателю</a></li>
 						</ul>
-	        </li>
+	      </li>
+	    </ul>
+	    <ul class="nav navbar-nav navbar-form navbar-right">
+		    <li>
+			    <div class="input-group date" id="datetimepicker">
+				    <input type="text" class="form-control"/>
+				    <span class="input-group-addon" >
+									<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+				    <script type="text/javascript">
+                $(function () {
+                    $("#datetimepicker").datetimepicker({
+                        locale: 'ru',
+                        format: 'MMMM/DD/YY',
+                    });
+                    $('.dropdown-toggle').dropdown();
+                });
+				    </script>
+			    </div>
+		    </li>
 	    </ul>
 	  </div>
-  </div>
-	<div class="container">
-		<div class="row">
-			<div class="col-sm-6">
-				<div class="form-group">
-					<div class="input-group date" id="datetimepicker2">
-							<input type="text" class="form-control" />
-									<span class="input-group-addon">
-												<span class="glyphicon glyphicon-calendar"></span>
-									</span>
-					</div>
-			</div>
-			<script type="text/javascript">
-					$(function () {
-							$('#datetimepicker').datetimepicker({locale: 'ru'});
-					});
-			</script>
-		</div>
-	</div>
-	</div>
 </nav>
 <body>
-	<div id="content" class="table-responsive" >
 		{% block content %}
 		{% endblock %}
-	</div>
 </body>
 </html>

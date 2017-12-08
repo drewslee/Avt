@@ -56,4 +56,6 @@ urlpatterns = [
     url(r'^Shipment$', views.ShipmentView, name='Shipment'),
     url(r'^Shipment/update$', views.ShipmentUpdate.as_view(), name='ShipmentUpdate'),
     url(r'^Shipment/delete$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
+
+    url(r'^Supplier/accumulate$', views.SupplierView, name='SupplierAcc'),
 ]

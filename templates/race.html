@@ -1,7 +1,8 @@
 {% extends "index.html" %}
 {% block content %}
+<div class="container">
  {% if qRace%}
-	 <table class="table table-hover table-bordered table-responsive">
+	 <table class="table table-hover table-condensed table-responsive">
 		 <thead>
 		 <tr>
 			 <th>Номер рейса</th>
@@ -17,7 +18,6 @@
 			 <th>Конец трека</th>
 			 <th>Загружено</th>
 			 <th>Выгружено</th>
-			 <th>Коментарий</th>
 			 <th>Состояние</th>
 		 </tr>
 
@@ -45,6 +45,9 @@
 		  </td>
 		  <td>
 			  {{ q.shipment}}
+		  </td>
+		  <td>
+			  {{ q.product}}
 		  </td>
 		  <td>
 			  {{ q.mediator}}
@@ -81,5 +84,6 @@
 	 {% endfor %}
 	 </table>
  {% endif %}
+</div>
 
 {% endblock %}
