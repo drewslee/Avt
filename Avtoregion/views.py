@@ -215,7 +215,7 @@ class ShipmentUpdate(UpdateView):
     success_url = '/Shipment'
     form_class = ShipmentForm
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
@@ -223,7 +223,7 @@ class ShipmentDelete(DeleteView):
     model = Shipment
     success_url = '/Shipment'
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
@@ -232,7 +232,7 @@ class MediatorUpdate(UpdateView):
     success_url = '/Mediator'
     form_class = MediatorForm
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
@@ -240,7 +240,7 @@ class MediatorDelete(DeleteView):
     model = Mediator
     success_url = '/Mediator'
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
@@ -249,7 +249,7 @@ class CustomerUpdate(UpdateView):
     success_url = '/Customer'
     form_class = CustomerForm
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
@@ -257,7 +257,7 @@ class CustomerDelete(DeleteView):
     model = Customer
     success_url = '/Customer'
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
@@ -271,15 +271,28 @@ class RaceUpdate(UpdateView):
     model = Race
     form_class = RaceForm
     success_url = '/Race'
+    initial = {'name_race': '666'}
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
+        return get_object_or_404(self.model, pk=self.request.POST.get('pk'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_initial(self):
+        obj = self.get_object()
+        return super(RaceUpdate, self).get_initial()
+
+    def form_invalid(self, form):
+        print(form)
+        return self.render_to_response(self.get_context_data(**{'form': form}))
 
 
 
 class RaceDelete(DeleteView):
     model = Race
-    success_url = '/Race'
+    success_url = "/Race"
 
-    def get_object(self, **kwargs):
+    def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
