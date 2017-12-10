@@ -26,8 +26,13 @@ from .forms import ShipmentForm
 
 
 def RaceView(req):
+    if req.method == 'GET':
         date = timezone.now().date()
         qRace = Race.objects.all().filter(race_date=date)
+        return render(request=req, template_name='race.html', context={'qRace': qRace})
+    if req.method == 'POST':
+        print(req.POST)
+        qRace = Race.objects.all()
         return render(request=req, template_name='race.html', context={'qRace': qRace})
 
 
@@ -267,26 +272,39 @@ class RaceCreate(CreateView):
     success_url = '/Race'
 
 
-class RaceUpdate(UpdateView):
-    model = Race
-    form_class = RaceForm
-    success_url = '/Race'
-    initial = {'name_race': '666'}
+def RaceUpdate(req):
+    if req.method == 'POST' and req.POST.get('update'):
+        race_instance = Race.objects.get(pk=req.POST['pk'])
+        form = RaceForm(instance=race_instance)
+        return render(request=req, template_name='Avtoregion/race_form.html', context={'form': form, 'pk': req.POST['pk']})
+    elif req.method == 'POST' and req.POST.get('add'):
+        race_instance = Race.objects.get(pk=req.POST['pk'])
+        form = RaceForm(req.POST, instance=race_instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('Race'))
 
-    def get_object(self, queryset=None):
-        return get_object_or_404(self.model, pk=self.request.POST.get('pk'))
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-    def get_initial(self):
-        obj = self.get_object()
-        return super(RaceUpdate, self).get_initial()
-
-    def form_invalid(self, form):
-        print(form)
-        return self.render_to_response(self.get_context_data(**{'form': form}))
+# class RaceUpdate(UpdateView):
+#     model = Race
+#     form_class = RaceForm
+#     success_url = '/Race'
+#     initial = {'name_race': '666'}
+#
+#     def get_object(self, queryset=None):
+#         return get_object_or_404(self.model, pk=self.request.POST.get('pk'))
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         return context
+#
+#     def get_initial(self):
+#         obj = self.get_object()
+#         return super(RaceUpdate, self).get_initial()
+#
+#     def form_invalid(self, form):
+#         print(form)
+#         return self.render_to_response(self.get_context_data(**{'form': form}))
 
 
 

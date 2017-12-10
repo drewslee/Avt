@@ -9,8 +9,9 @@
 	 {% bootstrap_field field %}
  {% endfor %}
 	  {% buttons %}
-        <button name="add" class="btn btn-success"> {% bootstrap_icon "star" %} Добавить</button>
+        <button name="add" value="add" class="btn btn-success"> {% bootstrap_icon "star" %} Обновить</button>
 	  {% endbuttons %}
+     <input type="hidden" value="{{ pk }}" name="pk">
 </form>
  </div>
 {% endblock %}

@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^$', views.RaceView, name='Race'),
     url(r'^Race$', views.RaceView, name='Race'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
-    url(r'^Race/update$', views.RaceUpdate.as_view(), name='RaceUpdate'),
+    url(r'^Race/update$', views.RaceUpdate, name='RaceUpdate'),
     url(r'^Race/delete$', views.RaceDelete.as_view(), name='RaceDelete'),
 
     url(r'^Car$', views.CarView, name='Car'),

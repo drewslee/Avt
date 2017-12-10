@@ -51,15 +51,28 @@
 	    <ul class="nav navbar-nav navbar-form navbar-right">
 		    <li>
 			    <div class="input-group date" id="datetimepicker">
-				    <input type="text" class="form-control"/>
+                    <form id="submit_date" action="" method="post">
+                        {% csrf_token %}
+				        <input id="input_date" type="text" class="form-control" name="date"/>
+                    </form>
+                    <script type="text/javascript">
+                        $.when( $.ready() ).then(function()
+                        {
+                            $(document).on("blur", "#input_date", function()
+                            {
+                                $('#submit_date').submit();
+                            });
+                        });​
+                </script>
 				    <span class="input-group-addon" >
 									<span class="glyphicon glyphicon-calendar"></span>
 						</span>
-				    <script type="text/javascript">
+                    <script type="text/javascript">
                 $(function () {
                     $("#datetimepicker").datetimepicker({
+                        defaultDate: new Date(),
                         locale: 'ru',
-                        format: 'MMMM/DD/YY',
+                        format: 'DD/MM/YY',
                     });
                     $('.dropdown-toggle').dropdown();
                 });

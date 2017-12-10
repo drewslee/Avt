@@ -70,7 +70,7 @@
 		 <td>
 			<form action="Race/update" method="post">
 				{% csrf_token %}
-              <button name="update" class="btn btn-info">Изменить</button>
+              <button name="update" value="update" class="btn btn-info">Изменить</button>
 							<input type="hidden" value="{{ q.pk }}" name="pk">
 			</form>
 			 <form action="Race/delete" method="post">
