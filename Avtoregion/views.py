@@ -134,17 +134,11 @@ class DriverUpdate(UpdateView):
     success_url = '/Driver'
     form_class = DriverForm
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
-
 
 class DriverDelete(DeleteView):
     model = Driver
     success_url = '/Driver'
 
-
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class SupplierUpdate(UpdateView):
@@ -152,16 +146,11 @@ class SupplierUpdate(UpdateView):
     success_url = '/Supplier'
     form_class = SupplierForm
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
-
 
 class SupplierDelete(DeleteView):
     model = Supplier
     success_url = '/Supplier'
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CarUpdate(UpdateView):
@@ -169,16 +158,12 @@ class CarUpdate(UpdateView):
     success_url = '/Car'
     form_class = CarForm
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CarDelete(DeleteView):
     model = Car
     success_url = '/Car'
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class ProductUpdate(UpdateView):
@@ -186,16 +171,11 @@ class ProductUpdate(UpdateView):
     success_url = '/Product'
     form_class = ProductForm
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class ProductDelete(DeleteView):
     model = Product
     success_url = '/Product'
-
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class TrailerUpdate(UpdateView):
@@ -203,50 +183,32 @@ class TrailerUpdate(UpdateView):
     success_url = '/Trailer'
     form_class = TrailerForm
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class TrailerDelete(DeleteView):
     model = Trailer
     success_url = '/Trailer'
 
-    def get_object(self, **kwargs):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
-
-
 class ShipmentUpdate(UpdateView):
     model = Shipment
     success_url = '/Shipment'
     form_class = ShipmentForm
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class ShipmentDelete(DeleteView):
     model = Shipment
     success_url = '/Shipment'
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
-
-
 class MediatorUpdate(UpdateView):
     model = Mediator
     success_url = '/Mediator'
     form_class = MediatorForm
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
-
 
 class MediatorDelete(DeleteView):
     model = Mediator
     success_url = '/Mediator'
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CustomerUpdate(UpdateView):
@@ -254,16 +216,10 @@ class CustomerUpdate(UpdateView):
     success_url = '/Customer'
     form_class = CustomerForm
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
-
 
 class CustomerDelete(DeleteView):
     model = Customer
     success_url = '/Customer'
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class RaceCreate(CreateView):

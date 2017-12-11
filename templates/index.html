@@ -55,7 +55,7 @@
                         {% csrf_token %}
 				        <input id="input_date" type="text" class="form-control" name="date"/>
                     </form>
-                    <script type="text/javascript">
+{% comment %}                    <script type="text/javascript">
                         $.when( $.ready() ).then(function()
                         {
                             $(document).on("blur", "#input_date", function()
@@ -63,14 +63,13 @@
                                 $('#submit_date').submit();
                             });
                         });​
-                </script>
+                </script>{% endcomment %}
 				    <span class="input-group-addon" >
 									<span class="glyphicon glyphicon-calendar"></span>
 						</span>
                     <script type="text/javascript">
                 $(function () {
                     $("#datetimepicker").datetimepicker({
-                        defaultDate: new Date(),
                         locale: 'ru',
                         format: 'DD/MM/YY',
                     });

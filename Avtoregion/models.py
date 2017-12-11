@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date
+from django.shortcuts import reverse
 
 
 class Supplier(models.Model):
@@ -9,6 +10,9 @@ class Supplier(models.Model):
     def __str__(self):
         return '%s' % self.name
 
+    def get_absolute_url(self):
+        return reverse('Supplier', kwargs={'pk': self.pk})
+
 
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
@@ -16,6 +20,9 @@ class Product(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+    def get_absolute_url(self):
+        return reverse('Product', kwargs={'pk': self.pk})
 
 
 class Shipment(models.Model):
@@ -25,6 +32,9 @@ class Shipment(models.Model):
     def __str__(self):
         return '%s' % self.name
 
+    def get_absolute_url(self):
+        return reverse('Shipment', kwargs={'pk': self.pk})
+
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
@@ -32,6 +42,9 @@ class Customer(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+    def get_absolute_url(self):
+        return reverse('Customer', kwargs={'pk': self.pk})
 
 
 class Mediator(models.Model):
@@ -41,6 +54,9 @@ class Mediator(models.Model):
     def __str__(self):
         return '%s' % self.address
 
+    def get_absolute_url(self):
+        return reverse('Mediator', kwargs={'pk': self.pk})
+
 
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
@@ -48,6 +64,9 @@ class Driver(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+    def get_absolute_url(self):
+        return reverse('Driver', kwargs={'pk': self.pk})
 
 
 class Milage(models.Model):
@@ -64,6 +83,9 @@ class Trailer(models.Model):
     def __str__(self):
         return '%s' % self.number
 
+    def get_absolute_url(self):
+        return reverse('Trailer', kwargs={'pk': self.pk})
+
 
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
@@ -74,6 +96,8 @@ class Car(models.Model):
     def __str__(self):
         return '%s' % self.number
 
+    def get_absolute_url(self):
+        return reverse('Car', kwargs={'pk': self.pk})
 
 class Race(models.Model):
     id_race = models.AutoField(primary_key=True)
@@ -97,3 +121,6 @@ class Race(models.Model):
 
     def __str__(self):
         return '%s' % self.name_race
+
+    def get_absolute_url(self):
+        return reverse('Race', kwargs={'pk': self.pk})

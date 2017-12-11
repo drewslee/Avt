@@ -23,39 +23,39 @@ urlpatterns = [
     url(r'^Race$', views.RaceView, name='Race'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
     url(r'^Race/update$', views.RaceUpdate, name='RaceUpdate'),
-    url(r'^Race/delete$', views.RaceDelete.as_view(), name='RaceDelete'),
+    url(r'^Race/delete(?P<pk>\d+)/$', views.RaceDelete.as_view(), name='RaceDelete'),
 
     url(r'^Car$', views.CarView, name='Car'),
-    url(r'^Car/update$', views.CarUpdate.as_view(), name='CarUpdate'),
-    url(r'^Car/delete$', views.CarDelete.as_view(), name='CarDelete'),
+    url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(), name='CarUpdate'),
+    url(r'^Car/delete(?P<pk>\d+)/$', views.CarDelete.as_view(), name='CarDelete'),
 
     url(r'^Product$', views.ProductView, name='Product'),
-    url(r'^Product/update$', views.ProductUpdate.as_view(), name='ProductUpdate'),
-    url(r'^Product/delete$', views.ProductDelete.as_view(), name='ProductDelete'),
+    url(r'^Product/update(?P<pk>\d+)/$', views.ProductUpdate.as_view(), name='ProductUpdate'),
+    url(r'^Product/delete(?P<pk>\d+)/$', views.ProductDelete.as_view(), name='ProductDelete'),
 
     url(r'^Driver$', views.DriverView, name='Driver'),
-    url(r'^Driver/update$', views.DriverUpdate.as_view(), name='DriverUpdate'),
-    url(r'^Driver/delete$', views.DriverDelete.as_view(), name='DriverDelete'),
+    url(r'^Driver/update(?P<pk>\d+)/$', views.DriverUpdate.as_view(), name='DriverUpdate'),
+    url(r'^Driver/delete(?P<pk>\d+)/$', views.DriverDelete.as_view(), name='DriverDelete'),
 
     url(r'^Supplier$', views.SupplierView, name='Supplier'),
-    url(r'^Supplier/update$', views.SupplierUpdate.as_view(), name='SupplierUpdate'),
-    url(r'^Supplier/delete$', views.SupplierDelete.as_view(), name='SupplierDelete'),
+    url(r'^Supplier/update(?P<pk>\d+)/$', views.SupplierUpdate.as_view(), name='SupplierUpdate'),
+    url(r'^Supplier/delete(?P<pk>\d+)/$', views.SupplierDelete.as_view(), name='SupplierDelete'),
 
     url(r'^Customer$', views.CustomerView, name='Customer'),
-    url(r'^Customer/update$', views.CustomerUpdate.as_view(), name='CustomerUpdate'),
-    url(r'^Customer/delete$', views.CustomerDelete.as_view(), name='CustomerDelete'),
+    url(r'^Customer/update(?P<pk>\d+)/$', views.CustomerUpdate.as_view(), name='CustomerUpdate'),
+    url(r'^Customer/delete(?P<pk>\d+)/$', views.CustomerDelete.as_view(), name='CustomerDelete'),
 
     url(r'^Trailer$', views.TrailerView, name='Trailer'),
-    url(r'^Trailer/update$', views.TrailerUpdate.as_view(), name='TrailerUpdate'),
-    url(r'^Trailer/delete$', views.TrailerDelete.as_view(), name='TrailerDelete'),
+    url(r'^Trailer/update(?P<pk>\d+)/$', views.TrailerUpdate.as_view(), name='TrailerUpdate'),
+    url(r'^Trailer/delete(?P<pk>\d+)/$', views.TrailerDelete.as_view(), name='TrailerDelete'),
 
     url(r'^Mediator$', views.MediatorView, name='Mediator'),
-    url(r'^Mediator/update$', views.MediatorUpdate.as_view(), name='MediatorUpdate'),
-    url(r'^Mediator/delete$', views.MediatorDelete.as_view(), name='MediatorDelete'),
+    url(r'^Mediator/update(?P<pk>\d+)/$', views.MediatorUpdate.as_view(), name='MediatorUpdate'),
+    url(r'^Mediator/delete(?P<pk>\d+)/$', views.MediatorDelete.as_view(), name='MediatorDelete'),
 
     url(r'^Shipment$', views.ShipmentView, name='Shipment'),
-    url(r'^Shipment/update$', views.ShipmentUpdate.as_view(), name='ShipmentUpdate'),
-    url(r'^Shipment/delete$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
+    url(r'^Shipment/update(?P<pk>\d+)/$', views.ShipmentUpdate.as_view(), name='ShipmentUpdate'),
+    url(r'^Shipment/delete(?P<pk>\d+)/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
     url(r'^Supplier/accumulate$', views.SupplierView, name='SupplierAcc'),
 ]

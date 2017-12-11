@@ -24,17 +24,13 @@
 			{{ q.trailer }}
 		 </td>
 		 <td>
-			<form action="Car/update" method="post">
-				{% csrf_token %}
-				<input type="hidden" value="{{ q.pk }}" name="pk">
-        <button name="update" class="btn btn-info">Изменить</button>
+			<form action="Car/update{{ q.pk }}" method="get">
+        <button class="btn btn-info">Изменить</button>
 		  </form>
 		 </td>
 		    <td>
-		 <form action="Car/delete" method="post">
-			  {% csrf_token %}
-			  <input type="hidden" value="{{ q.pk }}" name="pk">
-			  <button name="delete" class="btn btn-danger">Удалить</button>
+		 <form action="Car/delete{{ q.pk }}" method="get">
+			  <button class="btn btn-danger">Удалить</button>
 		 </form>
 	     </td>
 	    </tr>
