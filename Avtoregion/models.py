@@ -90,7 +90,7 @@ class Trailer(models.Model):
 
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
-    number = models.CharField(max_length=10, unique=True)
+    number = models.CharField(max_length=10, unique=True, verbose_name='Номер машины')
     pts = models.CharField(max_length=10, unique=True, blank=True)
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
 
