@@ -57,32 +57,28 @@
                     </form>
 				    <script type="text/javascript">
 				            var form = document.getElementById("input_date");
-				    form.addEventListener("blur", function ( event ) {
-				    event.target.style.background = "pink";
+				            form.addEventListener("blur", function ( event ) {
+				            event.target.style.background = "pink";
 				    }, true);
 				    </script>
                     <script type="text/javascript">
-                        $.when( $.ready() ).then(function()
-                        {
-                            $(document).on("blur", "#input_date", function()
-                            {
-                                $('#submit_date').submit();
-                            });
-                        });​
+                        $.when( $.ready() ).then(function(){
+                            $(document).on("blur", "#input_date", function(){('#submit_date').submit()});
+                        });
                 </script>
 				    <span class="input-group-addon" >
 									<span class="glyphicon glyphicon-calendar"></span>
 						</span>
                     <script type="text/javascript">
 	                  var now = moment().format('DD-MM-YY')
+                      console.log(now)
                 $(function ()
                 {
-                    $("#datetimepicker").datetimepicker
-                    (
+                    $("#datetimepicker").datetimepicker(
                         {
                         locale: 'ru',
 		                    format: 'DD-MM-YY',
-		                    defaultDate: now,
+		                    defaultDate: new Date(),
 		                    useCurrent: true,
                         }
                     );
