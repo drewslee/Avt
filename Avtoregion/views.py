@@ -47,6 +47,7 @@ def CarView(req):
         form = CarForm()
         return render(request=req, template_name='car.html', context={'form': form, 'qCar': qCar})
 
+
 def TrailerView(req):
     qTrailer = Trailer.objects.all()
     if req.method == 'POST':
@@ -58,6 +59,7 @@ def TrailerView(req):
         form = TrailerForm()
         return render(request=req, template_name='trailer.html', context={'form': form, 'qTrailer': qTrailer})
 
+
 def DriverView(req):
     qDriver = Driver.objects.all()
     if req.method == 'POST':
@@ -68,6 +70,7 @@ def DriverView(req):
     else:
         form = DriverForm()
         return render(request=req, template_name='driver.html', context={'form': form, 'qDriver': qDriver})
+
 
 def ProductView(req):
     qProduct = Product.objects.all()
@@ -106,7 +109,7 @@ def SupplierView(req):
 
 
 def MediatorView(req):
-    qMediator= Mediator.objects.all()
+    qMediator = Mediator.objects.all()
     if req.method == 'POST':
         form = MediatorForm(req.POST)
         if form.is_valid():
@@ -118,7 +121,7 @@ def MediatorView(req):
 
 
 def ShipmentView(req):
-    qShipment= Shipment.objects.all()
+    qShipment = Shipment.objects.all()
     if req.method == 'POST':
         form = ShipmentForm(req.POST)
         if form.is_valid():
@@ -140,7 +143,6 @@ class DriverDelete(DeleteView):
     success_url = '/Driver'
 
 
-
 class SupplierUpdate(UpdateView):
     model = Supplier
     success_url = '/Supplier'
@@ -152,12 +154,10 @@ class SupplierDelete(DeleteView):
     success_url = '/Supplier'
 
 
-
 class CarUpdate(UpdateView):
     model = Car
     success_url = '/Car'
     form_class = CarForm
-
 
 
 class CarDelete(DeleteView):
@@ -165,12 +165,10 @@ class CarDelete(DeleteView):
     success_url = '/Car'
 
 
-
 class ProductUpdate(UpdateView):
     model = Product
     success_url = '/Product'
     form_class = ProductForm
-
 
 
 class ProductDelete(DeleteView):
@@ -184,10 +182,10 @@ class TrailerUpdate(UpdateView):
     form_class = TrailerForm
 
 
-
 class TrailerDelete(DeleteView):
     model = Trailer
     success_url = '/Trailer'
+
 
 class ShipmentUpdate(UpdateView):
     model = Shipment
@@ -195,10 +193,10 @@ class ShipmentUpdate(UpdateView):
     form_class = ShipmentForm
 
 
-
 class ShipmentDelete(DeleteView):
     model = Shipment
     success_url = '/Shipment'
+
 
 class MediatorUpdate(UpdateView):
     model = Mediator
@@ -232,7 +230,8 @@ def RaceUpdate(req):
     if req.method == 'POST' and req.POST.get('update'):
         race_instance = Race.objects.get(pk=req.POST['pk'])
         form = RaceForm(instance=race_instance)
-        return render(request=req, template_name='Avtoregion/race_form.html', context={'form': form, 'pk': req.POST['pk']})
+        return render(request=req, template_name='Avtoregion/race_form.html',
+                      context={'form': form, 'pk': req.POST['pk']})
     elif req.method == 'POST' and req.POST.get('add'):
         race_instance = Race.objects.get(pk=req.POST['pk'])
         form = RaceForm(req.POST, instance=race_instance)
@@ -277,6 +276,7 @@ def Accumulate(req):
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
     if req.method == 'POST':
+        obj_model = Race.objects.filter(supplier__inn__exact=req.POST.get('inn' or None),
+                                        race_date__range=[req.POST.get('from'), req.POST.get('to')])
         print(req.POST)
         return render(request=req, template_name='Avtoregion/account.html', context={})
-

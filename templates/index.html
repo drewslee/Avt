@@ -53,9 +53,15 @@
 			    <div class="input-group date" id="datetimepicker">
                     <form id="submit_date" action="" method="post">
                         {% csrf_token %}
-				        <input id="input_date" type="text" class="form-control" name="date"/>
+				        <input id="input_date" type="text" class="form-control" name="input_date"/>
                     </form>
-{% comment %}                    <script type="text/javascript">
+				    <script type="text/javascript">
+				            var form = document.getElementById("input_date");
+				    form.addEventListener("blur", function ( event ) {
+				    event.target.style.background = "pink";
+				    }, true);
+				    </script>
+                    <script type="text/javascript">
                         $.when( $.ready() ).then(function()
                         {
                             $(document).on("blur", "#input_date", function()
@@ -63,16 +69,23 @@
                                 $('#submit_date').submit();
                             });
                         });​
-                </script>{% endcomment %}
+                </script>
 				    <span class="input-group-addon" >
 									<span class="glyphicon glyphicon-calendar"></span>
 						</span>
                     <script type="text/javascript">
-                $(function () {
-                    $("#datetimepicker").datetimepicker({
+	                  var now = moment().format('DD-MM-YY')
+                $(function ()
+                {
+                    $("#datetimepicker").datetimepicker
+                    (
+                        {
                         locale: 'ru',
-                        format: 'DD/MM/YY',
-                    });
+		                    format: 'DD-MM-YY',
+		                    defaultDate: now,
+		                    useCurrent: true,
+                        }
+                    );
                     $('.dropdown-toggle').dropdown();
                 });
 				    </script>
