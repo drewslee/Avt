@@ -30,8 +30,8 @@ class CarForm(ModelForm):
 class SupplierForm(ModelForm):
     class Meta:
         model = Supplier
-        fields = ['name']
-        labels = {'name': 'Поставщик'}
+        fields = ['name', 'inn']
+        labels = {'name': 'Поставщик', 'inn': 'ИНН'}
 
 
 class ProductForm(ModelForm):

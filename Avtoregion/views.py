@@ -270,3 +270,13 @@ class RaceDelete(DeleteView):
 
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+def Accumulate(req):
+    qset = Supplier.objects.all()
+    if req.method == 'GET':
+        return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
+    if req.method == 'POST':
+        print(req.POST)
+        return render(request=req, template_name='Avtoregion/account.html', context={})
+

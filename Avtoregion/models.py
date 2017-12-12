@@ -6,6 +6,7 @@ from django.shortcuts import reverse
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256)
+    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True)
 
     def __str__(self):
         return '%s' % self.name

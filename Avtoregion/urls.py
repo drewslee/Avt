@@ -57,5 +57,5 @@ urlpatterns = [
     url(r'^Shipment/update(?P<pk>\d+)/$', views.ShipmentUpdate.as_view(), name='ShipmentUpdate'),
     url(r'^Shipment/delete(?P<pk>\d+)/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
-    url(r'^Supplier/accumulate$', views.SupplierView, name='SupplierAcc'),
+    url(r'^Supplier/accumulate/$', views.Accumulate, name='SupplierAcc'),
 ]
