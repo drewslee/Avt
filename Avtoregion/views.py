@@ -27,12 +27,12 @@ from .forms import ShipmentForm
 
 def RaceView(req):
     if req.method == 'GET':
-        date = timezone.now().date()
+        if req.GET.get('input_date') is not None:
+            date = req.GET.get('input_date')
+        else:
+            date = timezone.now().date()
+        print(date)
         qRace = Race.objects.all().filter(race_date=date)
-        return render(request=req, template_name='race.html', context={'qRace': qRace})
-    if req.method == 'POST':
-        print(req.POST)
-        qRace = Race.objects.all()
         return render(request=req, template_name='race.html', context={'qRace': qRace})
 
 

@@ -51,39 +51,47 @@
 	    <ul class="nav navbar-nav navbar-form navbar-right">
 		    <li>
 			    <div class="input-group date" id="datetimepicker">
-                    <form id="submit_date" action="" method="post">
-                        {% csrf_token %}
-				        <input id="input_date" type="text" class="form-control" name="input_date"/>
+                    <form id="push_date" action="" method="get">
+				              <input id="date" type="text" class="form-control" name="input_date"/>
+	                    <input type="submit" name="push_val" hidden="true"/>
                     </form>
 				    <script type="text/javascript">
-				            var form = document.getElementById("input_date");
+				            var form = document.getElementById("date");
 				            form.addEventListener("blur", function ( event ) {
-				            event.target.style.background = "pink";
+				            document.getElementById("push_date").submit();
 				    }, true);
 				    </script>
-                    <script type="text/javascript">
-                        $.when( $.ready() ).then(function(){
-                            $(document).on("blur", "#input_date", function(){('#submit_date').submit()});
-                        });
-                </script>
 				    <span class="input-group-addon" >
 									<span class="glyphicon glyphicon-calendar"></span>
 						</span>
                     <script type="text/javascript">
-	                  var now = moment().format('DD-MM-YY')
-                      console.log(now)
+                        var $_GET = {};
+                        if(document.location.toString().indexOf('?') !== -1) {
+                            var query = document.location
+                                .toString()// get the query string
+                                .replace(/^.*?\?/, '')
+                                // and remove any existing hash string (thanks, @vrijdenker)
+                                .replace(/#.*$/, '')
+                                .split('&');
+
+                            for(var i=0, l=query.length; i<l; i++) {
+                                var aux = decodeURIComponent(query[i]).split('=');
+                                $_GET[aux[0]] = aux[1];
+                            }
+                        }
+                        console.log($_GET['input_date'])
                 $(function ()
                 {
                     $("#datetimepicker").datetimepicker(
                         {
                         locale: 'ru',
-		                    format: 'DD-MM-YY',
-		                    defaultDate: new Date(),
-		                    useCurrent: true,
+		                    format: 'YYYY-MM-DD',
+		                    useCurrent: false,
                         }
                     );
                     $('.dropdown-toggle').dropdown();
                 });
+
 				    </script>
 			    </div>
 		    </li>
