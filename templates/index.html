@@ -79,18 +79,31 @@
                                 $_GET[aux[0]] = aux[1];
                             }
                         }
-                        console.log($_GET['input_date'])
-                $(function ()
-                {
-                    $("#datetimepicker").datetimepicker(
-                        {
-                        locale: 'ru',
-		                    format: 'YYYY-MM-DD',
-		                    useCurrent: false,
-                        }
-                    );
-                    $('.dropdown-toggle').dropdown();
-                });
+                        console.log($_GET['input_date']);
+                        if (typeof $_GET['input_date'] !== 'undefined') {
+                            $(function () {
+                                $("#datetimepicker").datetimepicker(
+                                    {
+                                        locale: 'ru',
+                                        format: 'YYYY-MM-DD',
+                                        useCurrent: false,
+                                        date: $_GET['input_date']
+                                    }
+                                );
+                                $('.dropdown-toggle').dropdown();
+                            });
+
+                        } else $(function () {
+                            $("#datetimepicker").datetimepicker(
+                                {
+                                    locale: 'ru',
+                                    format: 'YYYY-MM-DD',
+                                    useCurrent: false,
+                                    date: new Date()
+                                }
+                            )
+		                        $('.dropdown-toggle').dropdown();
+                        });
 
 				    </script>
 			    </div>
