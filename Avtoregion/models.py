@@ -5,8 +5,8 @@ from django.shortcuts import reverse
 
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256)
-    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True)
+    name = models.CharField(max_length=256, verbose_name='Поставщик')
+    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, verbose_name='ИНН')
 
     def __str__(self):
         return '%s' % self.name
@@ -17,7 +17,7 @@ class Supplier(models.Model):
 
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, verbose_name='Груз')
 
     def __str__(self):
         return '%s' % self.name
@@ -28,7 +28,7 @@ class Product(models.Model):
 
 class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name='Место разгрузки')
 
     def __str__(self):
         return '%s' % self.name
@@ -39,7 +39,7 @@ class Shipment(models.Model):
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, verbose_name='Клиент')
 
     def __str__(self):
         return '%s' % self.name
@@ -50,7 +50,7 @@ class Customer(models.Model):
 
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
-    address = models.CharField(max_length=256)
+    address = models.CharField(max_length=256, verbose_name='Посредник')
 
     def __str__(self):
         return '%s' % self.address
@@ -61,7 +61,7 @@ class Mediator(models.Model):
 
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, verbose_name='Водитель')
 
     def __str__(self):
         return '%s' % self.name
@@ -91,7 +91,7 @@ class Trailer(models.Model):
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10, unique=True, verbose_name='Номер машины')
-    pts = models.CharField(max_length=10, unique=True, blank=True)
+    pts = models.CharField(max_length=10, unique=True, blank=True, verbose_name='ПТС')
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
 
     def __str__(self):

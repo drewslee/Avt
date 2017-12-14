@@ -68,9 +68,8 @@
                         var $_GET = {};
                         if(document.location.toString().indexOf('?') !== -1) {
                             var query = document.location
-                                .toString()// get the query string
+                                .toString()
                                 .replace(/^.*?\?/, '')
-                                // and remove any existing hash string (thanks, @vrijdenker)
                                 .replace(/#.*$/, '')
                                 .split('&');
 
@@ -79,32 +78,24 @@
                                 $_GET[aux[0]] = aux[1];
                             }
                         }
-                        console.log($_GET['input_date']);
                         if (typeof $_GET['input_date'] !== 'undefined') {
-                            $(function () {
-                                $("#datetimepicker").datetimepicker(
-                                    {
-                                        locale: 'ru',
-                                        format: 'YYYY-MM-DD',
-                                        useCurrent: false,
-                                        date: $_GET['input_date']
-                                    }
-                                );
-                                $('.dropdown-toggle').dropdown();
-                            });
+                            var selected_date = $_GET['input_date']
+                        }
+                        else{
+                            var selected_date = new Date()
+                        }
 
-                        } else $(function () {
+												$(function () {
                             $("#datetimepicker").datetimepicker(
                                 {
                                     locale: 'ru',
                                     format: 'YYYY-MM-DD',
                                     useCurrent: false,
-                                    date: new Date()
+                                    date: selected_date
                                 }
-                            )
+                            );
 		                        $('.dropdown-toggle').dropdown();
-                        });
-
+                        })
 				    </script>
 			    </div>
 		    </li>
