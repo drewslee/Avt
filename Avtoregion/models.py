@@ -14,6 +14,10 @@ class Supplier(models.Model):
     def get_absolute_url(self):
         return reverse('Supplier', kwargs={'pk': self.pk})
 
+    def __iter__(self):
+        for field in self._meta.fields:
+            yield (field.verbose_name, field.value_to_string(self))
+
 
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
@@ -39,7 +43,7 @@ class Shipment(models.Model):
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256, verbose_name='Клиент')
+    name = models.CharField(max_length=256,  verbose_name='Клиент')
 
     def __str__(self):
         return '%s' % self.name
