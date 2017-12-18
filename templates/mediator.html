@@ -3,34 +3,28 @@
  <div class="container">
  {% if qMediator %}
 	 <table class="table table-hover">
+		 <thead>
+		 <th>Посредник</th>
+		    </thead>
+		 <tbody>
 	 {% for q in qMediator%}
-         <thead>
-					 <tr>
-							 <th>Посредник</th>
-					 </tr>
-         </thead>
-         <tbody>
 	    <tr>
 		 <td>
 			{{ q.address}}
 		 </td>
-		 <td>
-			 <form action="update" method="post">
-				 {% csrf_token %}
-				 <input type="hidden" value="{{ q.pk }}" name="pk">
-				 <button name="update" class="btn btn-info">Изменить</button>
-			 </form>
-		 </td>
 		    <td>
-			    <form action="delete" method="post">
-				    {% csrf_token %}
-				    <input type="hidden" value="{{ q.pk }}" name="pk">
-				    <button name="delete" class="btn btn-danger">Удалить</button>
+			    <form action="update{{ q.pk }}" method="get">
+				    <button class="btn btn-info">Изменить</button>
 			    </form>
-	     </td>
+		    </td>
+		    <td>
+			    <form action="delete{{ q.pk }}" method="get">
+				    <button class="btn btn-danger">Удалить</button>
+			    </form>
+		    </td>
 	    </tr>
-     </tbody>
 	 {% endfor %}
+		 </tbody>
 	 </table>
  {% endif %}
 

@@ -271,12 +271,26 @@ class RaceDelete(DeleteView):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-def Accumulate(req):
+def AccumulateSup(req):
     qset = Supplier.objects.all()
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
     if req.method == 'POST':
-        obj_model = Race.objects.filter(supplier__inn__exact=req.POST.get('inn' or None),
+        fields = Race._meta.get_fields()
+        fields.remove('weight_unload')
+        qResponse = Race.objects.filter(fields=fields,fisupplier__inn__exact=req.POST.get('radio' or None),
                                         race_date__range=[req.POST.get('from'), req.POST.get('to')])
-        print(req.POST)
-        return render(request=req, template_name='Avtoregion/account.html', context={})
+        return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
+
+
+def AccumulateCus(req):
+    qset = Customer.objects.all()
+    if req.method == 'GET':
+        return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
+    if req.method == 'POST':
+        fields = Race._meta.get_fields()
+        fields.remove('weight_load')
+        qResponse = Race.objects.filter(fields=fields, customer__inn__exact=req.POST.get('radio' or None),
+                                        race_date__range=[req.POST.get('from'), req.POST.get('to')])
+        return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
+

@@ -5,17 +5,16 @@
 
  <form action="" method="post">
     {% csrf_token %}
- <label>From:</label><input name="from" type="date"/>
- <label>To:</label>
+ <label>С:</label>
+ <input name="from" type="date"/>
+ <label>По:</label>
  <input name="to" type="date"/><br>
  {% for field in qset %}
 	 <input name="radio" type="radio" value="{{ field.inn }}">{{  field.name }}<br>
  {% endfor %}
-
 	  {% buttons %}
-        <button name="add" value="add" class="btn btn-success"> {% bootstrap_icon "star" %} Сформировать</button>
+        <button class="btn btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
 	  {% endbuttons %}
-     <input type="hidden" value="{{ pk }}" name="pk">
 </form>
  </div>
 {% endblock %}

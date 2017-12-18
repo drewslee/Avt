@@ -59,5 +59,6 @@ urlpatterns = [
     url(r'^Shipment/update(?P<pk>\d+)/$', views.ShipmentUpdate.as_view(template_name='Avtoregion/update_form.html'), name='ShipmentUpdate'),
     url(r'^Shipment/delete(?P<pk>\d+)/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
-    url(r'^Supplier/accumulate/$', views.Accumulate, name='SupplierAcc'),
+    url(r'^Supplier/accumulate/$', views.AccumulateSup, name='SupplierAcc'),
+    url(r'^Customer/accumulate/$', views.AccumulateCus, name='CustomerAcc'),
 ]

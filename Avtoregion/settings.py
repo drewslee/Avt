@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Avtoregion',
     'bootstrap3',
+    'Avtoregion.templatetags.verbose_names'
 ]
 
 MIDDLEWARE = [

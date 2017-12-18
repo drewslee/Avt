@@ -44,6 +44,7 @@ class Shipment(models.Model):
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256,  verbose_name='Клиент')
+    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, verbose_name='ИНН')
 
     def __str__(self):
         return '%s' % self.name
