@@ -279,7 +279,7 @@ def AccumulateSup(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        qResponse = Race.objects.filter(*fields, supplier__inn__exact=req.POST.get('radio' or None),
+        qResponse = Race.objects.filter(supplier__inn__exact=req.POST.get('radio' or None),
                                         race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
         print(qResponse)
         return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
