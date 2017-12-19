@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from django.db.models import fields
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -276,10 +277,11 @@ def AccumulateSup(req):
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
     if req.method == 'POST':
-        fields = Race._meta.get_fields()
+        fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        qResponse = Race.objects.filter(fields=fields,fisupplier__inn__exact=req.POST.get('radio' or None),
-                                        race_date__range=[req.POST.get('from'), req.POST.get('to')])
+        qResponse = Race.objects.filter(*fields, supplier__inn__exact=req.POST.get('radio' or None),
+                                        race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
+        print(qResponse)
         return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
 
 
@@ -288,9 +290,10 @@ def AccumulateCus(req):
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
     if req.method == 'POST':
-        fields = Race._meta.get_fields()
+        fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
-        qResponse = Race.objects.filter(fields=fields, customer__inn__exact=req.POST.get('radio' or None),
+        print(fields)
+        qResponse = Race.objects.filter(*fields, customer__inn__exact=req.POST.get('radio' or None),
                                         race_date__range=[req.POST.get('from'), req.POST.get('to')])
         return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
 
