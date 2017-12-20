@@ -5,6 +5,7 @@
 	 <table class="table table-hover">
 		 <thead>
 		    <th>Клиент</th>
+            <th>ИНН</th>
 		 </thead>
 		 <tbody>
 	 {% for q in qCustomer %}
@@ -12,6 +13,9 @@
 		 <td>
 			{{ q.name }}
 		 </td>
+         <td>
+            {{ q.inn}}
+         </td>
 		    <td>
 			    <form action="update{{ q.pk }}" method="get">
 				    <button class="btn btn-info">Изменить</button>

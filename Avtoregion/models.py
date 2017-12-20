@@ -6,7 +6,7 @@ from django.shortcuts import reverse
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, verbose_name='Поставщик')
-    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, verbose_name='ИНН')
+    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
     def __str__(self):
         return '%s' % self.name
@@ -44,7 +44,7 @@ class Shipment(models.Model):
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256,  verbose_name='Клиент')
-    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, verbose_name='ИНН')
+    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
     def __str__(self):
         return '%s' % self.name
@@ -95,8 +95,8 @@ class Trailer(models.Model):
 
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
-    number = models.CharField(max_length=10, unique=True, verbose_name='Номер машины')
-    pts = models.CharField(max_length=10, unique=True, blank=True, verbose_name='ПТС')
+    number = models.CharField(max_length=11, unique=True, verbose_name='Номер машины')
+    pts = models.CharField(max_length=10, null=True, blank=True, verbose_name='ПТС')
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
 
     def __str__(self):

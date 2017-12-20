@@ -25,6 +25,11 @@ from .forms import TrailerForm
 from .forms import MediatorForm
 from .forms import ShipmentForm
 
+def RaceAll(req):
+    if req.method == 'GET':
+        qRace = Race.objects.all()
+        return render(request=req, template_name='race.html', context={'qRace': qRace})
+
 
 def RaceView(req):
     if req.method == 'GET':
@@ -279,13 +284,13 @@ def AccumulateSup(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        qResponse = Race.objects.filter(supplier__inn__exact=req.POST.get('radio' or None),
-                                   race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
-        for obj in qResponse:
+        q_resp = Race.objects.filter(supplier__inn__exact=req.POST.get('radio'),
+                                     race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
+        for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
 
-        return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
+        return render(request=req, template_name='Avtoregion/account.html', context={'q_resp': q_resp})
 
 
 def AccumulateCus(req):
@@ -295,11 +300,20 @@ def AccumulateCus(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
-        qResponse = Race.objects.filter(customer__inn__exact=req.POST.get('radio' or None),
-                                        race_date__range=[req.POST.get('from'), req.POST.get('to')]).select_related(*fields)
-        for obj in qResponse:
+        q_resp = Race.objects.filter(customer__inn__exact=req.POST.get('radio'),
+                                     race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
+        for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
 
-        return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
+        return render(request=req, template_name='Avtoregion/account.html', context={'q_resp': q_resp})
 
+
+def AccumulateCar(req):
+    qset = Car.objects.all()
+    if req.method == 'GET':
+        return render(request=req, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
+    if req.method == 'POST':
+        q_resp = Race.objects.filter(car__number__exact=req.POST.get('radio'),
+                                     race_date__range=[req.POST.get('from'), req.POST.get('to')])
+        return render(request=req, template_name='Avtoregion/account_car.html', context={'q_resp': q_resp})
