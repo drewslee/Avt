@@ -54,12 +54,11 @@ class MediatorForm(ModelForm):
         fields = ['address']
 
 
-
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ['name']
-        labels = {'name': 'Клиент'}
+        fields = ['name', 'inn']
+        labels = {'name': 'Клиент', 'inn': 'ИНН'}
 
 
 class DriverForm(ModelForm):

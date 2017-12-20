@@ -281,7 +281,10 @@ def AccumulateSup(req):
         fields.remove('weight_unload')
         qResponse = Race.objects.filter(supplier__inn__exact=req.POST.get('radio' or None),
                                    race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
-        print(qResponse)
+        for obj in qResponse:
+            obj['car'] = Car.objects.get(id_car=obj.get('car')).number
+            obj['product'] = Product.objects.get(id_product=obj.get('product')).name
+
         return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
 
 
@@ -294,5 +297,9 @@ def AccumulateCus(req):
         fields.remove('weight_load')
         qResponse = Race.objects.filter(customer__inn__exact=req.POST.get('radio' or None),
                                         race_date__range=[req.POST.get('from'), req.POST.get('to')]).select_related(*fields)
+        for obj in qResponse:
+            obj['car'] = Car.objects.get(id_car=obj.get('car')).number
+            obj['product'] = Product.objects.get(id_product=obj.get('product')).name
+
         return render(request=req, template_name='Avtoregion/account.html', context={'qResponce': qResponse})
 
