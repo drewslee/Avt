@@ -105,13 +105,32 @@ class Car(models.Model):
     def get_absolute_url(self):
         return reverse('Car', kwargs={'pk': self.pk})
 
+
 class Race(models.Model):
+    CREATE = 'Создан'
+    LOAD = 'Загружен'
+    UNLOAD = 'Выгружен'
+    FINISH = 'Закончен'
+    END = 'Проведен'
+    ACCIDENT = 'Авария'
+    STATE = (
+        (CREATE, 'Создан'),
+        (LOAD, 'Зазгружен'),
+        (UNLOAD, 'Выгружен'),
+        (FINISH, 'Закончена'),
+        (END, 'Проведена'),
+        (ACCIDENT, 'Авария'),
+    )
+    TYPE = (
+        ('Реализация', 'Реализация'),
+        ('Услуга', 'Услуга')
+    )
     id_race = models.AutoField(primary_key=True)
     name_race = models.CharField(max_length=5, default='Рейс')
     race_date = models.DateField(default=date.today)
     car = models.ForeignKey(Car)
     driver = models.ForeignKey(Driver)
-    type_ship = models.BooleanField(default=0)
+    type_ship = models.CharField(default=TYPE[0], choices=TYPE, max_length=10)
     supplier = models.ForeignKey(Supplier)
     customer = models.ForeignKey(Customer)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
@@ -122,7 +141,7 @@ class Race(models.Model):
     weight_load = models.FloatField(default=0)
     weight_unload = models.FloatField(default=0)
     comm = models.TextField(null=True, blank=True)
-    state = models.IntegerField(default=0)
+    state = models.CharField(default=STATE[0], choices=STATE, max_length=9)
     create_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):

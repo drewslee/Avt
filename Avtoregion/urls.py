@@ -27,11 +27,13 @@ urlpatterns = [
     url(r'^Race/delete(?P<pk>\d+)/$', views.RaceDelete.as_view(), name='RaceDelete'),
 
     url(r'^Car/$', views.CarView, name='Car'),
-    url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(template_name='Avtoregion/update_form.html'), name='CarUpdate'),
+    url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(template_name='Avtoregion/update_form.html'),
+        name='CarUpdate'),
     url(r'^Car/delete(?P<pk>\d+)/$', views.CarDelete.as_view(), name='CarDelete'),
 
     url(r'^Product/$', views.ProductView, name='Product'),
-    url(r'^Product/update(?P<pk>\d+)/$', views.ProductUpdate.as_view(template_name='Avtoregion/update_form.html'), name='ProductUpdate'),
+    url(r'^Product/update(?P<pk>\d+)/$', views.ProductUpdate.as_view(template_name='Avtoregion/update_form.html'),
+        name='ProductUpdate'),
     url(r'^Product/delete(?P<pk>\d+)/$', views.ProductDelete.as_view(), name='ProductDelete'),
 
     url(r'^Driver/$', views.DriverView, name='Driver'),
@@ -67,4 +69,5 @@ urlpatterns = [
     url(r'^Supplier/accumulate/$', views.AccumulateSup, name='SupplierAcc'),
     url(r'^Customer/accumulate/$', views.AccumulateCus, name='CustomerAcc'),
     url(r'^Car/accumulate/$', views.AccumulateCar, name='CarAcc'),
+    url(r'^Driver/accumulate/$', views.AccumulateDriver, name='DriverAcc'),
 ]

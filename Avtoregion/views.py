@@ -317,3 +317,13 @@ def AccumulateCar(req):
         q_resp = Race.objects.filter(car__number__exact=req.POST.get('radio'),
                                      race_date__range=[req.POST.get('from'), req.POST.get('to')])
         return render(request=req, template_name='Avtoregion/account_car.html', context={'q_resp': q_resp})
+
+
+def AccumulateDriver(req):
+    qset = Driver.objects.all()
+    if req.method == 'GET':
+        return render(request=req, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
+    if req.method == 'POST':
+        q_resp = Race.objects.filter(driver__name__exact=req.POST.get('radio'),
+                                     race_date__range=[req.POST.get('from'), req.POST.get('to')])
+        return render(request=req, template_name='Avtoregion/account_driver.html', context={'q_resp': q_resp})
