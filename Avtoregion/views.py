@@ -100,7 +100,7 @@ def CustomerView(req):
     else:
         form = CustomerForm()
         return render(request=req, template_name='customer.html', context={'form': form, 'qCustomer': qCustomer,
-                                                                           'titles': titles})
+                                                                           })
 
 
 def SupplierView(req):
