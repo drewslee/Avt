@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^RaceAll$', views.RaceAll, name='Race'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
     url(r'^Race/update$', views.RaceUpdate, name='RaceUpdate'),
-    url(r'^Race/delete(?P<pk>\d+)/$', views.RaceDelete.as_view(), name='RaceDelete'),
+    url(r'^Race/delete', views.RaceDelete.as_view(), name='RaceDelete'),
 
     url(r'^Car/$', views.CarView, name='Car'),
     url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(template_name='Avtoregion/update_form.html'),

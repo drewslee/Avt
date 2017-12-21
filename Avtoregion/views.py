@@ -99,7 +99,8 @@ def CustomerView(req):
             return HttpResponseRedirect(reverse('Customer'))
     else:
         form = CustomerForm()
-        return render(request=req, template_name='customer.html', context={'form': form, 'qCustomer': qCustomer})
+        return render(request=req, template_name='customer.html', context={'form': form, 'qCustomer': qCustomer,
+                                                                           'titles': titles})
 
 
 def SupplierView(req):

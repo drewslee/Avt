@@ -53,6 +53,8 @@ class Customer(models.Model):
         return reverse('Customer', kwargs={'pk': self.pk})
 
 
+
+
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
     address = models.CharField(max_length=256, verbose_name='Посредник')
