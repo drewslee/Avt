@@ -3,6 +3,7 @@ from django.db.models import fields
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.list import ListView
 from django.shortcuts import render, reverse
 from django.utils import timezone
 from .models import Car
@@ -101,6 +102,11 @@ def CustomerView(req):
         form = CustomerForm()
         return render(request=req, template_name='customer.html', context={'form': form, 'qCustomer': qCustomer,
                                                                            })
+
+class CustomerViewList(ListView):
+    model = Customer
+    template_name = 'customer.html'
+    context_object_name = 'qCustomer'
 
 
 def SupplierView(req):
