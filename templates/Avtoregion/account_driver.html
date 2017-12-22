@@ -7,8 +7,7 @@
      <th>Дата</th>
      <th>Номер рейса</th>
      <th>Номер машины</th>
-     <th>Водитель</th>
-     <th>Реализация</th>
+     <th>Тип дохода</th>
      <th>Поставщик</th>
      <th>Клиент</th>
      <th>Место разгрузки</th>
@@ -20,7 +19,7 @@
      <th>Состояние</th>
  </thead>
  <tbody>
- {% for q in q_resp%}
+ {% for q in q_resp %}
 	 <tr>
          <td>
             {{ q.race_date }}
@@ -30,6 +29,9 @@
          </td>
          <td>
              {{ q.car}}
+         </td>
+         <td>
+             {{ q.type_ship }}
          </td>
          <td>
              {{ q.supplier}}

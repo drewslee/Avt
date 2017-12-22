@@ -4,7 +4,7 @@
  <div class="container">
  <table class="table table-hover">
  <thead>
-		<th>Дата</th>
+	<th>Дата</th>
     <th>Номер машины</th>
     <th>Вес</th>
     <th>Фракция</th>
@@ -23,15 +23,20 @@
 		 <td>{{ q.product }}</td>
 	 </tr>
 {% endfor %}
- <tr>
- <form action="" method="post">
-    {% csrf_token %}
-	  {% buttons %}
-        <button class="btn btn-success"> {% bootstrap_icon "star" %} В xls</button>
-	  {% endbuttons %}
-</form>
- </tr>
  </tbody>
  </table>
+<label>Всего загружено:</label>
+ {% if q_weight.weight_unload__sum %}
+    {{ q_weight.weight_unload__sum }}
+ {% endif %}
+ {% if q_weight.weight_load__sum %}
+     {{ q_weight.weight_load__sum }}
+ {% endif %}
+<form action="" method="post">
+    {% csrf_token %}
+    {% buttons %}
+        <button class="btn btn-success"> {% bootstrap_icon "star" %} В xls</button>
+    {% endbuttons %}
+</form>
  </div>
 {% endblock %}

@@ -296,23 +296,28 @@ class RaceDelete(DeleteView):
 
 def AccumulateSup(req):
     qset = Supplier.objects.all()
+    q_prod = Product.objects.all()
     if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset})
+        return render(request=req, template_name='Avtoregion/accumulate_supplier.html',
+                      context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        q_resp = Race.objects.filter(supplier__inn__exact=req.POST.get('radio'),
-                                     race_date__range=[req.POST.get('from'), req.POST.get('to')]).values(*fields)
+        q_resp = Race.objects.filter(supplier__inn__exact=req.POST.get('supplier'),
+                                     race_date__range=[req.POST.get('from'), req.POST.get('to')],
+                                     product__name__exact=req.POST.get('product')).values(*fields)
+        q_weight = q_resp.aggregate(Sum('weight_load'))
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
 
-        return render(request=req, template_name='Avtoregion/account.html', context={'q_resp': q_resp})
+        return render(request=req, template_name='Avtoregion/account.html',
+                      context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
 class Accumulate(ListView):
     context_object_name = 'qset'
-    template_name = 'Avtoregion/accumulate.html'
+    template_name = 'Avtoregion/accumulate_customer.html'
     model = Customer
 
 
@@ -320,7 +325,7 @@ def AccumulateCus(req):
     qset = Customer.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate.html', context={'qset': qset, 'q_prod': q_prod})
+        return render(request=req, template_name='Avtoregion/accumulate_customer.html', context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
@@ -344,7 +349,8 @@ def AccumulateCar(req):
     if req.method == 'POST':
         q_resp = Race.objects.filter(car__number__exact=req.POST.get('radio'),
                                      race_date__range=[req.POST.get('from'), req.POST.get('to')])
-        return render(request=req, template_name='Avtoregion/account_car.html', context={'q_resp': q_resp})
+        return render(request=req, template_name='Avtoregion/account_car.html',
+                      context={'q_resp': q_resp})
 
 
 def AccumulateDriver(req):
