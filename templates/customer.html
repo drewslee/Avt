@@ -32,10 +32,10 @@
 	 </table>
  {% endif %}
 
- <form action="" method="post">
+ <form action="add" method="post">
     {% csrf_token %}
     {{ form.as_table }}
-    <button name="add" class="btn btn-success">Добавить</button>
+    <button class="btn btn-success">Добавить</button>
 </form>
  </div>
 {% endblock %}

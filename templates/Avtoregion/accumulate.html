@@ -9,9 +9,18 @@
  <input name="from" type="date"/>
  <label>По:</label>
  <input name="to" type="date"/><br>
- {% for field in qset %}
-	 <input name="radio" type="radio" value="{{ field.inn }}">{{  field.name }}<br>
- {% endfor %}
+ <label>Клиент</label>
+	 <select name="customer">
+		 {% for field in qset %}
+			 <option value="{{ field.inn }}">{{ field.name }}</option>
+		 {% endfor %}
+	 </select>
+	 <label>Фракция</label>
+   <select name="product">
+	   {% for field in q_prod %}
+		   <option value="{{ field.name }}">{{ field.name }}</option>
+	   {% endfor %}
+   </select>
 	  {% buttons %}
         <button class="btn btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
 	  {% endbuttons %}

@@ -151,3 +151,8 @@ class Race(models.Model):
 
     def get_absolute_url(self):
         return reverse('Race', kwargs={'pk': self.pk})
+
+ #   @property
+ #   def get_sum_weight(self):
+ #       self.weight_load
+
