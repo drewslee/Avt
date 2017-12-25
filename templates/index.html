@@ -17,95 +17,12 @@
 	<script type="text/javascript" src="/static/js/ru.js"></script>
 	<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
 </head>
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-	    <ul class="nav navbar-nav">
-		    <li class="dropdown">
-			    <a class="dropdown-toggle" data-toggle="dropdown" href="/Race">Рейсы<span class="caret"></span></a>
-			    <ul class="dropdown-menu">
-                    <li><a href="/RaceAll">Все рейсы</a></li>
-				    <li><a href="/Race">Текущие рейсы</a></li>
-				    <li><a href="/Race/add">Добавить Рейсы</a></li>
-			    </ul>
-		    </li>
-		    <li class="dropdown">
-			    <a class="dropdown-toggle" href="index.html" data-toggle="dropdown">Справочники<span class="caret"></span></a>
-			    <ul class="dropdown-menu">
-				    <li><a href="/Car">Машины</a></li>
-				    <li><a href="/Driver">Водители</a></li>
-				    <li><a href="/Supplier">Поставщики</a></li>
-				    <li><a href="/Customer">Клиенты</a></li>
-				    <li><a href="/Product">Груз</a></li>
-				    <li><a href="/Trailer">Прицепы</a></li>
-				    <li><a href="/Mediator">Посредники</a></li>
-				    <li><a href="/Shipment">Место разгрузки</a></li>
-			    </ul>
-		    </li>
-	      <li class="dropdown">
-		        <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							  <li><a href="/Supplier/accumulate/">Реестр по поставщику</a></li>
-							  <li><a href="/Customer/accumulate">Реестр по покупателю</a></li>
-                              <li><a href="/Driver/accumulate">Реестр по водителю</a></li>
-                              <li><a href="/Car/accumulate">Реестр по автомобилю</a></li>
-                              <li><a href="/Mediator/accumulate">Реестр по посреднику</a></li>
-						</ul>
-	      </li>
-	    </ul>
-	    <ul class="nav navbar-nav navbar-form navbar-right">
-		    <li>
-			    <div class="input-group date" id="datetimepicker">
-                    <form id="push_date" action="" method="get">
-				              <input id="date" type="text" class="form-control" name="input_date"/>
-	                    <input type="submit" name="push_val" hidden="true"/>
-                    </form>
-				    <script type="text/javascript">
-				            var form = document.getElementById("date");
-				            form.addEventListener("blur", function ( event ) {
-				            document.getElementById("push_date").submit();
-				    }, true);
-				    </script>
-				    <span class="input-group-addon" >
-									<span class="glyphicon glyphicon-calendar"></span>
-						</span>
-                    <script type="text/javascript">
-                        var $_GET = {};
-                        if(document.location.toString().indexOf('?') !== -1) {
-                            var query = document.location
-                                .toString()
-                                .replace(/^.*?\?/, '')
-                                .replace(/#.*$/, '')
-                                .split('&');
+{% if user.is_anonymous %}
 
-                            for(var i=0, l=query.length; i<l; i++) {
-                                var aux = decodeURIComponent(query[i]).split('=');
-                                $_GET[aux[0]] = aux[1];
-                            }
-                        }
-                        if (typeof $_GET['input_date'] !== 'undefined') {
-                            var selected_date = $_GET['input_date']
-                        }
-                        else{
-                            var selected_date = new Date()
-                        }
-
-												$(function () {
-                            $("#datetimepicker").datetimepicker(
-                                {
-                                    locale: 'ru',
-                                    format: 'YYYY-MM-DD',
-                                    useCurrent: false,
-                                    date: selected_date
-                                }
-                            );
-		                        $('.dropdown-toggle').dropdown();
-                        })
-				    </script>
-			    </div>
-		    </li>
-	    </ul>
-	  </div>
-</nav>
+	{% else %}
+		{% block navbar %}
+		{% endblock %}
+{% endif %}
 <body>
 		{% block content %}
 		{% endblock %}
