@@ -18,13 +18,14 @@
 	<script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
 </head>
 {% if user.is_anonymous %}
-
-	{% else %}
+    {% block login %}
+    {% endblock %}
+{% else %}
 		{% block navbar %}
 		{% endblock %}
-{% endif %}
 <body>
 		{% block content %}
 		{% endblock %}
 </body>
+{% endif %}
 </html>
