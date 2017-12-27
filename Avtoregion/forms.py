@@ -91,3 +91,4 @@ class RaceForm(ModelForm):
                   'comm': 'Комментарий',
                   'state': 'Состояние',
         }
+

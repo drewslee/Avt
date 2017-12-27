@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.shortcuts import render, reverse
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Car
 from .models import Driver
@@ -27,12 +28,14 @@ from .forms import MediatorForm
 from .forms import ShipmentForm
 from django.db.models import Sum
 
+@login_required
 def RaceAll(req):
     if req.method == 'GET':
         qRace = Race.objects.all()
         return render(request=req, template_name='race.html', context={'qRace': qRace})
 
 
+@login_required
 def RaceView(req):
     if req.method == 'GET':
         if req.GET.get('input_date') is not None:

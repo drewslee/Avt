@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.RaceView, name='Race'),
     url(r'^Race$', views.RaceView, name='Race'),
-    url(r'^RaceAll$', views.RaceAll, name='Race'),
+    url(r'^RaceAll$', views.RaceAll, name='RaceAll'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
     url(r'^Race/update$', views.RaceUpdate, name='RaceUpdate'),
     url(r'^Race/delete', views.RaceDelete.as_view(), name='RaceDelete'),
