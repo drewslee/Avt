@@ -23,12 +23,10 @@
     {% endblock %}
     </body>
 {% else %}
-		{% block navbar %}
-		{% endblock %}
+	{% include 'navbar.html' %}
     <body>
 		{% block content %}
 		{% endblock %}
     </body>
 {% endif %}
-{{ user }}
 </html>

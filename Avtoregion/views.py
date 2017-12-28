@@ -28,6 +28,7 @@ from .forms import MediatorForm
 from .forms import ShipmentForm
 from django.db.models import Sum
 
+
 @login_required
 def RaceAll(req):
     if req.method == 'GET':
@@ -104,6 +105,7 @@ def CustomerView(req):
     else:
         form = CustomerForm()
         return render(request=req, template_name='customer.html', context={'form': form, 'qCustomer': qCustomer})
+
 
 class CustomerViewList(ListView):
     model = Customer

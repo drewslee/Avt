@@ -1,4 +1,5 @@
 {% extends "index.html" %}
+{% load static %}
 {% block login %}
 <section id="loginform" class="outer-wrapper">
 <div class="inner-wrapper">
@@ -12,6 +13,7 @@
             <form method="post" action="" class="form-group">
             {% csrf_token %}
             <table>
+	            <img src="{% static 'img/scania.jpg' %}">
             <tr>
                 <td>{{ form.username.label_tag }}</td>
                 <td>{{ form.username }}</td>
