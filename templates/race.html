@@ -65,12 +65,12 @@
 			  {{ q.state}}
 		  </td>
 		 <td>
-			<form action="Race/update" method="post">
+			<form action="{% url 'RaceUpdate' %}" method="post">
 				{% csrf_token %}
               <button name="update" value="update" class="btn btn-info">Изменить</button>
 							<input type="hidden" value="{{ q.pk }}" name="pk">
 			</form>
-			 <form action="Race/delete" method="post">
+			 <form action="{% url 'RaceDelete' %}" method="post">
 				 {% csrf_token %}
 							<input type="hidden" value="{{ q.pk }}" name="pk">
 			        <button name="delete" class="btn btn-danger">Удалить</button>
