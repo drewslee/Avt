@@ -53,11 +53,10 @@ class Customer(models.Model):
         return reverse('Customer', kwargs={'pk': self.pk})
 
 
-
-
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
     address = models.CharField(max_length=256, verbose_name='Посредник')
+    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
     def __str__(self):
         return '%s' % self.address
@@ -77,13 +76,6 @@ class Driver(models.Model):
         return reverse('Driver', kwargs={'pk': self.pk})
 
 
-class Milage(models.Model):
-    id_milage = models.AutoField(primary_key=True)
-    id_driver = models.ForeignKey(Driver)
-    start_milage = models.IntegerField()
-    end_milage = models.IntegerField()
-
-
 class Trailer(models.Model):
     id_trailer = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10)
@@ -100,6 +92,7 @@ class Car(models.Model):
     number = models.CharField(max_length=11, unique=True, verbose_name='Номер машины')
     pts = models.CharField(max_length=10, null=True, blank=True, verbose_name='ПТС')
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
+    mediator = models.ForeignKey(Mediator, blank=True, null=True)
 
     def __str__(self):
         return '%s' % self.number

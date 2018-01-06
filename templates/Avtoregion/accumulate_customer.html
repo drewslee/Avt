@@ -12,7 +12,7 @@
  <label>Клиент</label>
 	 <select name="customer">
 		 {% for field in qset %}
-			 <option value="{{ field.inn }}">{{ field.name }}</option>
+			 <option value="{{ field.id_customer }}">{{ field.name }}</option>
 		 {% endfor %}
 	 </select>
 	 <label>Фракция</label>

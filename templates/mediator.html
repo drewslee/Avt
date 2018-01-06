@@ -12,6 +12,9 @@
 		 <td>
 			{{ q.address}}
 		 </td>
+         <td>
+            {{ q.inn|default_if_none:"Неопределен"}}
+         </td>
 		    <td>
 			    <form action="update{{ q.pk }}" method="get">
 				    <button class="btn btn-info">Изменить</button>

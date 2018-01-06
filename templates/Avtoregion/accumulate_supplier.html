@@ -12,7 +12,7 @@
  <label>Поставщик</label>
 	 <select name="supplier">
 		 {% for field in qset %}
-			 <option value="{{ field.inn }}">{{ field.name }}</option>
+			 <option value="{{ field.id_supplier}}">{{ field.name }}</option>
 		 {% endfor %}
 	 </select>
 	 <label>Фракция</label>

@@ -1,18 +1,18 @@
 {% extends "index.html" %}
 {% block content %}
-<div class="container">
+<div class="container-fluid">
  {% if qRace%}
 	 <table class="table table-hover table-condensed table-responsive">
 		 <thead>
+             <th>Дата</th>
 			 <th>Номер рейса</th>
 			 <th>Номер машины</th>
 			 <th>Водитель</th>
-			 <th>Реализация</th>
+			 <th>Тип операции</th>
 			 <th>Поставщик</th>
 			 <th>Клиент</th>
 			 <th>Место разгрузки</th>
 			 <th>Товар</th>
-			 <th>Посредник</th>
 			 <th>Начало трека</th>
 			 <th>Конец трека</th>
 			 <th>Загружено</th>
@@ -22,6 +22,9 @@
 	 {% for q in qRace%}
          <tbody>
 	    <tr>
+         <td>
+            {{ q.race_date }}
+         </td>
 		 <td>
 			{{ q.name_race}}
 		 </td>
@@ -41,13 +44,10 @@
 			  {{ q.customer}}
 		  </td>
 		  <td>
-			  {{ q.shipment}}
+			  {{ q.shipment|default_if_none:"Нет"}}
 		  </td>
 		  <td>
 			  {{ q.product}}
-		  </td>
-		  <td>
-			  {{ q.mediator}}
 		  </td>
 		  <td>
 			  {{ q.s_milage}}

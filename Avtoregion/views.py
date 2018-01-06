@@ -5,14 +5,16 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.shortcuts import render, reverse
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.utils import timezone
 from .models import Car
 from .models import Driver
 from .models import Customer
 from .models import Product
 from .models import Shipment
-from .models import Milage
 from .models import Supplier
 from .models import Trailer
 from .models import Race
@@ -29,11 +31,10 @@ from .forms import ShipmentForm
 from django.db.models import Sum
 
 
-@login_required
-def RaceAll(req):
-    if req.method == 'GET':
-        qRace = Race.objects.all()
-        return render(request=req, template_name='race.html', context={'qRace': qRace})
+class RaceAllList(LoginRequiredMixin, ListView):
+    model = Race
+    template_name = 'race.html'
+    context_object_name = 'qRace'
 
 
 @login_required
@@ -47,64 +48,65 @@ def RaceView(req):
         return render(request=req, template_name='race.html', context={'qRace': qRace})
 
 
-def CarView(req):
-    qCar = Car.objects.all()
-    if req.method == 'POST':
-        form = CarForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Car'))
-    else:
-        form = CarForm()
-        return render(request=req, template_name='car.html', context={'form': form, 'qCar': qCar})
+class RaceCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Race
+    form_class = RaceForm
+    success_url = '/Race'
+    success_message = "Рейс %(name_race)s создан успешно"
+    permission_required = ('races.add_race',)
 
 
-def TrailerView(req):
-    qTrailer = Trailer.objects.all()
-    if req.method == 'POST':
-        form = TrailerForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Trailer'))
-    else:
-        form = TrailerForm()
-        return render(request=req, template_name='trailer.html', context={'form': form, 'qTrailer': qTrailer})
+class RaceDelete(PermissionRequiredMixin, DeleteView):
+    model = Race
+    success_url = '/Race'
+    permission_required = ('races.delete_race',)
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-def DriverView(req):
-    qDriver = Driver.objects.all()
-    if req.method == 'POST':
-        form = DriverForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Driver'))
-    else:
-        form = DriverForm()
-        return render(request=req, template_name='driver.html', context={'form': form, 'qDriver': qDriver})
+class CarViewList(LoginRequiredMixin, ListView):
+    model = Car
+    template_name = 'car.html'
+    context_object_name = 'qCar'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CarForm()
+        return context
 
 
-def ProductView(req):
-    qProduct = Product.objects.all()
-    if req.method == 'POST':
-        form = ProductForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Product'))
-    else:
-        form = ProductForm()
-        return render(request=req, template_name='product.html', context={'form': form, 'qProduct': qProduct})
+class TrailerViewList(ListView):
+    model = Trailer
+    template_name = 'trailer.html'
+    context_object_name = 'qTrailer'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TrailerForm()
+        return context
 
 
-def CustomerView(req):
-    qCustomer = Customer.objects.all()
-    if req.method == 'POST':
-        form = CustomerForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Customer'))
-    else:
-        form = CustomerForm()
-        return render(request=req, template_name='customer.html', context={'form': form, 'qCustomer': qCustomer})
+class DriverViewList(ListView):
+    model = Driver
+    template_name = 'driver.html'
+    context_object_name = 'qDriver'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = DriverForm()
+        return context
+
+
+class ProductViewList(ListView):
+    model = Product
+    template_name = 'product.html'
+    context_object_name = 'qProduct'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ProductForm()
+        return context
 
 
 class CustomerViewList(ListView):
@@ -118,40 +120,37 @@ class CustomerViewList(ListView):
         return context
 
 
-def SupplierView(req):
-    qSupplier = Supplier.objects.all()
-    if req.method == 'POST':
-        form = SupplierForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Supplier'))
-    else:
-        form = SupplierForm()
-        return render(request=req, template_name='supplier.html', context={'form': form, 'qSupplier': qSupplier})
+class SupplierViewList(ListView):
+    model = Supplier
+    template_name = 'supplier.html'
+    context_object_name = 'qSupplier'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = SupplierForm()
+        return context
 
 
-def MediatorView(req):
-    qMediator = Mediator.objects.all()
-    if req.method == 'POST':
-        form = MediatorForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Mediator'))
-    else:
-        form = MediatorForm()
-        return render(request=req, template_name='mediator.html', context={'form': form, 'qMediator': qMediator})
+class ShipmentViewList(ListView):
+    model = Shipment
+    template_name = 'shipment.html'
+    context_object_name = 'qShipment'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ShipmentForm()
+        return context
 
 
-def ShipmentView(req):
-    qShipment = Shipment.objects.all()
-    if req.method == 'POST':
-        form = ShipmentForm(req.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Shipment'))
-    else:
-        form = ShipmentForm()
-        return render(request=req, template_name='shipment.html', context={'form': form, 'qShipment': qShipment})
+class MediatorViewList(ListView):
+    model = Mediator
+    template_name = 'mediator.html'
+    context_object_name = 'qMediator'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = MediatorForm()
+        return context
 
 
 class DriverUpdate(UpdateView):
@@ -248,10 +247,6 @@ class CustomerDelete(DeleteView):
     success_url = '/Customer'
 
 
-class RaceCreate(CreateView):
-    model = Race
-    form_class = RaceForm
-    success_url = '/Race'
 
 
 def RaceUpdate(req):
@@ -291,12 +286,6 @@ def RaceUpdate(req):
 
 
 
-class RaceDelete(DeleteView):
-    model = Race
-    success_url = "/Race"
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 def AccumulateSup(req):
@@ -308,9 +297,9 @@ def AccumulateSup(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        q_resp = Race.objects.filter(supplier__inn__exact=req.POST.get('supplier'),
-                                     race_date__range=[req.POST.get('from'), req.POST.get('to')],
-                                     product__name__exact=req.POST.get('product')).values(*fields)
+        q_resp = Race.objects.filter(supplier__id_supplier__exact=req.POST.get('supplier'),
+                                         race_date__range=[req.POST.get('from'), req.POST.get('to')],
+                                         product__name__exact=req.POST.get('product')).values(*fields)
         q_weight = q_resp.aggregate(Sum('weight_load'))
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
@@ -334,7 +323,7 @@ def AccumulateCus(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
-        q_resp = Race.objects.filter(customer__inn__exact=req.POST.get('customer'),
+        q_resp = Race.objects.filter(customer__id_customer__exact=req.POST.get('customer'),
                                      race_date__range=[req.POST.get('from'), req.POST.get('to')],
                                      product__name__exact=req.POST.get('product')).values(*fields)
         q_weight = q_resp.aggregate(Sum('weight_unload'))
