@@ -23,8 +23,8 @@
                             <td>{{ form.password }}</td>
                         </tr>
                     </table>
-                <button type="submit" class="btn btn-default" style="position: relative; background-color: lawngreen;
-                 border-radius: 50%; top: 10px; left: 100px; width: 150px;">Вход</button>
+                <button type="submit" class="btn button-default button-slanted" style="position: relative;
+                 top: 10px; left: 100px; width: 150px;"><span class="button-slanted-content" >Вход</span></button>
                 <input type="hidden" name="next" value="{{ next }}" class="form-control"/>
             </form>
             </div>
@@ -43,6 +43,32 @@
   display:table-cell;
   vertical-align:middle;
   padding:15px;
+}
+.button-default {
+  color: white;
+  background-color: teal;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  margin: 10px;
+  display: inline-block;
+}
+
+.button-slanted {
+  -ms-transform: skewX(-20deg);
+  -webkit-transform: skewX(-20deg);
+  transform: skewX(-20deg);
+}
+
+.button-slanted-content {
+  -ms-transform: skewX(20deg);
+  -webkit-transform: skewX(20deg);
+  transform: skewX(20deg);
+  display: inline-block;
+}
+
+.button-fixedwidth {
+  width: 100px;
 }
 </style>
 {% endblock %}

@@ -48,7 +48,7 @@ def RaceView(req):
         return render(request=req, template_name='race.html', context={'qRace': qRace})
 
 
-class RaceCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     model = Race
     form_class = RaceForm
     success_url = '/Race'
