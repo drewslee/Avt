@@ -76,7 +76,7 @@ class CarViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class TrailerViewList(ListView):
+class TrailerViewList(LoginRequiredMixin, ListView):
     model = Trailer
     template_name = 'trailer.html'
     context_object_name = 'qTrailer'
@@ -87,7 +87,7 @@ class TrailerViewList(ListView):
         return context
 
 
-class DriverViewList(ListView):
+class DriverViewList(LoginRequiredMixin, ListView):
     model = Driver
     template_name = 'driver.html'
     context_object_name = 'qDriver'
@@ -98,7 +98,7 @@ class DriverViewList(ListView):
         return context
 
 
-class ProductViewList(ListView):
+class ProductViewList(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'product.html'
     context_object_name = 'qProduct'
@@ -109,7 +109,7 @@ class ProductViewList(ListView):
         return context
 
 
-class CustomerViewList(ListView):
+class CustomerViewList(LoginRequiredMixin, ListView):
     model = Customer
     template_name = 'customer.html'
     context_object_name = 'qCustomer'
@@ -120,7 +120,7 @@ class CustomerViewList(ListView):
         return context
 
 
-class SupplierViewList(ListView):
+class SupplierViewList(LoginRequiredMixin, ListView):
     model = Supplier
     template_name = 'supplier.html'
     context_object_name = 'qSupplier'
@@ -131,7 +131,7 @@ class SupplierViewList(ListView):
         return context
 
 
-class ShipmentViewList(ListView):
+class ShipmentViewList(LoginRequiredMixin, ListView):
     model = Shipment
     template_name = 'shipment.html'
     context_object_name = 'qShipment'
@@ -142,7 +142,7 @@ class ShipmentViewList(ListView):
         return context
 
 
-class MediatorViewList(ListView):
+class MediatorViewList(LoginRequiredMixin, ListView):
     model = Mediator
     template_name = 'mediator.html'
     context_object_name = 'qMediator'
@@ -153,96 +153,96 @@ class MediatorViewList(ListView):
         return context
 
 
-class DriverUpdate(UpdateView):
+class DriverUpdate(PermissionRequiredMixin, UpdateView):
     model = Driver
     success_url = '/Driver'
     form_class = DriverForm
 
 
-class DriverDelete(DeleteView):
+class DriverDelete(PermissionRequiredMixin, DeleteView):
     model = Driver
     success_url = '/Driver'
 
 
-class SupplierUpdate(UpdateView):
+class SupplierUpdate(PermissionRequiredMixin, UpdateView):
     model = Supplier
     success_url = '/Supplier'
     form_class = SupplierForm
 
 
-class SupplierDelete(DeleteView):
+class SupplierDelete(PermissionRequiredMixin, DeleteView):
     model = Supplier
     success_url = '/Supplier'
 
 
-class CarUpdate(UpdateView):
+class CarUpdate(PermissionRequiredMixin, UpdateView):
     model = Car
     success_url = '/Car'
     form_class = CarForm
 
 
-class CarDelete(DeleteView):
+class CarDelete(PermissionRequiredMixin, DeleteView):
     model = Car
     success_url = '/Car'
 
 
-class ProductUpdate(UpdateView):
+class ProductUpdate(PermissionRequiredMixin, UpdateView):
     model = Product
     success_url = '/Product'
     form_class = ProductForm
 
 
-class ProductDelete(DeleteView):
+class ProductDelete(PermissionRequiredMixin, DeleteView):
     model = Product
     success_url = '/Product'
 
 
-class TrailerUpdate(UpdateView):
+class TrailerUpdate(PermissionRequiredMixin, UpdateView):
     model = Trailer
     success_url = '/Trailer'
     form_class = TrailerForm
 
 
-class TrailerDelete(DeleteView):
+class TrailerDelete(PermissionRequiredMixin, DeleteView):
     model = Trailer
     success_url = '/Trailer'
 
 
-class ShipmentUpdate(UpdateView):
+class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     model = Shipment
     success_url = '/Shipment'
     form_class = ShipmentForm
 
 
-class ShipmentDelete(DeleteView):
+class ShipmentDelete(PermissionRequiredMixin, DeleteView):
     model = Shipment
     success_url = '/Shipment'
 
 
-class MediatorUpdate(UpdateView):
+class MediatorUpdate(PermissionRequiredMixin, UpdateView):
     model = Mediator
     success_url = '/Mediator'
     form_class = MediatorForm
 
 
-class MediatorDelete(DeleteView):
+class MediatorDelete(PermissionRequiredMixin, DeleteView):
     model = Mediator
     success_url = '/Mediator'
 
 
-class CustomerAdd(CreateView):
+class CustomerAdd(PermissionRequiredMixin, CreateView):
     model = Customer
     form_class = CustomerForm
     success_url = '/Customer'
 
 
-class CustomerUpdate(UpdateView):
+class CustomerUpdate(PermissionRequiredMixin, UpdateView):
     model = Customer
     success_url = '/Customer'
     form_class = CustomerForm
 
 
-class CustomerDelete(DeleteView):
+class CustomerDelete(PermissionRequiredMixin, DeleteView):
     model = Customer
     success_url = '/Customer'
 
@@ -309,7 +309,7 @@ def AccumulateSup(req):
                       context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
-class Accumulate(ListView):
+class Accumulate(LoginRequiredMixin, ListView):
     context_object_name = 'qset'
     template_name = 'Avtoregion/accumulate_customer.html'
     model = Customer

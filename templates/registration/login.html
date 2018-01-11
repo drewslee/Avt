@@ -6,14 +6,14 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-4 col-sm-offset-4">
-            {% if form.errors %}
-            <p class="text-center">Вы ввели неправильный логин или пароль.Попробуйте снова.</p>
-            {% endif %}
 
             <form method="post" action="" class="form-group">
                 {% csrf_token %}
                     <table>
                         <img src="{% static 'img/scania.jpg' %}">
+                        {% if form.errors %}
+                            <p class="text-center">Вы ввели неправильный логин или пароль.Попробуйте снова.</p>
+                        {% endif %}
                         <tr>
                             <td>{{ form.username.label_tag }}</td>
                             <td>{{ form.username }}</td>
