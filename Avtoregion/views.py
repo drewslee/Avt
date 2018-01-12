@@ -4,9 +4,8 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.shortcuts import render, reverse
+from django.shortcuts import render
 from django.core.urlresolvers import reverse_lazy
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils import timezone
@@ -39,39 +38,42 @@ class RaceAllList(LoginRequiredMixin, ListView):
     queryset = Race.objects.order_by('id_race')
 
 
+class RaceViewList(LoginRequiredMixin, ListView):
+    model = Race
+    template_name = 'race_date.html'
+    context_object_name = 'qRace'
 
-@login_required
-def RaceView(req):
-    if req.method == 'GET':
-        if req.GET.get('input_date_from') is not None and req.GET.get('input_date_to') is not None:
-            date_from = req.GET.get('input_date_from')
-            date_to = req.GET.get('input_date_to')
-            qRace = Race.objects.filter(race_date__range=[date_from, date_to])
+    def get_queryset(self):
+        if self.request.GET.get('input_date_from') is None or self.request.GET.get('input_date_to') is None:
+            queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()])
         else:
-            date = timezone.now().date()
-            qRace = Race.objects.filter(race_date=date)
-        return render(request=req, template_name='race_date.html', context={'qRace': qRace})
+            queryset = Race.objects.filter(race_date__range=[self.request.GET.get('input_date_from'),
+                                                             self.request.GET.get('input_date_to')])
+        return queryset
 
 
 class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     model = Race
     form_class = RaceForm
-    success_url = '/Race'
+    success_url = reverse_lazy('RaceCreate')
     success_message = "Рейс %(name_race)s создан успешно"
     permission_required = ('races.add_race',)
 
 
 class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
-    success_url = '/Race'
+    success_url = reverse_lazy('RaceUpdate')
     form_class = RaceForm
-    permission_required = ('races.update_race', )
+    success_message = "Рейс %(name_race)s обновлён успешно"
+    permission_required = ('races.update_race',)
 
 
 class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
     model = Race
     success_url = '/Race'
+    success_message = "Рейс %(name_race)s удалён"
     permission_required = ('races.delete_race',)
+
 
 #    def get_object(self, queryset=None):
 #        return self.model.objects.get(pk=self.request.POST.get('pk'))
@@ -167,145 +169,116 @@ class MediatorViewList(LoginRequiredMixin, ListView):
 
 class DriverUpdate(PermissionRequiredMixin, UpdateView):
     model = Driver
-    success_url = '/Driver'
+    success_url = reverse_lazy('DriverUpdate')
     form_class = DriverForm
-    permission_required = ('drivers.update_driver', )
+    permission_required = ('drivers.update_driver',)
 
 
 class DriverDelete(PermissionRequiredMixin, DeleteView):
     model = Driver
-    success_url = '/Driver'
-    permission_required = ('drivers.delete_driver', )
+    success_url = reverse_lazy('Driver')
+    permission_required = ('drivers.delete_driver',)
 
 
 class SupplierUpdate(PermissionRequiredMixin, UpdateView):
     model = Supplier
-    success_url = '/Supplier'
+    success_url = reverse_lazy('SupplierUpdate')
     form_class = SupplierForm
-    permission_required = ('suppliers.update_supplier', )
+    permission_required = ('suppliers.update_supplier',)
 
 
 class SupplierDelete(PermissionRequiredMixin, DeleteView):
     model = Supplier
-    success_url = '/Supplier'
-    permission_required = ('suppliers.delete_supplier', )
+    success_url = reverse_lazy('Supplier')
+    permission_required = ('suppliers.delete_supplier',)
 
 
 class CarUpdate(PermissionRequiredMixin, UpdateView):
     model = Car
-    success_url = '/Car'
+    success_url = reverse_lazy('CarUpdate')
     form_class = CarForm
-    permission_required = ('cars.update_car', )
+    permission_required = ('cars.update_car',)
 
 
 class CarDelete(PermissionRequiredMixin, DeleteView):
     model = Car
-    success_url = '/Car'
-    permission_required = ('cars.delete_cars', )
+    success_url = reverse_lazy('Car')
+    permission_required = ('cars.delete_cars',)
 
 
 class ProductUpdate(PermissionRequiredMixin, UpdateView):
     model = Product
-    success_url = '/Product'
+    success_url = reverse_lazy('ProductUpdate')
     form_class = ProductForm
-    permission_required = ('products.update_product', )
+    permission_required = ('products.update_product',)
 
 
 class ProductDelete(PermissionRequiredMixin, DeleteView):
     model = Product
-    success_url = '/Product'
-    permission_required = ('products.delete_product', )
+    success_url = reverse_lazy('Product')
+    permission_required = ('products.delete_product',)
 
 
 class TrailerUpdate(PermissionRequiredMixin, UpdateView):
     model = Trailer
-    success_url = '/Trailer'
+    success_url = reverse_lazy('TrailerUpdate')
     form_class = TrailerForm
-    permission_required = ('trailers.update_trailer', )
+    permission_required = ('trailers.update_trailer',)
 
 
 class TrailerDelete(PermissionRequiredMixin, DeleteView):
     model = Trailer
-    success_url = '/Trailer'
-    permission_required = ('trailers.delete_trailer', )
+    success_url = reverse_lazy('Trailer')
+    permission_required = ('trailers.delete_trailer',)
 
 
 class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     model = Shipment
-    success_url = '/Shipment'
+    success_url = reverse_lazy('ShipmentUpdate')
     form_class = ShipmentForm
-    permission_required = ('shipments.update_shipment', )
+    permission_required = ('shipments.update_shipment',)
 
 
 class ShipmentDelete(PermissionRequiredMixin, DeleteView):
     model = Shipment
-    success_url = '/Shipment'
-    permission_required = ('shipments.delete_shipment', )
+    success_url = reverse_lazy('Shipment')
+    permission_required = ('shipments.delete_shipment',)
 
 
 class MediatorUpdate(PermissionRequiredMixin, UpdateView):
     model = Mediator
-    success_url = '/Mediator'
+    success_url = reverse_lazy('MediatorUpdate')
     form_class = MediatorForm
-    permission_required = ('mediators.update_mediator', )
+    permission_required = ('mediators.update_mediator',)
 
 
 class MediatorDelete(PermissionRequiredMixin, DeleteView):
     model = Mediator
-    success_url = '/Mediator'
-    permission_required = ('mediators.delete_mediator', )
+    success_url = reverse_lazy('Mediator')
+    permission_required = ('mediators.delete_mediator',)
 
 
 class CustomerAdd(PermissionRequiredMixin, CreateView):
     model = Customer
     form_class = CustomerForm
-    success_url = '/Customer'
-    permission_required = ('customers.add_customer', )
+    success_url = reverse_lazy('CustomerAdd')
+    permission_required = ('customers.add_customer',)
 
 
 class CustomerUpdate(PermissionRequiredMixin, UpdateView):
     model = Customer
-    success_url = '/Customer'
+    success_url = reverse_lazy('CustomerUpdate')
     form_class = CustomerForm
-    permission_required = ('customers.update_customer', )
+    permission_required = ('customers.update_customer',)
 
 
 class CustomerDelete(PermissionRequiredMixin, DeleteView):
     model = Customer
-    success_url = '/Customer'
-    permission_required = ('customers.delete_customer', )
+    success_url = reverse_lazy('Customer')
+    permission_required = ('customers.delete_customer',)
 
 
-
-
-
-
-# class RaceUpdate(UpdateView):
-#     model = Race
-#     form_class = RaceForm
-#     success_url = '/Race'
-#     initial = {'name_race': '666'}
-#
-#     def get_object(self, queryset=None):
-#         return get_object_or_404(self.model, pk=self.request.POST.get('pk'))
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         return context
-#
-#     def get_initial(self):
-#         obj = self.get_object()
-#         return super(RaceUpdate, self).get_initial()
-#
-#     def form_invalid(self, form):
-#         print(form)
-#         return self.render_to_response(self.get_context_data(**{'form': form}))
-
-
-
-
-
-def AccumulateSup(req):
+def accumulate_sup(req):
     qset = Supplier.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
@@ -315,8 +288,8 @@ def AccumulateSup(req):
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
         q_resp = Race.objects.filter(supplier__id_supplier__exact=req.POST.get('supplier'),
-                                         race_date__range=[req.POST.get('from'), req.POST.get('to')],
-                                         product__name__exact=req.POST.get('product')).values(*fields)
+                                     race_date__range=[req.POST.get('from'), req.POST.get('to')],
+                                     product__name__exact=req.POST.get('product')).values(*fields)
         q_weight = q_resp.aggregate(Sum('weight_load'))
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
@@ -332,11 +305,12 @@ class Accumulate(LoginRequiredMixin, ListView):
     model = Customer
 
 
-def AccumulateCus(req):
+def accumulate_cus(req):
     qset = Customer.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate_customer.html', context={'qset': qset, 'q_prod': q_prod})
+        return render(request=req, template_name='Avtoregion/accumulate_customer.html',
+                      context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
@@ -353,7 +327,7 @@ def AccumulateCus(req):
                       context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
-def AccumulateCar(req):
+def accumulate_car(req):
     qset = Car.objects.all()
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
@@ -364,7 +338,7 @@ def AccumulateCar(req):
                       context={'q_resp': q_resp})
 
 
-def AccumulateDriver(req):
+def accumulate_driver(req):
     qset = Driver.objects.all()
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})

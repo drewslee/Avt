@@ -1,6 +1,15 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
+    {% if messages %}
+        <ul class="messagelist">
+            {% for msg in messages %}
+                <li class="alert alert-{{ msg.level_tag }}" role="alert">
+                    {{ msg.message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
  <div class="container table-responsive">
 
  <form action="" method="post">
@@ -9,7 +18,7 @@
 	 {% bootstrap_field field %}
  {% endfor %}
 	  {% buttons %}
-        <button name="add" value="add" class="btn btn-success"> {% bootstrap_icon "star" %} Обновить</button>
+        <button class="btn btn-success"> {% bootstrap_icon "star" %} Обновить</button>
 	  {% endbuttons %}
      <input type="hidden" value="{{ pk }}" name="pk">
 </form>

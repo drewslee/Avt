@@ -23,8 +23,8 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(next_page=reverse_lazy('login')), name='logout'),
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.RaceView, name='Race'),
-    url(r'^Race$', views.RaceView, name='Race'),
+    url(r'^$', views.RaceViewList.as_view(), name='Race'),
+    url(r'^Race$', views.RaceViewList.as_view(), name='Race'),
     url(r'^RaceAll$', views.RaceAllList.as_view(), name='RaceAll'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
     url(r'^Race/update(?P<pk>\d+)/$', views.RaceUpdate.as_view(), name='RaceUpdate'),
@@ -71,8 +71,8 @@ urlpatterns = [
         name='ShipmentUpdate'),
     url(r'^Shipment/delete(?P<pk>\d+)/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
-    url(r'^Supplier/accumulate/$', views.AccumulateSup, name='SupplierAcc'),
-    url(r'^Customer/accumulate/$', views.AccumulateCus, name='CustomerAcc'),
-    url(r'^Car/accumulate/$', views.AccumulateCar, name='CarAcc'),
-    url(r'^Driver/accumulate/$', views.AccumulateDriver, name='DriverAcc'),
+    url(r'^Supplier/accumulate/$', views.accumulate_sup, name='SupplierAcc'),
+    url(r'^Customer/accumulate/$', views.accumulate_cus, name='CustomerAcc'),
+    url(r'^Car/accumulate/$', views.accumulate_car, name='CarAcc'),
+    url(r'^Driver/accumulate/$', views.accumulate_driver, name='DriverAcc'),
 ]
