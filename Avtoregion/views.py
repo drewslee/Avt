@@ -35,17 +35,22 @@ class RaceAllList(LoginRequiredMixin, ListView):
     model = Race
     template_name = 'race.html'
     context_object_name = 'qRace'
+    paginate_by = 5
+    queryset = Race.objects.order_by('id_race')
+
 
 
 @login_required
 def RaceView(req):
     if req.method == 'GET':
-        if req.GET.get('input_date') is not None:
-            date = req.GET.get('input_date')
+        if req.GET.get('input_date_from') is not None and req.GET.get('input_date_to') is not None:
+            date_from = req.GET.get('input_date_from')
+            date_to = req.GET.get('input_date_to')
+            qRace = Race.objects.filter(race_date__range=[date_from, date_to])
         else:
             date = timezone.now().date()
-        qRace = Race.objects.all().filter(race_date=date)
-        return render(request=req, template_name='race.html', context={'qRace': qRace})
+            qRace = Race.objects.filter(race_date=date)
+        return render(request=req, template_name='race_date.html', context={'qRace': qRace})
 
 
 class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
@@ -56,13 +61,20 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     permission_required = ('races.add_race',)
 
 
-class RaceDelete(PermissionRequiredMixin, DeleteView):
+class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
+    model = Race
+    success_url = '/Race'
+    form_class = RaceForm
+    permission_required = ('races.update_race', )
+
+
+class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
     model = Race
     success_url = '/Race'
     permission_required = ('races.delete_race',)
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
+#    def get_object(self, queryset=None):
+#        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CarViewList(LoginRequiredMixin, ListView):
@@ -157,110 +169,115 @@ class DriverUpdate(PermissionRequiredMixin, UpdateView):
     model = Driver
     success_url = '/Driver'
     form_class = DriverForm
+    permission_required = ('drivers.update_driver', )
 
 
 class DriverDelete(PermissionRequiredMixin, DeleteView):
     model = Driver
     success_url = '/Driver'
+    permission_required = ('drivers.delete_driver', )
 
 
 class SupplierUpdate(PermissionRequiredMixin, UpdateView):
     model = Supplier
     success_url = '/Supplier'
     form_class = SupplierForm
+    permission_required = ('suppliers.update_supplier', )
 
 
 class SupplierDelete(PermissionRequiredMixin, DeleteView):
     model = Supplier
     success_url = '/Supplier'
+    permission_required = ('suppliers.delete_supplier', )
 
 
 class CarUpdate(PermissionRequiredMixin, UpdateView):
     model = Car
     success_url = '/Car'
     form_class = CarForm
+    permission_required = ('cars.update_car', )
 
 
 class CarDelete(PermissionRequiredMixin, DeleteView):
     model = Car
     success_url = '/Car'
+    permission_required = ('cars.delete_cars', )
 
 
 class ProductUpdate(PermissionRequiredMixin, UpdateView):
     model = Product
     success_url = '/Product'
     form_class = ProductForm
+    permission_required = ('products.update_product', )
 
 
 class ProductDelete(PermissionRequiredMixin, DeleteView):
     model = Product
     success_url = '/Product'
+    permission_required = ('products.delete_product', )
 
 
 class TrailerUpdate(PermissionRequiredMixin, UpdateView):
     model = Trailer
     success_url = '/Trailer'
     form_class = TrailerForm
+    permission_required = ('trailers.update_trailer', )
 
 
 class TrailerDelete(PermissionRequiredMixin, DeleteView):
     model = Trailer
     success_url = '/Trailer'
+    permission_required = ('trailers.delete_trailer', )
 
 
 class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     model = Shipment
     success_url = '/Shipment'
     form_class = ShipmentForm
+    permission_required = ('shipments.update_shipment', )
 
 
 class ShipmentDelete(PermissionRequiredMixin, DeleteView):
     model = Shipment
     success_url = '/Shipment'
+    permission_required = ('shipments.delete_shipment', )
 
 
 class MediatorUpdate(PermissionRequiredMixin, UpdateView):
     model = Mediator
     success_url = '/Mediator'
     form_class = MediatorForm
+    permission_required = ('mediators.update_mediator', )
 
 
 class MediatorDelete(PermissionRequiredMixin, DeleteView):
     model = Mediator
     success_url = '/Mediator'
+    permission_required = ('mediators.delete_mediator', )
 
 
 class CustomerAdd(PermissionRequiredMixin, CreateView):
     model = Customer
     form_class = CustomerForm
     success_url = '/Customer'
+    permission_required = ('customers.add_customer', )
 
 
 class CustomerUpdate(PermissionRequiredMixin, UpdateView):
     model = Customer
     success_url = '/Customer'
     form_class = CustomerForm
+    permission_required = ('customers.update_customer', )
 
 
 class CustomerDelete(PermissionRequiredMixin, DeleteView):
     model = Customer
     success_url = '/Customer'
+    permission_required = ('customers.delete_customer', )
 
 
 
 
-def RaceUpdate(req):
-    if req.method == 'POST' and req.POST.get('update'):
-        race_instance = Race.objects.get(pk=req.POST['pk'])
-        form = RaceForm(instance=race_instance)
-        return render(request=req, template_name='Avtoregion/race_form.html',
-                      context={'form': form, 'pk': req.POST['pk']})
-    elif req.method == 'POST' and req.POST.get('add'):
-        race_instance = Race.objects.get(pk=req.POST['pk'])
-        form = RaceForm(req.POST, instance=race_instance)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('Race'))
 
 
 # class RaceUpdate(UpdateView):

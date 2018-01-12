@@ -1,4 +1,21 @@
 {% extends "index.html" %}
+{% block datetime %}
+	<ul class="nav navbar-nav navbar-form navbar-right">
+		<li>
+			<div class="input-group date" id="datetimepicker">
+				<form id="push_date" action="" method="get">
+					<input id="date_from" type="date" class="form-control" name="input_date_from"/>
+					<input id="date_to" type="date" class="form-control" name="input_date_to"/>
+					<input type="submit" class="button btn-success" value="push"/>
+				</form>
+				<script type="text/javascript">
+            document.getElementById('date_from').valueAsDate = new Date();
+            document.getElementById('date_to').valueAsDate = new Date();
+				</script>
+			</div>
+		</li>
+	</ul>
+{% endblock %}
 {% block content %}
 <div class="container-fluid">
  {% if qRace%}

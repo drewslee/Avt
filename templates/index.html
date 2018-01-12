@@ -23,8 +23,51 @@
     {% endblock %}
     </body>
 {% else %}
-	{% include 'navbar.html' %}
     <body>
+    <nav class="navbar navbar-inverse">
+	    <div class="container-fluid">
+		    <ul class="nav navbar-nav">
+			    <li class="dropdown">
+				    <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'Race' %}">Рейсы<span class="caret"></span></a>
+				    <ul class="dropdown-menu">
+					    <li><a href="{% url 'RaceAll' %}">Все рейсы</a></li>
+					    <li><a href="{% url 'Race' %}">Текущие рейсы</a></li>
+					    <li><a href="{% url 'RaceCreate' %}">Добавить Рейсы</a></li>
+				    </ul>
+			    </li>
+			    <li class="dropdown">
+				    <a class="dropdown-toggle" href="index.html" data-toggle="dropdown">Справочники<span class="caret"></span></a>
+				    <ul class="dropdown-menu">
+					    <li><a href="{% url 'Car' %}">Машины</a></li>
+					    <li><a href="{% url 'Driver' %}">Водители</a></li>
+					    <li><a href="{% url 'Supplier' %}">Поставщики</a></li>
+					    <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
+					    <li><a href="{% url 'Product' %}">Груз</a></li>
+					    <li><a href="{% url 'Trailer' %}">Прицепы</a></li>
+					    <li><a href="{% url 'Mediator' %}">Посредники</a></li>
+					    <li><a href="{% url 'Shipment' %}">Место разгрузки</a></li>
+				    </ul>
+			    </li>
+			    <li class="dropdown">
+				    <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
+				    <ul class="dropdown-menu">
+					    <li><a href="/Supplier/accumulate/">Реестр по поставщику</a></li>
+					    <li><a href="/Customer/accumulate">Реестр по покупателю</a></li>
+					    <li><a href="/Driver/accumulate">Реестр по водителю</a></li>
+					    <li><a href="/Car/accumulate">Реестр по автомобилю</a></li>
+					    <li><a href="/Mediator/accumulate">Реестр по посреднику</a></li>
+				    </ul>
+			    </li>
+			    <li class="navbar-text">{{ user }}</li>
+			    <li><a class="navbar-link" href="{% url 'logout' %}">Выход</a></li>
+		    </ul>
+		    {% block datetime %}
+		    {% endblock %}
+	    </div>
+	    <script type="text/javascript">
+          $('.dropdown-toggle').dropdown();
+	    </script>
+    </nav>
 		{% block content %}
 		{% endblock %}
     </body>
