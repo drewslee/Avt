@@ -143,7 +143,7 @@ class Race(models.Model):
         return '%s' % self.name_race
 
     def get_absolute_url(self):
-        return reverse('Race', kwargs={'pk': self.pk})
+        return reverse('RaceUpdate', kwargs={'pk': self.pk})
 
  #   @property
  #   def get_sum_weight(self):

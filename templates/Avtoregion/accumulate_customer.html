@@ -15,8 +15,9 @@
 			 <option value="{{ field.id_customer }}">{{ field.name }}</option>
 		 {% endfor %}
 	 </select>
+ <p>
 	 <label>Фракция</label>
-   <select name="product">
+   <select multiple name="product" class="selector-chooseall">
 	   {% for field in q_prod %}
 		   <option value="{{ field.name }}">{{ field.name }}</option>
 	   {% endfor %}

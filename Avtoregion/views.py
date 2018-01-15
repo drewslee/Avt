@@ -62,7 +62,6 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
 
 class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
-    success_url = reverse_lazy('RaceUpdate')
     form_class = RaceForm
     success_message = "Рейс %(name_race)s обновлён успешно"
     permission_required = ('races.update_race',)
@@ -289,7 +288,7 @@ def accumulate_sup(req):
         fields.remove('weight_unload')
         q_resp = Race.objects.filter(supplier__id_supplier__exact=req.POST.get('supplier'),
                                      race_date__range=[req.POST.get('from'), req.POST.get('to')],
-                                     product__name__exact=req.POST.get('product')).values(*fields)
+                                     product__name__exact=req.POST.get('product'), weight_load__gt=0).values(*fields)
         q_weight = q_resp.aggregate(Sum('weight_load'))
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
@@ -312,17 +311,23 @@ def accumulate_cus(req):
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
+        print(req.POST)
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
+        if req.POST.get('product') is not None:
+            product = req.POST['product']
+        else:
+            product = 'any'
         q_resp = Race.objects.filter(customer__id_customer__exact=req.POST.get('customer'),
                                      race_date__range=[req.POST.get('from'), req.POST.get('to')],
-                                     product__name__exact=req.POST.get('product')).values(*fields)
-        q_weight = q_resp.aggregate(Sum('weight_unload'))
-        print(q_weight)
+                                     product__name__in=[product],
+                                     weight_unload__gt=0).values(*fields)
+        q_resp = q_resp.order_by('product')
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
-
+        q_weight = q_resp.aggregate(Sum('weight_unload'))
+        #something.objects.filter(Q(field=value1) | Q(field=value2) | Q(field=value3))
         return render(request=req, template_name='Avtoregion/account.html',
                       context={'q_resp': q_resp, 'q_weight': q_weight})
 
