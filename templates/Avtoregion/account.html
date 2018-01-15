@@ -2,10 +2,12 @@
 {% load bootstrap3 %}
 {% block content %}
     <script type="text/javascript">
-    var tab = document.getElementById('tab');
-    var tdArr = tab.getElementsByTagName('td');
-    console.log(tdArr.length);
-    console.log(tdArr.values());
+    $(function() {
+        var tab = document.getElementById('tab');
+        var tdArr = tab.getElementsByTagName('td');
+        console.log(tdArr.length);
+        console.log(tdArr.item(3));
+    });
     </script>
  <div class="container">
  <table id="tab" class="table table-hover">
