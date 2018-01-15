@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.utils import timezone
+from django.db.models import Q
 from .models import Car
 from .models import Driver
 from .models import Customer
@@ -286,13 +287,20 @@ def accumulate_sup(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        q_resp = Race.objects.filter(supplier__id_supplier__exact=req.POST.get('supplier'),
-                                     race_date__range=[req.POST.get('from'), req.POST.get('to')],
-                                     product__name__exact=req.POST.get('product'), weight_load__gt=0).values(*fields)
-        q_weight = q_resp.aggregate(Sum('weight_load'))
+        query = Q(supplier__id_supplier=req.POST.get('supplier'),
+                  race_date__range=[req.POST.get('from'), req.POST.get('to')]
+                  )
+        if req.POST.get('product') is not None:
+            prod = req.POST.getlist('product')
+            for v in prod:
+                query.add(Q(product__name=v), Q.OR)
+            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0).values(*fields)
+        else:
+            q_resp = Race.objects.filter(query).filter(weight_load__gt=0).values(*fields)
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
+        q_weight = q_resp.aggregate(Sum('weight_load'))
 
         return render(request=req, template_name='Avtoregion/account.html',
                       context={'q_resp': q_resp, 'q_weight': q_weight})
@@ -311,23 +319,23 @@ def accumulate_cus(req):
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
-        print(req.POST)
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_load')
+        query = Q(customer__id_customer__exact=req.POST.get('customer'),
+                  race_date__range=[req.POST.get('from'), req.POST.get('to')]
+                  )
         if req.POST.get('product') is not None:
-            product = req.POST['product']
+            prod = req.POST.getlist('product')
+            for v in prod:
+                query.add(Q(product__name=v), Q.OR)
+            q_resp = Race.objects.filter(query).order_by('product').filter(weight_unload__gt=0).values(*fields)
         else:
-            product = 'any'
-        q_resp = Race.objects.filter(customer__id_customer__exact=req.POST.get('customer'),
-                                     race_date__range=[req.POST.get('from'), req.POST.get('to')],
-                                     product__name__in=[product],
-                                     weight_unload__gt=0).values(*fields)
-        q_resp = q_resp.order_by('product')
+            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0).values(*fields)
+
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
         q_weight = q_resp.aggregate(Sum('weight_unload'))
-        #something.objects.filter(Q(field=value1) | Q(field=value2) | Q(field=value3))
         return render(request=req, template_name='Avtoregion/account.html',
                       context={'q_resp': q_resp, 'q_weight': q_weight})
 
@@ -351,3 +359,7 @@ def accumulate_driver(req):
         q_resp = Race.objects.filter(driver__name__exact=req.POST.get('radio'),
                                      race_date__range=[req.POST.get('from'), req.POST.get('to')])
         return render(request=req, template_name='Avtoregion/account_driver.html', context={'q_resp': q_resp})
+
+
+def accumulate_mediator(req):
+    pass

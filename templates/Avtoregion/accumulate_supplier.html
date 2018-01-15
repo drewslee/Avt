@@ -16,7 +16,7 @@
 		 {% endfor %}
 	 </select>
 	 <label>Фракция</label>
-   <select name="product">
+   <select multiple ="product">
 	   {% for field in q_prod %}
 		   <option value="{{ field.name }}">{{ field.name }}</option>
 	   {% endfor %}

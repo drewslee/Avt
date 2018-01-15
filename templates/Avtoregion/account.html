@@ -1,8 +1,14 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
+    <script type="text/javascript">
+    var tab = document.getElementById('tab');
+    var tdArr = tab.getElementsByTagName('td');
+    console.log(tdArr.length);
+    console.log(tdArr.values());
+    </script>
  <div class="container">
- <table class="table table-hover">
+ <table id="tab" class="table table-hover">
  <thead>
 	<th>Дата</th>
     <th>Номер машины</th>
