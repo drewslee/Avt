@@ -3,6 +3,7 @@
 {% block content %}
     <script type="text/javascript">
     $(function() {
+        var arr = $('tbody>tr>td:nth-child(' + ($('thead>tr>td:contains("' + colName + '")')[0].cellIndex+1) + ')').map(function(){return $(this).text();});
         var tab = document.getElementById('tab');
         var tdArr = tab.getElementsByTagName('td');
         console.log(tdArr.length);
@@ -40,11 +41,6 @@
  {% if q_weight.weight_load__sum %}
      {{ q_weight.weight_load__sum }}
  {% endif %}
-<form action="" method="post">
-    {% csrf_token %}
-    {% buttons %}
-        <button class="btn btn-success"> {% bootstrap_icon "star" %} В xls</button>
-    {% endbuttons %}
-</form>
+        <a href="/{{ filename }}" download><span class="glyphicon glyphicon-book"></span>В xls</a>
  </div>
 {% endblock %}

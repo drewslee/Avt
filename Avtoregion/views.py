@@ -29,7 +29,8 @@ from .forms import TrailerForm
 from .forms import MediatorForm
 from .forms import ShipmentForm
 from django.db.models import Sum
-
+import xlwt, os
+from django.conf import settings as djangoSettings
 
 class RaceAllList(LoginRequiredMixin, ListView):
     model = Race
@@ -297,13 +298,50 @@ def accumulate_sup(req):
             q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0).values(*fields)
         else:
             q_resp = Race.objects.filter(query).filter(weight_load__gt=0).values(*fields)
+        sum_products = []
         for obj in q_resp:
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
+            sum_products.append([obj.get('product'), obj.get('weight_load')])
+        i = 0
+        while True:
+            try:
+                if sum_products[i][0] == sum_products[i + 1][0]:
+                    sum_products[i][1] += sum_products[i + 1][1]
+                    del sum_products[i + 1]
+                else:
+                    i += 1
+            except IndexError:
+                break
         q_weight = q_resp.aggregate(Sum('weight_load'))
 
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('List1')
+
+        # Sheet header, first row
+        row_num = 0
+
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+
+        columns = ['Дата', 'Номер машины', 'Вес', 'Фракция', ]
+
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
+
+        # Sheet body, remaining rows
+        font_style = xlwt.XFStyle()
+
+        rows = q_resp.values_list('race_date', 'car', 'weight_load', 'product')
+        for row in rows:
+            row_num += 1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+        filename = 'supplier.xls'
+        path_for_save = os.path.join(djangoSettings.BASE_DIR, 'Avtoregion', filename)
+        wb.save(filename_or_stream=path_for_save)
         return render(request=req, template_name='Avtoregion/account.html',
-                      context={'q_resp': q_resp, 'q_weight': q_weight})
+                      context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
 
 
 class Accumulate(LoginRequiredMixin, ListView):
