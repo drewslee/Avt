@@ -314,32 +314,8 @@ def accumulate_sup(req):
             except IndexError:
                 break
         q_weight = q_resp.aggregate(Sum('weight_load'))
+        filename = save_excel('supplier.xls', )
 
-        wb = xlwt.Workbook(encoding='utf-8')
-        ws = wb.add_sheet('List1')
-
-        # Sheet header, first row
-        row_num = 0
-
-        font_style = xlwt.XFStyle()
-        font_style.font.bold = True
-
-        columns = ['Дата', 'Номер машины', 'Вес', 'Фракция', ]
-
-        for col_num in range(len(columns)):
-            ws.write(row_num, col_num, columns[col_num], font_style)
-
-        # Sheet body, remaining rows
-        font_style = xlwt.XFStyle()
-
-        rows = q_resp.values_list('race_date', 'car', 'weight_load', 'product')
-        for row in rows:
-            row_num += 1
-            for col_num in range(len(row)):
-                ws.write(row_num, col_num, row[col_num], font_style)
-        filename = 'supplier.xls'
-        path_for_save = os.path.join(djangoSettings.BASE_DIR, 'Avtoregion', filename)
-        wb.save(filename_or_stream=path_for_save)
         return render(request=req, template_name='Avtoregion/account.html',
                       context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
 
@@ -401,3 +377,31 @@ def accumulate_driver(req):
 
 def accumulate_mediator(req):
     pass
+
+
+def save_excel(filename, values_list, *col):
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('List1')
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+
+    for col_num in range(len(col)):
+        ws.write(row_num, col_num, col[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    rows = values_list('race_date', 'car_id__number', 'weight_load', 'product_id__name')
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', filename)
+    wb.save(filename_or_stream=path_for_save)
+    return filename
