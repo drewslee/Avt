@@ -288,6 +288,7 @@ def accumulate_sup(req):
     if req.method == 'POST':
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
+        fields_list = ['race_date', 'car__number', 'weight_load', 'product__name']
         query = Q(supplier__id_supplier=req.POST.get('supplier'),
                   race_date__range=[req.POST.get('from'), req.POST.get('to')]
                   )
@@ -314,7 +315,7 @@ def accumulate_sup(req):
             except IndexError:
                 break
         q_weight = q_resp.aggregate(Sum('weight_load'))
-        filename = save_excel('supplier.xls', )
+        filename = save_excel('supplier.xls', q_resp.values_list(*fields_list), ['Дата', 'Номер', 'Вес', 'Фракция'])
 
         return render(request=req, template_name='Avtoregion/account.html',
                       context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
@@ -379,7 +380,7 @@ def accumulate_mediator(req):
     pass
 
 
-def save_excel(filename, values_list, *col):
+def save_excel(filename, values_list, col):
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('List1')
@@ -389,6 +390,7 @@ def save_excel(filename, values_list, *col):
 
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
+    font_style.font.name = 'Times New Roman'
 
 
     for col_num in range(len(col)):
@@ -396,9 +398,9 @@ def save_excel(filename, values_list, *col):
 
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
+    font_style.font.name = 'Times New Roman'
 
-    rows = values_list('race_date', 'car_id__number', 'weight_load', 'product_id__name')
-    for row in rows:
+    for row in values_list:
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
