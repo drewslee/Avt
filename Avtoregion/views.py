@@ -290,7 +290,7 @@ def accumulate_sup(req):
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
         fields_list = ['race_date', 'car__number', 'weight_load', 'product__name']
-        query = Q(supplier__id_supplier=req.POST.get('supplier'),
+        query = Q(supplier__id_supplier__exact=req.POST.get('supplier'),
                   race_date__range=[start_date, end_date]
                   )
         if req.POST.get('product') is not None:
@@ -407,13 +407,10 @@ def save_excel(filename, values_list, col):
     font_style.font.name = 'Times New Roman'
     print(values_list)
     for row in values_list:
-        if isinstance(row, timezone.datetime):
-            row = str(row)
         row_num += 1
         for col_num in range(len(row)):
-            ws.write(row_num, col_num, row[col_num], font_style)
-    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
-    print(path_for_save)
+            ws.write(row_num, col_num, str(row[col_num]), font_style)
+    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', filename)
     wb.save(filename_or_stream=path_for_save)
     return filename
 
