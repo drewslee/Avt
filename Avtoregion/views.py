@@ -286,11 +286,12 @@ def accumulate_sup(req):
         return render(request=req, template_name='Avtoregion/accumulate_supplier.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
+        start_date, end_date = date_to_str(req.POST['daterange'])
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
         fields_list = ['race_date', 'car__number', 'weight_load', 'product__name']
         query = Q(supplier__id_supplier=req.POST.get('supplier'),
-                  race_date__range=[req.POST.get('from'), req.POST.get('to')]
+                  race_date__range=[start_date, end_date]
                   )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
@@ -315,7 +316,7 @@ def accumulate_sup(req):
             except IndexError:
                 break
         q_weight = q_resp.aggregate(Sum('weight_load'))
-        filename = save_excel('supplier.xls', q_resp.values_list(*fields_list), ['Дата', 'Номер', 'Вес', 'Фракция'])
+        filename = save_excel('supplier', q_resp.values_list(*fields_list), ['Дата', 'Номер', 'Вес', 'Фракция'])
 
         return render(request=req, template_name='Avtoregion/account.html',
                       context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
@@ -334,10 +335,12 @@ def accumulate_cus(req):
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
+        start_date, end_date = date_to_str(req.POST['daterange'])
         fields = [field.name for field in Race._meta.fields]
+        fields_list = ['race_date', 'car__number', 'weight_unload', 'product__name']
         fields.remove('weight_load')
         query = Q(customer__id_customer__exact=req.POST.get('customer'),
-                  race_date__range=[req.POST.get('from'), req.POST.get('to')]
+                  race_date__range=[start_date, end_date]
                   )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
@@ -351,8 +354,9 @@ def accumulate_cus(req):
             obj['car'] = Car.objects.get(id_car=obj.get('car')).number
             obj['product'] = Product.objects.get(id_product=obj.get('product')).name
         q_weight = q_resp.aggregate(Sum('weight_unload'))
+        filename = save_excel('customer', q_resp.values_list(*fields_list), ['Дата', 'Номер', 'Вес', 'Фракция'])
         return render(request=req, template_name='Avtoregion/account.html',
-                      context={'q_resp': q_resp, 'q_weight': q_weight})
+                      context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
 
 
 def accumulate_car(req):
@@ -382,6 +386,8 @@ def accumulate_mediator(req):
 
 def save_excel(filename, values_list, col):
 
+    filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xls'
+
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('List1')
 
@@ -399,11 +405,18 @@ def save_excel(filename, values_list, col):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
     font_style.font.name = 'Times New Roman'
-
+    print(values_list)
     for row in values_list:
+        if isinstance(row, timezone.datetime):
+            row = str(row)
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
-    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', filename)
+    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
+    print(path_for_save)
     wb.save(filename_or_stream=path_for_save)
     return filename
+
+
+def date_to_str(date):
+    return date.split(' - ')

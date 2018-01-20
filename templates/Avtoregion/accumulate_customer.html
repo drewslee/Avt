@@ -2,45 +2,79 @@
 {% load bootstrap3 %}
 {% load static %}
 {% block content %}
-<link rel="stylesheet" href="{% static "css/jquery.multiselect.css" %}">
 <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
-<script type="text/javascript" src="{% static "js/jquery.multiselect.js" %}"></script>
+<link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
 <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
+<script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
 <script type="text/javascript">
 $(function () {
-    $('input[name="daterange"]').daterangepicker();
-    $('select[multiple]').multiselect({
-		    texts: { placeholder: 'Выберите фракцию'},
+    $('input[name="daterange"]').daterangepicker({
+        "autoApply": true,
+        "alwaysShowCalendars": false,
+        ranges:{
+           'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
+           'Прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        locale: {
+        "fromLabel": "C",
+        "toLabel": "По",
+       "monthNames": [
+            "Январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь"
+        ],
+      customRangeLabel: 'Свой диапазон',
+      format: 'YYYY-MM-DD',
+      "firstDay": 1,
+      "weekLabel": "Неделя",
+        "daysOfWeek": [
+            "Вс",
+            "Пн",
+            "Вт",
+            "Ср",
+            "Чт",
+            "Пт",
+            "Сб"
+        ]
+
+    }
+    });
+    $('select[multiple]').chosen({
+        placeholder_text_multiple:'Выберите фракцию',
+        width: "25%"
+    });
+    $('select[name="customer"]').chosen({
+        placeholder_text_single: 'Выберите организацию',
+
     });
 });
 </script>
 <div class="container-fluid">
-		<div class="row">
-        <p action="" method="post">
+  <form action="" method="post">
 	        {% csrf_token %}
-        <div class="col-sm-4">
           <input name="daterange" type="text"/>
-        </div>
-        <div class="col-sm-2">
-	        <select name="customer">
+	      <select name="customer">
 						 {% for field in qset %}
 							 <option value="{{ field.id_customer }}">{{ field.name }}</option>
 						 {% endfor %}
-	        </select>
-        </div>
-        <div class="col-sm-3">
+	      </select>
           <select multiple name="product">
 	        {% for field in q_prod %}
 		          <option value="{{ field.name }}">{{ field.name }}</option>
 	        {% endfor %}
           </select>
-        </div>
 	        {% buttons %}
               <button class="btn btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
 	        {% endbuttons %}
-        </div>
-				</form>
-
-		</div>
- </div>
+  </form>
+</div>
 {% endblock %}

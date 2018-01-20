@@ -1,21 +1,73 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
+{% load static %}
 {% block content %}
- <div class="container table-responsive">
+    <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
+    <link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
+    <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('input[name="daterange"]').daterangepicker({
+                "autoApply": true,
+                "alwaysShowCalendars": true,
+                ranges:{
+                    'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
+                    'Прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                locale: {
+                    "fromLabel": "C",
+                    "toLabel": "По",
+                    "monthNames": [
+                        "Январь",
+                        "Февраль",
+                        "Март",
+                        "Апрель",
+                        "Май",
+                        "Июнь",
+                        "Июль",
+                        "Август",
+                        "Сентябрь",
+                        "Октябрь",
+                        "Ноябрь",
+                        "Декабрь"
+                    ],
+                    customRangeLabel: 'Свой диапазон',
+                    format: 'YYYY-MM-DD',
+                    "firstDay": 1,
+                    "weekLabel": "Неделя",
+                    "daysOfWeek": [
+                        "Вс",
+                        "Пн",
+                        "Вт",
+                        "Ср",
+                        "Чт",
+                        "Пт",
+                        "Сб"
+                    ]
+
+                }
+            });
+            $('select[multiple]').chosen({
+                placeholder_text_multiple:'Выберите фракцию',
+                width: "25%"
+            });
+            $('select[name="supplier"]').chosen({
+                placeholder_text_single: 'Выберите организацию',
+
+            });
+        });
+    </script>
+ <div class="container-fluid">
 
  <form action="" method="post">
     {% csrf_token %}
- <label>С:</label>
- <input name="from" type="date"/>
- <label>По:</label>
- <input name="to" type="date"/><br>
- <label>Поставщик</label>
-	 <select name="supplier">
+ <input name="daterange" type="text"/>
+ <select name="supplier">
 		 {% for field in qset %}
 			 <option value="{{ field.id_supplier}}">{{ field.name }}</option>
 		 {% endfor %}
-	 </select>
-	 <label>Фракция</label>
+ </select>
    <select multiple ="product">
 	   {% for field in q_prod %}
 		   <option value="{{ field.name }}">{{ field.name }}</option>
