@@ -1,6 +1,7 @@
 {% extends "index.html" %}
 {% block content %}
  <div class="container">
+ <div class="table-responsive">
  {% if qMediator %}
 	 <table class="table table-hover">
 		 <thead>
@@ -13,7 +14,7 @@
 			{{ q.address}}
 		 </td>
          <td>
-            {{ q.inn|default_if_none:"Неопределен"}}
+            {{ q.inn|default_if_none:"Не назначен"}}
          </td>
 		    <td>
 			    <form action="update{{ q.pk }}" method="get">
@@ -30,11 +31,11 @@
 		 </tbody>
 	 </table>
  {% endif %}
-
- <form action="" method="post">
+ </div>
+ <form action="add" method="post">
     {% csrf_token %}
     {{ form.as_table }}
-    <button name="add" class="btn btn-success">Добавить</button>
+    <button class="btn btn-success">Добавить</button>
 </form>
  </div>
 {% endblock %}

@@ -1,8 +1,16 @@
 {% extends "index.html" %}
+{% load static %}
 {% block content %}
+<link rel="stylesheet" href="{% static "css/datatables.min.css" %}">
+<script type="text/javascript" src="{% static "js/datatables.min.js" %}"></script>
+<script type="text/javascript">
+$(function () {
+    $("#race").DataTable();
+});
+</script>
 <div class="container-fluid">
  {% if qRace%}
-	 <table class="table table-hover table-condensed table-responsive">
+	 <table id="race" class="table table-hover table-condensed table-responsive">
 		 <thead>
        <th>Дата</th>
 			 <th>Номер рейса</th>

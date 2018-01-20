@@ -37,24 +37,24 @@
 			    <li class="dropdown">
 				    <a class="dropdown-toggle" href="index.html" data-toggle="dropdown">Справочники<span class="caret"></span></a>
 				    <ul class="dropdown-menu">
-					    <li><a href="{% url 'Car' %}">Машины</a></li>
-					    <li><a href="{% url 'Driver' %}">Водители</a></li>
-					    <li><a href="{% url 'Supplier' %}">Поставщики</a></li>
+					    <li><a href="{% url 'CarList' %}">Машины</a></li>
+					    <li><a href="{% url 'DriverList' %}">Водители</a></li>
+					    <li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
 					    <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
-					    <li><a href="{% url 'Product' %}">Груз</a></li>
-					    <li><a href="{% url 'Trailer' %}">Прицепы</a></li>
-					    <li><a href="{% url 'Mediator' %}">Посредники</a></li>
-					    <li><a href="{% url 'Shipment' %}">Место разгрузки</a></li>
+					    <li><a href="{% url 'ProductList' %}">Груз</a></li>
+					    <li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
+					    <li><a href="{% url 'MediatorList' %}">Посредники</a></li>
+					    <li><a href="{% url 'ShipmentList' %}">Место разгрузки</a></li>
 				    </ul>
 			    </li>
 			    <li class="dropdown">
 				    <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
 				    <ul class="dropdown-menu">
-					    <li><a href="/Supplier/accumulate/">Реестр по поставщику</a></li>
-					    <li><a href="/Customer/accumulate">Реестр по покупателю</a></li>
-					    <li><a href="/Driver/accumulate">Реестр по водителю</a></li>
-					    <li><a href="/Car/accumulate">Реестр по автомобилю</a></li>
-					    <li><a href="/Mediator/accumulate">Реестр по посреднику</a></li>
+					    <li><a href="{% url 'SupplierAcc' %}">Реестр по поставщику</a></li>
+					    <li><a href="{% url 'CustomerAcc' %}">Реестр по покупателю</a></li>
+					    <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
+					    <li><a href="{% url 'CarAcc' %}">Реестр по автомобилю</a></li>
+					    <!--<li><a href="banned">Реестр по посреднику</a></li>-->
 				    </ul>
 			    </li>
 			    <li class="navbar-text">{{ user }}</li>

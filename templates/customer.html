@@ -1,6 +1,7 @@
 {% extends "index.html" %}
 {% block content %}
  <div class="container">
+ <div class="table-responsive col-lg-8">
  {% if qCustomer %}
 	 <table class="table table-hover">
 		 <thead>
@@ -14,28 +15,31 @@
 			{{ q.name }}
 		 </td>
          <td>
-            {{ q.inn}}
+            {{ q.inn|default_if_none:'Не назначен'}}
          </td>
-		    <td>
+		    <td><div class="form-group">
 			    <form action="update{{ q.pk }}" method="get">
-				    <button class="btn btn-info">Изменить</button>
+				    <button class="btn btn-info form-control">Изменить</button>
 			    </form>
+            </div>
 		    </td>
 		    <td>
+                <div class="form-group">
 			    <form action="delete{{ q.pk }}" method="get">
-				    <button class="btn btn-danger">Удалить</button>
+				    <button class="btn btn-danger form-control">Удалить</button>
 			    </form>
+                </div>
 		    </td>
 	    </tr>
 	 {% endfor %}
 		 </tbody>
 	 </table>
  {% endif %}
-
- <form action="add" method="post">
-    {% csrf_token %}
-    {{ form.as_table }}
-    <button class="btn btn-success">Добавить</button>
-</form>
+     <form action="add" method="post">
+        {% csrf_token %}
+        {{ form.as_table }}
+        <button class="btn btn-success">Добавить</button>
+     </form>
  </div>
+</div>
 {% endblock %}

@@ -1,8 +1,9 @@
 {% extends "index.html" %}
 {% load verbose_names %}
 {% block content %}
- <div class="container">
+ <div class="container col-lg-4 col-lg-offset-4">
  {% if qSupplier %}
+     <div class="table-responsive">
 	 <table class="table table-hover">
 		 <thead>
 		 <th>
@@ -11,6 +12,9 @@
 		 <th>
 			 ИНН
 		 </th>
+         <th>
+             Действия
+         </th>
 		 </thead>
 		 <tbody>
 	 {% for q in qSupplier %}
@@ -24,12 +28,12 @@
 		 <div class="form-group">
 			 <td>
 				 <form action="update{{ q.pk }}" method="get">
-					 <button class="btn btn-info">Изменить</button>
+					 <button class="btn btn-info form-control">Изменить</button>
 				 </form>
 			 </td>
 			 <td>
 				 <form action="delete{{ q.pk }}" method="get">
-					 <button class="btn btn-danger">Удалить</button>
+					 <button class="btn btn-danger form-control">Удалить</button>
 				 </form>
 			 </td>
 	    </div>
@@ -37,12 +41,13 @@
 	 {% endfor %}
 		 </tbody>
 	 </table>
+     </div>
  {% endif %}
 
- <form action="" method="post">
+ <form action="add" method="post">
     {% csrf_token %}
     {{ form.as_table }}
-    <button name="add" class="btn btn-success">Добавить</button>
+    <button class="btn btn-success">Добавить</button>
 </form>
  </div>
 {% endblock %}

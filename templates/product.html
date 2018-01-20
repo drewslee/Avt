@@ -1,10 +1,12 @@
 {% extends "index.html" %}
 {% block content %}
- <div class="container">
+ <div class="container col-lg-3 col-lg-offset-4">
  {% if qProduct %}
+     <div class="table-responsive">
 	 <table class="table table-hover">
 		 <thead>
-		    <th>Товар</th>
+		    <th>Фракция</th>
+            <th>Действия</th>
 		 </thead>
 		 <tbody>
 	 {% for q in qProduct %}
@@ -12,26 +14,29 @@
 		 <td>
 			{{ q.name }}
 		 </td>
+            <div class="form-group">
 		    <td>
 			    <form action="update{{ q.pk }}" method="get">
-				    <button class="btn btn-info">Изменить</button>
+				    <button class="btn btn-info form-control">Изменить</button>
 			    </form>
 		    </td>
 		    <td>
 			    <form action="delete{{ q.pk }}" method="get">
-				    <button class="btn btn-danger">Удалить</button>
+				    <button class="btn btn-danger form-control">Удалить</button>
 			    </form>
 		    </td>
+            </div>
 	    </tr>
      </tbody>
 	 {% endfor %}
 	 </table>
+     </div>
  {% endif %}
 
- <form action="" method="post">
+ <form action="add" method="post">
     {% csrf_token %}
     {{ form.as_table }}
-    <button name="add" class="btn btn-success">Добавить</button>
+    <button class="btn btn-success">Добавить</button>
 </form>
  </div>
 {% endblock %}

@@ -32,6 +32,7 @@ from django.db.models import Sum
 import xlwt, os
 from django.conf import settings as djangoSettings
 
+
 class RaceAllList(LoginRequiredMixin, ListView):
     model = Race
     template_name = 'race.html'
@@ -168,82 +169,131 @@ class MediatorViewList(LoginRequiredMixin, ListView):
         return context
 
 
+class DriverAdd(PermissionRequiredMixin, CreateView):
+    model = Driver
+    success_url = reverse_lazy('DriverList')
+    form_class = DriverForm
+    permission_required = ('drivers.add_driver',)
+
+
 class DriverUpdate(PermissionRequiredMixin, UpdateView):
     model = Driver
-    success_url = reverse_lazy('DriverUpdate')
+    success_url = reverse_lazy('DriverList')
     form_class = DriverForm
     permission_required = ('drivers.update_driver',)
 
 
 class DriverDelete(PermissionRequiredMixin, DeleteView):
     model = Driver
-    success_url = reverse_lazy('Driver')
+    success_url = reverse_lazy('DriverList')
     permission_required = ('drivers.delete_driver',)
+
+
+class SupplierAdd(PermissionRequiredMixin, CreateView):
+    model = Supplier
+    success_url = reverse_lazy('SupplierList')
+    form_class = SupplierForm
+    permission_required = ('suppliers.add_supplier',)
 
 
 class SupplierUpdate(PermissionRequiredMixin, UpdateView):
     model = Supplier
-    success_url = reverse_lazy('SupplierUpdate')
+    success_url = reverse_lazy('SupplierList')
     form_class = SupplierForm
     permission_required = ('suppliers.update_supplier',)
 
 
 class SupplierDelete(PermissionRequiredMixin, DeleteView):
     model = Supplier
-    success_url = reverse_lazy('Supplier')
+    success_url = reverse_lazy('SupplierList')
     permission_required = ('suppliers.delete_supplier',)
+
+
+class CarAdd(PermissionRequiredMixin, CreateView):
+    model = Car
+    success_url = reverse_lazy('CarList')
+    form_class = CarForm
+    permission_required = ('cars.add_car',)
 
 
 class CarUpdate(PermissionRequiredMixin, UpdateView):
     model = Car
-    success_url = reverse_lazy('CarUpdate')
+    success_url = reverse_lazy('CarList')
     form_class = CarForm
     permission_required = ('cars.update_car',)
 
 
 class CarDelete(PermissionRequiredMixin, DeleteView):
     model = Car
-    success_url = reverse_lazy('Car')
+    success_url = reverse_lazy('CarList')
     permission_required = ('cars.delete_cars',)
+
+
+class ProductAdd(PermissionRequiredMixin, CreateView):
+    model = Product
+    success_url = reverse_lazy('ProductList')
+    form_class = ProductForm
+    permission_required = ('products.add_product',)
 
 
 class ProductUpdate(PermissionRequiredMixin, UpdateView):
     model = Product
-    success_url = reverse_lazy('ProductUpdate')
+    success_url = reverse_lazy('ProductList')
     form_class = ProductForm
     permission_required = ('products.update_product',)
 
 
 class ProductDelete(PermissionRequiredMixin, DeleteView):
     model = Product
-    success_url = reverse_lazy('Product')
+    success_url = reverse_lazy('ProductList')
     permission_required = ('products.delete_product',)
+
+
+class TrailerAdd(PermissionRequiredMixin, CreateView):
+    model = Trailer
+    success_url = reverse_lazy('TrailerList')
+    form_class = TrailerForm
+    permission_required = ('trailers.add_trailer',)
 
 
 class TrailerUpdate(PermissionRequiredMixin, UpdateView):
     model = Trailer
-    success_url = reverse_lazy('TrailerUpdate')
+    success_url = reverse_lazy('TrailerList')
     form_class = TrailerForm
     permission_required = ('trailers.update_trailer',)
 
 
 class TrailerDelete(PermissionRequiredMixin, DeleteView):
     model = Trailer
-    success_url = reverse_lazy('Trailer')
+    success_url = reverse_lazy('TrailerList')
     permission_required = ('trailers.delete_trailer',)
+
+
+class ShipmentAdd(PermissionRequiredMixin, CreateView):
+    model = Shipment
+    success_url = reverse_lazy('ShipmentList')
+    form_class = ShipmentForm
+    permission_required = ('shipments.add_shipment',)
 
 
 class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     model = Shipment
-    success_url = reverse_lazy('ShipmentUpdate')
+    success_url = reverse_lazy('ShipmentList')
     form_class = ShipmentForm
     permission_required = ('shipments.update_shipment',)
 
 
 class ShipmentDelete(PermissionRequiredMixin, DeleteView):
     model = Shipment
-    success_url = reverse_lazy('Shipment')
+    success_url = reverse_lazy('ShipmentList')
     permission_required = ('shipments.delete_shipment',)
+
+
+class MediatorAdd(PermissionRequiredMixin, CreateView):
+    model = Mediator
+    success_url = reverse_lazy('MediatorList')
+    form_class = MediatorForm
+    permission_required = ('mediators.add_mediator',)
 
 
 class MediatorUpdate(PermissionRequiredMixin, UpdateView):
@@ -262,7 +312,7 @@ class MediatorDelete(PermissionRequiredMixin, DeleteView):
 class CustomerAdd(PermissionRequiredMixin, CreateView):
     model = Customer
     form_class = CustomerForm
-    success_url = reverse_lazy('CustomerAdd')
+    success_url = reverse_lazy('CustomerList')
     permission_required = ('customers.add_customer',)
 
 
@@ -364,10 +414,19 @@ def accumulate_car(req):
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
     if req.method == 'POST':
-        q_resp = Race.objects.filter(car__number__exact=req.POST.get('radio'),
-                                     race_date__range=[req.POST.get('from'), req.POST.get('to')])
+        start_date, end_date = date_to_str(req.POST['daterange'])
+        q_resp = Race.objects.filter(car__number__exact=req.POST.get('car'),
+                                     race_date__range=[start_date, end_date])
+        field_list = ['race_date', 'name_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
+                      'customer__name', 'shipment__name', 'product__name', 's_milage', 'e_milage', 'weight_load',
+                      'weight_unload', 'state']
+        col = (
+            'Дата', 'Номер рейса', 'Номер машины', 'Водитель', 'Реализация', 'Поставщик', 'Клиент', 'Место разгрузки',
+            'Товар',
+            'Начало трека', 'Конец трека', 'Загружено', 'Выгружено', 'Состояние')
+        filename = save_excel('car', q_resp.values_list(*field_list), col)
         return render(request=req, template_name='Avtoregion/account_car.html',
-                      context={'q_resp': q_resp})
+                      context={'q_resp': q_resp, 'filename': filename})
 
 
 def accumulate_driver(req):
@@ -375,9 +434,19 @@ def accumulate_driver(req):
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
     if req.method == 'POST':
-        q_resp = Race.objects.filter(driver__name__exact=req.POST.get('radio'),
-                                     race_date__range=[req.POST.get('from'), req.POST.get('to')])
-        return render(request=req, template_name='Avtoregion/account_driver.html', context={'q_resp': q_resp})
+        start_date, end_date = date_to_str(req.POST['daterange'])
+        q_resp = Race.objects.filter(driver__name__exact=req.POST.get('driver'),
+                                     race_date__range=[start_date, end_date])
+        field_list = ['race_date', 'name_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
+                      'customer__name', 'shipment__name', 'product__name', 's_milage', 'e_milage', 'weight_load',
+                      'weight_unload', 'state']
+        col = (
+            'Дата', 'Номер рейса', 'Номер машины', 'Водитель', 'Реализация', 'Поставщик', 'Клиент', 'Место разгрузки',
+            'Товар',
+            'Начало трека', 'Конец трека', 'Загружено', 'Выгружено', 'Состояние')
+        filename = save_excel('driver', q_resp.values_list(*field_list), col)
+        return render(request=req, template_name='Avtoregion/account_driver.html',
+                      context={'q_resp': q_resp, 'filename': filename})
 
 
 def accumulate_mediator(req):
@@ -385,7 +454,6 @@ def accumulate_mediator(req):
 
 
 def save_excel(filename, values_list, col):
-
     filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xls'
 
     wb = xlwt.Workbook(encoding='utf-8')
@@ -398,7 +466,6 @@ def save_excel(filename, values_list, col):
     font_style.font.bold = True
     font_style.font.name = 'Times New Roman'
 
-
     for col_num in range(len(col)):
         ws.write(row_num, col_num, col[col_num], font_style)
 
@@ -410,9 +477,9 @@ def save_excel(filename, values_list, col):
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, str(row[col_num]), font_style)
-    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', filename)
+    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
     wb.save(filename_or_stream=path_for_save)
-    return filename
+    return '/'.join(['temp', filename])
 
 
 def date_to_str(date):
