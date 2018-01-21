@@ -12,7 +12,7 @@ class Supplier(models.Model):
         return '%s' % self.name
 
     def get_absolute_url(self):
-        return reverse('Supplier', kwargs={'pk': self.pk})
+        return reverse('SupplierList', kwargs={'pk': self.pk})
 
     def __iter__(self):
         for field in self._meta.fields:
@@ -27,7 +27,7 @@ class Product(models.Model):
         return '%s' % self.name
 
     def get_absolute_url(self):
-        return reverse('Product', kwargs={'pk': self.pk})
+        return reverse('ProductList', kwargs={'pk': self.pk})
 
 
 class Shipment(models.Model):
@@ -38,7 +38,7 @@ class Shipment(models.Model):
         return '%s' % self.name
 
     def get_absolute_url(self):
-        return reverse('Shipment', kwargs={'pk': self.pk})
+        return reverse('ShipmentList', kwargs={'pk': self.pk})
 
 
 class Customer(models.Model):
@@ -50,7 +50,7 @@ class Customer(models.Model):
         return '%s' % self.name
 
     def get_absolute_url(self):
-        return reverse('Customer', kwargs={'pk': self.pk})
+        return reverse('CustomerList', kwargs={'pk': self.pk})
 
 
 class Mediator(models.Model):
@@ -62,7 +62,7 @@ class Mediator(models.Model):
         return '%s' % self.address
 
     def get_absolute_url(self):
-        return reverse('Mediator', kwargs={'pk': self.pk})
+        return reverse('MediatorList', kwargs={'pk': self.pk})
 
 
 class Driver(models.Model):
@@ -73,7 +73,7 @@ class Driver(models.Model):
         return '%s' % self.name
 
     def get_absolute_url(self):
-        return reverse('Driver', kwargs={'pk': self.pk})
+        return reverse('DriverList', kwargs={'pk': self.pk})
 
 
 class Trailer(models.Model):
@@ -84,7 +84,7 @@ class Trailer(models.Model):
         return '%s' % self.number
 
     def get_absolute_url(self):
-        return reverse('Trailer', kwargs={'pk': self.pk})
+        return reverse('TrailerList', kwargs={'pk': self.pk})
 
 
 class Car(models.Model):
@@ -98,7 +98,7 @@ class Car(models.Model):
         return '%s' % self.number
 
     def get_absolute_url(self):
-        return reverse('Car', kwargs={'pk': self.pk})
+        return reverse('CarList', kwargs={'pk': self.pk})
 
 
 class Race(models.Model):

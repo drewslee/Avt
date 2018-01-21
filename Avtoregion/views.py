@@ -188,6 +188,8 @@ class DriverDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('DriverList')
     permission_required = ('drivers.delete_driver',)
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 class SupplierAdd(PermissionRequiredMixin, CreateView):
     model = Supplier
@@ -208,6 +210,8 @@ class SupplierDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('SupplierList')
     permission_required = ('suppliers.delete_supplier',)
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 class CarAdd(PermissionRequiredMixin, CreateView):
     model = Car
@@ -227,6 +231,9 @@ class CarDelete(PermissionRequiredMixin, DeleteView):
     model = Car
     success_url = reverse_lazy('CarList')
     permission_required = ('cars.delete_cars',)
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class ProductAdd(PermissionRequiredMixin, CreateView):
@@ -248,6 +255,8 @@ class ProductDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('ProductList')
     permission_required = ('products.delete_product',)
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 class TrailerAdd(PermissionRequiredMixin, CreateView):
     model = Trailer
@@ -268,6 +277,8 @@ class TrailerDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('TrailerList')
     permission_required = ('trailers.delete_trailer',)
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 class ShipmentAdd(PermissionRequiredMixin, CreateView):
     model = Shipment
@@ -288,6 +299,8 @@ class ShipmentDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('ShipmentList')
     permission_required = ('shipments.delete_shipment',)
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 class MediatorAdd(PermissionRequiredMixin, CreateView):
     model = Mediator
@@ -308,6 +321,9 @@ class MediatorDelete(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy('Mediator')
     permission_required = ('mediators.delete_mediator',)
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
 
 class CustomerAdd(PermissionRequiredMixin, CreateView):
     model = Customer
@@ -327,6 +343,9 @@ class CustomerDelete(PermissionRequiredMixin, DeleteView):
     model = Customer
     success_url = reverse_lazy('Customer')
     permission_required = ('customers.delete_customer',)
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 def accumulate_sup(req):

@@ -25,8 +25,10 @@
 		    </td>
 		    <td>
                 <div class="form-group">
-			    <form action="delete{{ q.pk }}" method="get">
-				    <button class="btn btn-danger form-control">Удалить</button>
+                    <form action="{% url 'CustomerDelete' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="pk" value="{{ q.pk }}">
+				    <button class="btn btn-danger form-control delete-confirmation">Удалить</button>
 			    </form>
                 </div>
 		    </td>
@@ -42,4 +44,10 @@
      </form>
  </div>
 </div>
+    <script type="text/javascript">
+        $(document).on('click', '.delete-confirmation', function()
+        {
+            return confirm('Вы уверены, что хотите удалить?');
+        })
+    </script>
 {% endblock %}

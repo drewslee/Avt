@@ -21,8 +21,9 @@
 			    </form>
 		    </td>
 		    <td>
-			    <form action="delete{{ q.pk }}" method="get">
-				    <button class="btn btn-danger form-control">Удалить</button>
+			    <form action="{% url 'ProductDelete' %}" method="post">
+                    <input type="hidden" name="pk" value="{{ q.pk }}">
+				    <button class="btn btn-danger form-control delete-confirmation">Удалить</button>
 			    </form>
 		    </td>
             </div>
@@ -39,4 +40,10 @@
     <button class="btn btn-success">Добавить</button>
 </form>
  </div>
+    <script type="text/javascript">
+        $(document).on('click', '.delete-confirmation', function()
+        {
+            return confirm('Вы уверены, что хотите удалить?');
+        })
+    </script>
 {% endblock %}

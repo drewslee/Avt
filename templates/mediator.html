@@ -22,8 +22,9 @@
 			    </form>
 		    </td>
 		    <td>
-			    <form action="delete{{ q.pk }}" method="get">
-				    <button class="btn btn-danger">Удалить</button>
+			    <form action="{% url 'MediatorDelete' %}" method="post">
+                    <input type="hidden" name="pk" value="{{ q.pk }}">
+				    <button class="btn btn-danger delete-confirmation">Удалить</button>
 			    </form>
 		    </td>
 	    </tr>
@@ -38,4 +39,10 @@
     <button class="btn btn-success">Добавить</button>
 </form>
  </div>
+    <script type="text/javascript">
+        $(document).on('click', '.delete-confirmation', function()
+        {
+            return confirm('Вы уверены, что хотите удалить?');
+        })
+    </script>
 {% endblock %}
