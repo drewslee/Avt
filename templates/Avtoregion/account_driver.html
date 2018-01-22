@@ -42,7 +42,7 @@
              {{ q.customer}}
          </td>
          <td>
-             {{ q.shipment}}
+             {{ q.shipment|default_if_none:'Не назначено'}}
          </td>
          <td>
              {{ q.product}}

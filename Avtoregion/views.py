@@ -491,7 +491,6 @@ def save_excel(filename, values_list, col):
     # Sheet body, remaining rows
     font_style = xlwt.XFStyle()
     font_style.font.name = 'Times New Roman'
-    print(values_list)
     for row in values_list:
         row_num += 1
         for col_num in range(len(row)):
