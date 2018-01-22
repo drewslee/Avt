@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
-from django.forms import ModelForm
+from django.forms import ModelForm, CharField, TextInput, PasswordInput
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.forms.widgets import SelectDateWidget
 from django.forms import DateField
 from django.utils import timezone
@@ -11,6 +12,18 @@ MONTHS = {
     5: 'май', 6: 'июнь', 7: 'июль', 8: 'август',
     9: 'сентябрь', 10: 'октябрь', 11: 'ноябрь', 12: 'декабрь'
 }
+
+
+class CustomAuthForm(AuthenticationForm):
+    username = UsernameField(
+        max_length=254,
+        widget=TextInput(attrs={'autofocus': True, 'class': 'form-control'}),
+    )
+    password = CharField(
+        label=("Password"),
+        strip=False,
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+    )
 
 
 class TrailerForm(ModelForm):
@@ -76,19 +89,18 @@ class RaceForm(ModelForm):
         model = Race
         fields = '__all__'
         labels = {
-                  'name_race': 'Номер рейса',
-                  'car': 'Машина',
-                  'driver': 'Водитель',
-                  'type_ship': 'Реализация',
-                  'supplier': 'Поставщик',
-                  'customer': 'Клиент',
-                  'shipment': 'Место разгрузки',
-                  'product': 'Груз',
-                  's_milage': 'Начало трeка',
-                  'e_milage': 'Конец трeка',
-                  'weight_unload': 'Разгружено',
-                  'weight_load': 'Загружено',
-                  'comm': 'Комментарий',
-                  'state': 'Состояние',
+            'name_race': 'Номер рейса',
+            'car': 'Машина',
+            'driver': 'Водитель',
+            'type_ship': 'Реализация',
+            'supplier': 'Поставщик',
+            'customer': 'Клиент',
+            'shipment': 'Место разгрузки',
+            'product': 'Груз',
+            's_milage': 'Начало трeка',
+            'e_milage': 'Конец трeка',
+            'weight_unload': 'Разгружено',
+            'weight_load': 'Загружено',
+            'comm': 'Комментарий',
+            'state': 'Состояние',
         }
-

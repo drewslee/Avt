@@ -5,9 +5,8 @@
 <div class="inner-wrapper">
     <div class="container">
         <div class="row">
-            <div class="col-sm-4 col-sm-offset-4">
-
-            <form method="post" action="" class="form-group">
+            <div class="col-sm-4 col-sm-offset-4 form-group">
+            <form method="post" action="">
                 {% csrf_token %}
                     <table>
                         <img src="{% static 'img/scania.jpg' %}">
@@ -15,16 +14,24 @@
                             <p class="text-center">Вы ввели неправильный логин или пароль.Попробуйте снова.</p>
                         {% endif %}
                         <tr>
-                            <td>{{ form.username.label_tag }}</td>
-                            <td>{{ form.username }}</td>
+                            <td>
+                                <div class="input-group col-xs-15 col-xs-offset-3">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                    {{ form.username }}
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td>{{ form.password.label_tag }}</td>
-                            <td>{{ form.password }}</td>
+                            <td>
+                                <div class="input-group col-xs-15">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                        {{ form.password }}
+                                </div>
+                            </td>
                         </tr>
                     </table>
-                <button type="submit" class="btn button-default button-slanted" style="position: relative;
-                 top: 10px; left: 100px; width: 150px;"><span class="button-slanted-content" >Вход</span></button>
+                <button type="submit" class="btn button-default button-slanted form-control">
+                    <span class="button-slanted-content" >Вход</span></button>
                 <input type="hidden" name="next" value="{{ next }}" class="form-control"/>
             </form>
             </div>
@@ -34,6 +41,17 @@
 </section>
 <style type="text/css">
   html, body { height:100%; }
+  img {
+     display: block;
+     margin-left:auto;
+     margin-right: auto;
+     width: 80%;
+     max-width: 100%;
+     height: auto;
+  }
+  input[type=text], input[type=password]{
+      width:100%;
+  }
   .outer-wrapper {
     display: table;
     width: 100%;
@@ -50,7 +68,10 @@
   text-align: center;
   text-transform: uppercase;
   padding: 5px 10px;
-  margin: 10px;
+  top: 10px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
   display: inline-block;
 }
 

@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
@@ -28,10 +29,13 @@ from .forms import RaceForm
 from .forms import TrailerForm
 from .forms import MediatorForm
 from .forms import ShipmentForm
+from .forms import CustomAuthForm
 from django.db.models import Sum
 import xlwt, os
 from django.conf import settings as djangoSettings
 
+class LoginViewMix(LoginView):
+    form_class = CustomAuthForm
 
 class RaceAllList(LoginRequiredMixin, ListView):
     model = Race
