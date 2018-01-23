@@ -42,17 +42,19 @@
 
               }
           });
+          $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+              $('form[id="push_date"]').submit()
+          })
       });
 	</script>
 	<ul class="nav navbar-nav navbar-form navbar-right">
 		<li>
 			<div class="input-group date" id="datetimepicker">
-				<form id="push_date" action="" method="get" onchange="this.form.submit()">
+				<form id="push_date" action="" method="get">
 					<div class="input-group">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
 					<input type="text" class="form-control" name="daterange">
 					</div>
-					<input type="submit" class="button btn-success" value="OK"/>
 				</form>
 			</div>
 		</li>
