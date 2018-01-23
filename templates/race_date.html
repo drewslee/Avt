@@ -1,17 +1,59 @@
 {% extends "index.html" %}
 {% block datetime %}
+	<script type="text/javascript">
+      $(function () {
+          $('input[name="daterange"]').daterangepicker({
+              "autoApply": true,
+              "alwaysShowCalendars": true,
+              ranges:{
+                  'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
+                  'Прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+              },
+              locale: {
+                  "fromLabel": "C",
+                  "toLabel": "По",
+                  "monthNames": [
+                      "Январь",
+                      "Февраль",
+                      "Март",
+                      "Апрель",
+                      "Май",
+                      "Июнь",
+                      "Июль",
+                      "Август",
+                      "Сентябрь",
+                      "Октябрь",
+                      "Ноябрь",
+                      "Декабрь"
+                  ],
+                  customRangeLabel: 'Свой диапазон',
+                  format: 'YYYY-MM-DD',
+                  "firstDay": 1,
+                  "weekLabel": "Неделя",
+                  "daysOfWeek": [
+                      "Вс",
+                      "Пн",
+                      "Вт",
+                      "Ср",
+                      "Чт",
+                      "Пт",
+                      "Сб"
+                  ]
+
+              }
+          });
+      });
+	</script>
 	<ul class="nav navbar-nav navbar-form navbar-right">
 		<li>
 			<div class="input-group date" id="datetimepicker">
 				<form id="push_date" action="" method="get">
-					<input id="date_from" type="date" class="form-control" name="input_date_from"/>
-					<input id="date_to" type="date" class="form-control" name="input_date_to"/>
-					<input type="submit" class="button btn-success" value="push"/>
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+					<input type="text" class="form-control" name="daterange">
+					</div>
+					<input type="submit" class="button btn-success" value="OK"/>
 				</form>
-				<script type="text/javascript">
-            document.getElementById('date_from').valueAsDate = new Date();
-            document.getElementById('date_to').valueAsDate = new Date();
-				</script>
 			</div>
 		</li>
 	</ul>
@@ -85,8 +127,10 @@
 			<form action="{% url 'RaceUpdate' q.pk %}">
               <button class="btn btn-info">Изменить</button>
 			</form>
-			 <form action="{% url 'RaceDelete' q.pk %}">
-			        <button class="btn btn-danger">Удалить</button>
+			 <form action="{% url 'RaceDelete'%}" method="post">
+				 {% csrf_token %}
+			        <button class="btn btn-danger delete-confirmation">Удалить</button>
+				      <input type="hidden" name="pk" value="{{ q.pk }}">
 		  </form>
 	     </td>
 	    </tr>
@@ -121,5 +165,11 @@
 	</div>
 {% endif %}
 </div>
+	<script type="text/javascript">
+      $(document).on('click', '.delete-confirmation', function()
+      {
+          return confirm('Вы уверены, что хотите удалить?');
+      })
+	</script>
 
 {% endblock %}
