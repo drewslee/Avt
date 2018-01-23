@@ -4,8 +4,10 @@
 {% block content %}
 <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
 <link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/chosenIcon.css" %}">
 <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
 <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
 <script type="text/javascript">
 $(function () {
     $('input[name="daterange"]').daterangepicker({
@@ -50,43 +52,36 @@ $(function () {
     });
     $('select[multiple]').chosen({
         placeholder_text_multiple:'Выберите фракцию',
-        width: "25%"
+        inherit_select_classes: false,
     });
     $('select[name="customer"]').chosen({
         placeholder_text_single: 'Выберите организацию',
+		    inherit_select_classes: false,
 
     });
+    $(".icon-select").chosenIcon({});
 });
-</script>
-<script type="text/css">
-#config
 </script>
 <div class="container-fluid">
 	<div class="form-group">
   <form action="" method="post">
 	        {% csrf_token %}
-  <div class="col-xs-3">
 		<div class="input-group">
 			<span class="input-group-addon">
 				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;</span>
 			<input name="daterange" type="text" class="form-control">
 		</div>
-  </div>
-  <div class="col-xs-3">
-	      <select name="customer" class="form-control">
+	      <select name="customer" class="form-control icon-select">
 
 						 {% for field in qset %}
-							 <option value="{{ field.id_customer }}">{{ field.name }}</option>
+							 <option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
 						 {% endfor %}
 	      </select>
-  </div>
-  <div class="col-xs-6">
-          <select multiple name="product" class="form-control">
+          <select multiple name="product" class="form-control icon-select">
 	        {% for field in q_prod %}
-		          <option value="{{ field.name }}">{{ field.name }}</option>
+		          <option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
 	        {% endfor %}
           </select>
-  </div>
 	        {% buttons %}
               <button class="btn btn-success form-control "> {% bootstrap_icon "star" %}Сформировать</button>
 	        {% endbuttons %}

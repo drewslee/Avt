@@ -13,22 +13,14 @@
                         {% if form.errors %}
                             <p class="text-center">Вы ввели неправильный логин или пароль.Попробуйте снова.</p>
                         {% endif %}
-                        <tr>
-                            <td>
-                                <div class="input-group col-xs-15 col-xs-offset-3">
+                                <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                                     {{ form.username }}
                                 </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="input-group col-xs-15">
+                                <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                                         {{ form.password }}
                                 </div>
-                            </td>
-                        </tr>
                     </table>
                 <button type="submit" class="btn button-default button-slanted form-control">
                     <span class="button-slanted-content" >Вход</span></button>
@@ -50,7 +42,7 @@
      height: auto;
   }
   input[type=text], input[type=password]{
-      width:100%;
+      width:50%;
   }
   .outer-wrapper {
     display: table;
@@ -70,8 +62,6 @@
   padding: 5px 10px;
   top: 10px;
   margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
   display: inline-block;
 }
 

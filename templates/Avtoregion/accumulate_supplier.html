@@ -4,8 +4,10 @@
 {% block content %}
     <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
     <link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/chosenIcon.css" %}">
     <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
     <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
     <script type="text/javascript">
         $(function () {
             $('input[name="daterange"]').daterangepicker({
@@ -50,32 +52,36 @@
             });
             $('select[multiple]').chosen({
                 placeholder_text_multiple:'Выберите фракцию',
-                width: "25%"
             });
             $('select[name="supplier"]').chosen({
                 placeholder_text_single: 'Выберите организацию',
 
             });
+            $(".icon-select").chosenIcon({});
         });
     </script>
  <div class="container-fluid">
-
+ <div class="form-group">
  <form action="" method="post">
     {% csrf_token %}
- <input name="daterange" type="text"/>
- <select name="supplier">
+		 <div class="input-group">
+			 <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+				<input name="daterange" type="text" class="form-control"/>
+		 </div>
+ <select name="supplier" class="form-control icon-select">
 		 {% for field in qset %}
-			 <option value="{{ field.id_supplier}}">{{ field.name }}</option>
+			 <option data-icon="fa-building" value="{{ field.id_supplier}}">{{ field.name }}</option>
 		 {% endfor %}
  </select>
-   <select multiple ="product">
+   <select multiple ="product" class="form-control">
 	   {% for field in q_prod %}
 		   <option value="{{ field.name }}">{{ field.name }}</option>
 	   {% endfor %}
    </select>
 	  {% buttons %}
-        <button class="btn btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
+        <button class="btn btn-success form-control"> {% bootstrap_icon "star" %}Сформировать</button>
 	  {% endbuttons %}
 </form>
+ </div>
  </div>
 {% endblock %}
