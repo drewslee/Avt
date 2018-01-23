@@ -138,6 +138,7 @@ class Race(models.Model):
     weight_unload = models.FloatField(default=0)
     comm = models.TextField(null=True, blank=True)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=9)
+    shoulder = models.FloatField(default=0)
     create_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):

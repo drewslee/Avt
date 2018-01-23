@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -41,7 +41,7 @@ class RaceAllList(LoginRequiredMixin, ListView):
     model = Race
     template_name = 'race.html'
     context_object_name = 'qRace'
-    paginate_by = 5
+    paginate_by = 7
     queryset = Race.objects.order_by('id_race')
 
 
@@ -49,13 +49,14 @@ class RaceViewList(LoginRequiredMixin, ListView):
     model = Race
     template_name = 'race_date.html'
     context_object_name = 'qRace'
+    paginate_by = 7
 
     def get_queryset(self):
-        if self.request.GET.get('input_date_from') is None or self.request.GET.get('input_date_to') is None:
-            queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()])
+        if self.request.GET.get('daterange') is None:
+            queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()]).order_by('id_race')
         else:
-            queryset = Race.objects.filter(race_date__range=[self.request.GET.get('input_date_from'),
-                                                             self.request.GET.get('input_date_to')])
+            start_date, end_date = date_to_str(self.request.GET.get('daterange'))
+            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('id_race')
         return queryset
 
 
@@ -80,9 +81,8 @@ class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
     success_message = "Рейс %(name_race)s удалён"
     permission_required = ('races.delete_race',)
 
-
-#    def get_object(self, queryset=None):
-#        return self.model.objects.get(pk=self.request.POST.get('pk'))
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CarViewList(LoginRequiredMixin, ListView):

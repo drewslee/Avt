@@ -101,6 +101,7 @@ class RaceForm(ModelForm):
             'e_milage': 'Конец трeка',
             'weight_unload': 'Разгружено',
             'weight_load': 'Загружено',
+            'shoulder': 'Плечо',
             'comm': 'Комментарий',
             'state': 'Состояние',
         }
