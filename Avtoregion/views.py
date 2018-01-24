@@ -58,14 +58,10 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
         return cxt
 
     def post(self, *args, **kwargs):
-        print('args =', args)
-        print('POST = ' , self.request.POST)
+        kwargs['id'] = 1
         kwargs.update(self.request.POST)
         kwargs.pop('csrfmiddlewaretoken')
-        kwargs['id'] = 1
         self.model.objects.update(**kwargs)
-        self.model.objects.save()
-        print('kwargs =', kwargs)
         return HttpResponseRedirect(redirect_to='Constants')
 
 
