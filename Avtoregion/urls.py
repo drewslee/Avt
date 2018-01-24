@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^logout/$', LogoutView.as_view(next_page=reverse_lazy('login')), name='logout'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.RaceViewList.as_view(), name='Race'),
+    url(r'^Constants$', views.ConstantsViewList.as_view(), name='Constants'),
     url(r'^Race$', views.RaceViewList.as_view(), name='Race'),
     url(r'^RaceAll$', views.RaceAllList.as_view(), name='RaceAll'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),

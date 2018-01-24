@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 import xlwt
+from django.http.response import HttpResponseRedirect
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -10,7 +11,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.views.generic.list import ListView
 
 from .forms import CarForm
@@ -23,6 +24,7 @@ from .forms import RaceForm
 from .forms import ShipmentForm
 from .forms import SupplierForm
 from .forms import TrailerForm
+from .forms import ConstantForm
 from .models import Car
 from .models import Customer
 from .models import Driver
@@ -39,9 +41,30 @@ class LoginViewMix(LoginView):
     form_class = CustomAuthForm
 
 
-class ConstatnsViewList(PermissionRequiredMixin, ListView):
+class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
     model = Constants
     template_name = 'Avtoregion/update_form.html'
+    permission_required = ('constants.update_constants',)
+    context_object_name = 'qConstants'
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        cxt = super(ListView, self).get_context_data(**kwargs)
+        cnst, created = Constants.objects.get_or_create(pk=1)
+        print(cnst, created)
+        cxt['form'] = ConstantForm(instance=cnst)
+        return cxt
+
+    def post(self, *args, **kwargs):
+        print('args =', args)
+        print('POST = ' , self.request.POST)
+        kwargs.update(self.request.POST)
+        kwargs.fromkeys(['pk'], ['1'])
+        print('kwargs =', kwargs)
+        return HttpResponseRedirect(redirect_to='Constants')
+
 
 class RaceAllList(LoginRequiredMixin, ListView):
     model = Race
@@ -74,7 +97,6 @@ class RaceViewList(LoginRequiredMixin, ListView):
             end_date = timezone.now().date()
         ctx['start_date'] = str(start_date)
         ctx['end_date'] = str(end_date)
-        print(ctx)
         return ctx
 
 
