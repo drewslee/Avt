@@ -3,6 +3,13 @@ from datetime import date
 from django.shortcuts import reverse
 
 
+class Constants(models.Model):
+    organization_unit_full = models.CharField(max_length=256)
+    organization_unit_small = models.CharField(max_length=50)
+    mechanic = models.CharField(max_length=50)
+    dispatcher = models.CharField(max_length=50)
+
+
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, verbose_name='Поставщик')
@@ -90,6 +97,8 @@ class Trailer(models.Model):
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
     number = models.CharField(max_length=11, unique=True, verbose_name='Номер машины')
+    brand = models.CharField(max_length=20, default='Scania')
+
 
     pts = models.CharField(max_length=10, null=True, blank=True, verbose_name='ПТС')
     trailer = models.ForeignKey(Trailer, blank=True, null=True)

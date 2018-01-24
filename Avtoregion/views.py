@@ -32,10 +32,16 @@ from .models import Race
 from .models import Shipment
 from .models import Supplier
 from .models import Trailer
+from .models import Constants
 
 
 class LoginViewMix(LoginView):
     form_class = CustomAuthForm
+
+
+class ConstatnsViewList(PermissionRequiredMixin, ListView):
+    model = Constants
+    template_name = 'Avtoregion/update_form.html'
 
 class RaceAllList(LoginRequiredMixin, ListView):
     model = Race

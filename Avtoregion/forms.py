@@ -26,6 +26,15 @@ class CustomAuthForm(AuthenticationForm):
     )
 
 
+class ConstantForm(ModelForm):
+    class Meta:
+        model = Constants
+        fields = '__all__'
+        labels = {'organization_unit_full': 'Название организации полностью',
+                  'organization_unit_small': 'Короткое название организации',
+                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер'}
+
+
 class TrailerForm(ModelForm):
     class Meta:
         model = Trailer
