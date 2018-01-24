@@ -1,38 +1,38 @@
 # -*- coding:utf-8 -*-
-from django.db.models import fields
-from django.http import HttpResponseRedirect, HttpResponseForbidden
-from django.shortcuts import get_object_or_404
+import os
+import xlwt
+from django.conf import settings as djangoSettings
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
+from django.db.models import Sum
+from django.shortcuts import render
+from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
-from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
-from django.utils import timezone
-from django.db.models import Q
+
+from .forms import CarForm
+from .forms import CustomAuthForm
+from .forms import CustomerForm
+from .forms import DriverForm
+from .forms import MediatorForm
+from .forms import ProductForm
+from .forms import RaceForm
+from .forms import ShipmentForm
+from .forms import SupplierForm
+from .forms import TrailerForm
 from .models import Car
-from .models import Driver
 from .models import Customer
+from .models import Driver
+from .models import Mediator
 from .models import Product
+from .models import Race
 from .models import Shipment
 from .models import Supplier
 from .models import Trailer
-from .models import Race
-from .models import Mediator
-from .forms import CarForm
-from .forms import DriverForm
-from .forms import ProductForm
-from .forms import CustomerForm
-from .forms import SupplierForm
-from .forms import RaceForm
-from .forms import TrailerForm
-from .forms import MediatorForm
-from .forms import ShipmentForm
-from .forms import CustomAuthForm
-from django.db.models import Sum
-import xlwt, os
-from django.conf import settings as djangoSettings
+
 
 class LoginViewMix(LoginView):
     form_class = CustomAuthForm
@@ -58,6 +58,18 @@ class RaceViewList(LoginRequiredMixin, ListView):
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
             queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('id_race')
         return queryset
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        if self.request.GET.get('daterange') is not None:
+            start_date, end_date = date_to_str(self.request.GET.get('daterange'))
+        else:
+            start_date = timezone.now().date()
+            end_date = timezone.now().date()
+        ctx['start_date'] = str(start_date)
+        ctx['end_date'] = str(end_date)
+        print(ctx)
+        return ctx
 
 
 class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
@@ -217,6 +229,7 @@ class SupplierDelete(PermissionRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
+
 class CarAdd(PermissionRequiredMixin, CreateView):
     model = Car
     success_url = reverse_lazy('CarList')
@@ -262,6 +275,7 @@ class ProductDelete(PermissionRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
+
 class TrailerAdd(PermissionRequiredMixin, CreateView):
     model = Trailer
     success_url = reverse_lazy('TrailerList')
@@ -284,6 +298,7 @@ class TrailerDelete(PermissionRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
+
 class ShipmentAdd(PermissionRequiredMixin, CreateView):
     model = Shipment
     success_url = reverse_lazy('ShipmentList')
@@ -305,6 +320,7 @@ class ShipmentDelete(PermissionRequiredMixin, DeleteView):
 
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
+
 
 class MediatorAdd(PermissionRequiredMixin, CreateView):
     model = Mediator
