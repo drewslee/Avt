@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 import xlwt
+import openpyxl
 from django.http.response import HttpResponseRedirect
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -58,9 +59,11 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
         return cxt
 
     def post(self, *args, **kwargs):
-        kwargs['id'] = 1
         kwargs.update(self.request.POST)
         kwargs.pop('csrfmiddlewaretoken')
+        for k, v in kwargs.items():
+            kwargs[k] = v[0]
+        kwargs['id'] = 1
         self.model.objects.update(**kwargs)
         return HttpResponseRedirect(redirect_to='Constants')
 
@@ -483,7 +486,7 @@ def accumulate_car(req):
         start_date, end_date = date_to_str(req.POST['daterange'])
         q_resp = Race.objects.filter(car__number__exact=req.POST.get('car'),
                                      race_date__range=[start_date, end_date])
-        field_list = ['race_date', 'name_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
+        field_list = ['race_date', 'id_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
                       'customer__name', 'shipment__name', 'product__name', 's_milage', 'e_milage', 'weight_load',
                       'weight_unload', 'state']
         col = (
@@ -503,7 +506,7 @@ def accumulate_driver(req):
         start_date, end_date = date_to_str(req.POST['daterange'])
         q_resp = Race.objects.filter(driver__name__exact=req.POST.get('driver'),
                                      race_date__range=[start_date, end_date])
-        field_list = ['race_date', 'name_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
+        field_list = ['race_date', 'id_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
                       'customer__name', 'shipment__name', 'product__name', 's_milage', 'e_milage', 'weight_load',
                       'weight_unload', 'state']
         col = (
@@ -542,10 +545,21 @@ def save_excel(filename, values_list, col):
         row_num += 1
         for col_num in range(len(row)):
             ws.write(row_num, col_num, str(row[col_num]), font_style)
+
     path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
     wb.save(filename_or_stream=path_for_save)
     return '/'.join(['temp', filename])
 
+
+def waybill():
+    filename = 'waybill.xlsx'
+    wb = openpyxl.load_workbook(os.path.join(djangoSettings.BASE_DIR, 'static', 'way.xlsx'))
+    ws1 = wb['1']
+    ws2 = wb['2']
+    filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xlsx'
+    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
+    wb.save(path_for_save)
+    wb.close()
 
 def date_to_str(date):
     return date.split(' - ')

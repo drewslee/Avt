@@ -75,6 +75,8 @@ class Mediator(models.Model):
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, verbose_name='Водитель')
+    driver_card = models.CharField(max_length=50, blank=True)
+    personnel_number = models.DecimalField(decimal_places=0, max_digits=10, blank=True, default=0)
 
     def __str__(self):
         return '%s' % self.name
@@ -86,6 +88,8 @@ class Driver(models.Model):
 class Trailer(models.Model):
     id_trailer = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10)
+    brand_trailer = models.CharField(max_length=10, default='85300F')
+    garage_number_trailer = models.DecimalField(max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
 
     def __str__(self):
         return '%s' % self.number
@@ -97,10 +101,9 @@ class Trailer(models.Model):
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
     number = models.CharField(max_length=11, unique=True, verbose_name='Номер машины')
-    brand = models.CharField(max_length=20, default='Scania')
-
-
     pts = models.CharField(max_length=10, null=True, blank=True, verbose_name='ПТС')
+    brand = models.CharField(max_length=20, default='Scania')
+    garage_number = models.DecimalField(max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
     mediator = models.ForeignKey(Mediator, blank=True, null=True)
 
@@ -131,7 +134,6 @@ class Race(models.Model):
         ('Услуга', 'Услуга')
     )
     id_race = models.AutoField(primary_key=True)
-    name_race = models.CharField(max_length=5, default='Рейс')
     race_date = models.DateField(default=date.today)
     car = models.ForeignKey(Car)
     driver = models.ForeignKey(Driver)
@@ -147,6 +149,9 @@ class Race(models.Model):
     weight_unload = models.FloatField(default=0)
     comm = models.TextField(null=True, blank=True)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=9)
+    gas_start = models.DecimalField(max_digits=5, decimal_places=0, default=0)
+    gas_end = models.DecimalField(max_digits=5, decimal_places=0, default=0)
+    gas_given = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     shoulder = models.FloatField(default=0)
     create_time = models.DateTimeField(auto_now=True)
 

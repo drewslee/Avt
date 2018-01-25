@@ -38,15 +38,16 @@ class ConstantForm(ModelForm):
 class TrailerForm(ModelForm):
     class Meta:
         model = Trailer
-        fields = ['number']
-        labels = {'number': 'Прицеп'}
+        fields = ['number', 'brand_trailer', 'garage_number_trailer']
+        labels = {'number': 'Прицеп', 'brand_trailer': 'Марка', 'garage_number_trailer': 'Гаражный номер'}
 
 
 class CarForm(ModelForm):
     class Meta:
         model = Car
-        fields = ['number', 'pts', 'trailer', 'mediator']
-        labels = {'number': 'Номер машины', 'pts': 'ПТС', 'trailer': 'Прицеп', 'mediator': 'Посредник'}
+        fields = ['number', 'pts', 'trailer', 'mediator', 'brand', 'garage_number']
+        labels = {'number': 'Номер машины', 'pts': 'ПТС', 'trailer': 'Прицеп', 'mediator': 'Посредник',
+                  'brand': 'Марка', 'garage_number': 'Гаражный номер'}
 
 
 class SupplierForm(ModelForm):
@@ -87,8 +88,8 @@ class CustomerForm(ModelForm):
 class DriverForm(ModelForm):
     class Meta:
         model = Driver
-        fields = ['name']
-        labels = {'name': 'Водитель:'}
+        fields = ['name', 'personnel_number', 'driver_card']
+        labels = {'name': 'Водитель:', 'personnel_number': 'Табельный номер', 'driver_card': 'Удостоверение'}
 
 
 class RaceForm(ModelForm):
@@ -98,7 +99,6 @@ class RaceForm(ModelForm):
         model = Race
         fields = '__all__'
         labels = {
-            'name_race': 'Номер рейса',
             'car': 'Машина',
             'driver': 'Водитель',
             'type_ship': 'Реализация',
