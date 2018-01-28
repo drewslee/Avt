@@ -168,3 +168,4 @@ class Race(models.Model):
 #   @property
 #   def get_sum_weight(self):
 #       self.weight_load
+

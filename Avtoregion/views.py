@@ -594,6 +594,8 @@ def waybill(race_id):
     ws2['EF36'] = race.shoulder
     ws2['AL7'] = race.race_date
     ws2['AL8'] = race.race_date
+    ws2['A7'] = race.supplier.address
+    ws2['A8'] = race.customer.address
 
 
     filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xlsx'
