@@ -13,6 +13,7 @@ class Constants(models.Model):
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, verbose_name='Поставщик')
+    address = models.CharField(max_length=256, blank=True)
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
     def __str__(self):
@@ -50,7 +51,8 @@ class Shipment(models.Model):
 
 class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=256,  verbose_name='Клиент')
+    name = models.CharField(max_length=256, verbose_name='Клиент')
+    address = models.CharField(max_length=256, blank=True)
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
     def __str__(self):
@@ -62,6 +64,7 @@ class Customer(models.Model):
 
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, verbose_name='Название', blank=True)
     address = models.CharField(max_length=256, verbose_name='Посредник')
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
@@ -75,6 +78,7 @@ class Mediator(models.Model):
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, verbose_name='Водитель')
+    full_name = models.CharField(max_length=100, blank=True)
     driver_card = models.CharField(max_length=50, blank=True)
     personnel_number = models.DecimalField(decimal_places=0, max_digits=10, blank=True, default=0)
 
@@ -156,12 +160,11 @@ class Race(models.Model):
     create_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '%s' % self.name_race
+        return '%s' % self.id_race
 
     def get_absolute_url(self):
         return reverse('RaceUpdate', kwargs={'pk': self.pk})
 
- #   @property
- #   def get_sum_weight(self):
- #       self.weight_load
-
+#   @property
+#   def get_sum_weight(self):
+#       self.weight_load

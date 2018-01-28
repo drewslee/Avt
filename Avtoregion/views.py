@@ -54,7 +54,6 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
     def get_context_data(self, **kwargs):
         cxt = super(ListView, self).get_context_data(**kwargs)
         cnst, created = Constants.objects.get_or_create(pk=1)
-        print(cnst, created)
         cxt['form'] = ConstantForm(instance=cnst)
         return cxt
 
@@ -551,15 +550,58 @@ def save_excel(filename, values_list, col):
     return '/'.join(['temp', filename])
 
 
-def waybill():
+def waybill(race_id):
     filename = 'waybill.xlsx'
     wb = openpyxl.load_workbook(os.path.join(djangoSettings.BASE_DIR, 'static', 'way.xlsx'))
     ws1 = wb['1']
     ws2 = wb['2']
+    const = Constants.objects.get(id=1)
+    race = Race.objects.get(id=int(race_id))
+    track = int(race.e_milage) - int(race.s_milage)
+
+    ws1['BG5'] = race.race_date
+    ws1['Q6'] = const.organization_unit_full
+    ws1['Q13'] = race.car.brand
+    ws1['AB14'] = race.car.number
+    ws1['CI14'] = race.car.garage_number
+    ws1['I21'] = race.car.trailer.brand_trailer
+    ws1['CI21'] = race.car.trailer.garage_number_trailer
+    ws1['AR21'] = race.car.trailer.number
+    ws1['I15'] = race.driver.name
+    ws1['P17'] = race.driver.driver_card
+    ws1['CI15'] = race.driver.personnel_number
+    ws1['DM14'] = race.race_date
+    ws1['DM15'] = race.race_date
+    ws1['EV14'] = race.s_milage
+    ws1['EV15'] = race.e_milage
+    ws1['DN24'] = race.gas_given
+    ws1['N43'] = race.gas_given
+    ws1['DY24'] = race.gas_start
+    ws1['EG24'] = race.gas_end
+    ws1['V45'] = const.dispatcher
+    ws1['CO43'] = const.mechanic
+    ws1['CO45'] = race.driver.name
+    ws1['CF51'] = race.driver.name
+    ws1['CF53'] = const.mechanic
+    ws1['DP36'] = race.product.name
+    ws1['A36'] = const.organization_unit_small
+    ws1['AT36'] = race.supplier.name + race.supplier.address
+    ws1['CE36'] = race.customer.name + race.customer.address
+    ws1['FL36'] = track
+    ws2['DP36'] = track
+    ws2['I36'] = int(race.gas_end) - int(race.gas_start)
+    ws2['DX36'] = race.shoulder
+    ws2['EF36'] = race.shoulder
+    ws2['AL7'] = race.race_date
+    ws2['AL8'] = race.race_date
+
+
     filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xlsx'
     path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
     wb.save(path_for_save)
     wb.close()
+    return '/'.join(['temp', filename])
+
 
 def date_to_str(date):
     return date.split(' - ')
