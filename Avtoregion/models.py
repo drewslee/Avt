@@ -8,6 +8,7 @@ class Constants(models.Model):
     organization_unit_small = models.CharField(max_length=50, blank=True)
     mechanic = models.CharField(max_length=50, blank=True)
     dispatcher = models.CharField(max_length=50, blank=True)
+    ogrn = models.CharField(max_length=13, blank=True)
 
 
 class Supplier(models.Model):
