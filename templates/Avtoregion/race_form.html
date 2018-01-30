@@ -20,25 +20,28 @@
 	 {% bootstrap_field field %}
  {% endfor %}
 	  {% buttons %}
-        <button class="btn btn-success"> {% bootstrap_icon "star" %} Обновить</button>
+        <button class="btn btn-success"> {% bootstrap_icon "star" %} Добавить</button>
 	  {% endbuttons %}
 </form>
  </div>
 	<script type="text/javascript">
 	$(function ()
-	{
-	    $("select[name=car]").addEventListener("change" , function ()
+{       var sel = document.getElementById('id_car');
+        sel.addEventListener("change" , function ()
 	    {
-	        console.log($("select[name='car']").val())
-			});
-			  $.ajax({
-					  type: "GET",
-					  url: "{% url 'RaceAjax' %}",
-					  success: function ()
-					  {
-					      console.log('succsess')
-            }
-			  })
-	})
+	       var data = sel.value;
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "{% url 'RaceAjax' %}",
+                    data: { id : data},
+                    dataType: 'json',
+                    success: function (resp)
+                    {
+                        console.log('success' +resp);
+                    }
+                })
+		});
+})
 	</script>
 {% endblock %}

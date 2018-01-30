@@ -53,8 +53,8 @@ class CarForm(ModelForm):
 class SupplierForm(ModelForm):
     class Meta:
         model = Supplier
-        fields = ['name', 'inn']
-        labels = {'name': 'Поставщик', 'inn': 'ИНН'}
+        fields = ['name', 'inn', 'address']
+        labels = {'name': 'Поставщик', 'inn': 'ИНН', 'address': 'Адрес организации'}
 
 
 class ProductForm(ModelForm):
@@ -74,15 +74,15 @@ class ShipmentForm(ModelForm):
 class MediatorForm(ModelForm):
     class Meta:
         model = Mediator
-        fields = ['address', 'inn']
-        labels = {'address': 'Адрес', 'inn': 'ИНН'}
+        fields = ['name', 'address', 'inn', ]
+        labels = {'address': 'Адрес организации', 'inn': 'ИНН', 'name': 'Название организации'}
 
 
 class CustomerForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'inn']
-        labels = {'name': 'Клиент', 'inn': 'ИНН'}
+        fields = ['name', 'inn', 'address']
+        labels = {'name': 'Клиент', 'inn': 'ИНН', 'address': 'Адрес организации'}
 
 
 class DriverForm(ModelForm):

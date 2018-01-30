@@ -15,6 +15,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.views.generic.list import ListView
+from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -106,7 +107,7 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     model = Race
     form_class = RaceForm
     success_url = reverse_lazy('RaceCreate')
-    success_message = "Рейс %(name_race)s создан успешно"
+    success_message = "Рейс %(id_race)s создан успешно"
     permission_required = ('races.add_race',)
 
 
@@ -611,8 +612,13 @@ def date_to_str(date):
 
 def ajaxhandler(req):
     if req.is_ajax():
-        req.GET.get('')
-        data = json.dumps()
-        return HttpResponse(data, content_type='application/json')
+        id_car = req.GET.get('id')
+        print(id_car)
+        try:
+            gas_start = Race.objects.filter(car_id=int(id_car)).latest(field_name='gas_end')
+            data = json.dumps(gas_start)
+            return HttpResponse(data, content_type='application/json')
+        except ObjectDoesNotExist:
+            return HttpResponse(content=json.dumps({'success': True}), content_type='application/json')
     else:
         raise Http404
