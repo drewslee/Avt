@@ -2,7 +2,8 @@
 import os
 import xlwt
 import openpyxl
-from django.http.response import HttpResponseRedirect
+import json
+from django.http.response import HttpResponseRedirect,Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -606,3 +607,12 @@ def waybill(race_id):
 
 def date_to_str(date):
     return date.split(' - ')
+
+
+def ajaxhandler(req):
+    if req.is_ajax():
+        req.GET.get('')
+        data = json.dumps()
+        return HttpResponse(data, content_type='application/json')
+    else:
+        raise Http404

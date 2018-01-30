@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^Race$', views.RaceViewList.as_view(), name='Race'),
     url(r'^RaceAll$', views.RaceAllList.as_view(), name='RaceAll'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
+    url(r'^Race/add/ajax', views.ajaxhandler, name='RaceAjax'),
     url(r'^Race/update(?P<pk>\d+)/$', views.RaceUpdate.as_view(), name='RaceUpdate'),
     url(r'^Race/delete/$', views.RaceDelete.as_view(), name='RaceDelete'),
 
