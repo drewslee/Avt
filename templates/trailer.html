@@ -1,10 +1,14 @@
 {% extends "index.html" %}
+{% load bootstrap3 %}
 {% block content %}
  <div class="container-fluid">
  {% if qTrailer %}
-	 <table class="table table-bordered">
+	 <table class="table table-responsive">
 		 <thead>
 		    <th>Номер прицепа</th>
+		    <th>Марка</th>
+		    <th>Гаражный номер</th>
+		    <th>Действия</th>
 		 </thead>
 		 <tbody>
 	 {% for q in qTrailer %}
@@ -12,9 +16,15 @@
 		 <td>
 			{{ q.number }}
 		 </td>
+		    <td>
+			    {{ q.brand_trailer}}
+		    </td>
+		    <td>
+			    {{ q.garage_number_trailer}}
+		    </td>
 		 <td>
 			 <form action="update{{ q.pk }}" method="get">
-				 <button class="btn btn-info">Изменить</button>
+				 <button class="btn btn-info form-control">Изменить</button>
 			 </form>
 		 </td>
 		 <td>
@@ -31,7 +41,9 @@
 
  <form action="add" method="post">
     {% csrf_token %}
-    {{ form.as_table }}
+	  {% for field in form %}
+		  {% bootstrap_field field %}
+	  {% endfor %}
     <button class="btn btn-success">Добавить</button>
 </form>
  </div>

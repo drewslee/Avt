@@ -1,4 +1,5 @@
 {% extends "index.html" %}
+{% load bootstrap3 %}
 {% block content %}
  <div class="container">
  <div class="table-responsive">
@@ -35,7 +36,9 @@
  </div>
  <form action="add" method="post">
     {% csrf_token %}
-    {{ form.as_table }}
+	  {% for field in form %}
+		 {% bootstrap_field field %}
+	  {% endfor %}
     <button class="btn btn-success">Добавить</button>
 </form>
  </div>

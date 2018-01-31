@@ -106,22 +106,25 @@ class RaceViewList(LoginRequiredMixin, ListView):
 class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     model = Race
     form_class = RaceForm
+    template_name = 'Avtoregion/race_form.html'
     success_url = reverse_lazy('RaceCreate')
-    success_message = "Рейс %(id_race)s создан успешно"
+    success_message = "Рейс создан успешно"
     permission_required = ('races.add_race',)
 
 
 class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
     form_class = RaceForm
-    success_message = "Рейс %(name_race)s обновлён успешно"
+    template_name = 'Avtoregion/update_form.html'
+    success_url = reverse_lazy('Race')
+    success_message = "Рейс обновлён успешно"
     permission_required = ('races.update_race',)
 
 
 class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
     model = Race
     success_url = '/Race'
-    success_message = "Рейс %(name_race)s удалён"
+    success_message = "Рейс удалён"
     permission_required = ('races.delete_race',)
 
     def get_object(self, queryset=None):
@@ -362,14 +365,14 @@ class MediatorAdd(PermissionRequiredMixin, CreateView):
 
 class MediatorUpdate(PermissionRequiredMixin, UpdateView):
     model = Mediator
-    success_url = reverse_lazy('MediatorUpdate')
+    success_url = reverse_lazy('MediatorList')
     form_class = MediatorForm
     permission_required = ('mediators.update_mediator',)
 
 
 class MediatorDelete(PermissionRequiredMixin, DeleteView):
     model = Mediator
-    success_url = reverse_lazy('Mediator')
+    success_url = reverse_lazy('MediatorList')
     permission_required = ('mediators.delete_mediator',)
 
     def get_object(self, queryset=None):
@@ -385,14 +388,14 @@ class CustomerAdd(PermissionRequiredMixin, CreateView):
 
 class CustomerUpdate(PermissionRequiredMixin, UpdateView):
     model = Customer
-    success_url = reverse_lazy('CustomerUpdate')
+    success_url = reverse_lazy('CustomerList')
     form_class = CustomerForm
     permission_required = ('customers.update_customer',)
 
 
 class CustomerDelete(PermissionRequiredMixin, DeleteView):
     model = Customer
-    success_url = reverse_lazy('Customer')
+    success_url = reverse_lazy('CustomerList')
     permission_required = ('customers.delete_customer',)
 
     def get_object(self, queryset=None):
@@ -613,12 +616,14 @@ def date_to_str(date):
 def ajaxhandler(req):
     if req.is_ajax():
         id_car = req.GET.get('id')
-        print(id_car)
-        try:
-            gas_start = Race.objects.filter(car_id=int(id_car)).latest(field_name='gas_end')
-            data = json.dumps(gas_start)
-            return HttpResponse(data, content_type='application/json')
-        except ObjectDoesNotExist:
-            return HttpResponse(content=json.dumps({'success': True}), content_type='application/json')
-    else:
-        raise Http404
+        if id_car is not None:
+            try:
+                rce = Race.objects.filter(car_id=int(id_car)).latest(field_name='id_race')
+                data = json.dumps({'gas_start': float(rce.gas_end), 's_milage': float(rce.e_milage)})
+            except ObjectDoesNotExist:
+                data = json.dumps({'gas_start': 0, 's_milage': 0})
+            finally:
+                return HttpResponse(data, content_type='application/json')
+
+        else:
+            raise Http404

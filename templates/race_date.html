@@ -127,7 +127,7 @@
                             {{ q.state }}
                         </td>
                         <td>
-                            <form action="{% url 'RaceUpdate' q.pk %}">
+                            <form action="{% url 'RaceUpdate' q.pk%}">
                                 <button class="btn btn-info">Изменить</button>
                             </form>
                             <form action="{% url 'RaceDelete' %}" method="post">

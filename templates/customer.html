@@ -1,12 +1,13 @@
 {% extends "index.html" %}
+{% load bootstrap3 %}
 {% block content %}
  <div class="container">
- <div class="table-responsive col-lg-8">
  {% if qCustomer %}
 	 <table class="table table-hover">
 		 <thead>
 		    <th>Клиент</th>
         <th>ИНН</th>
+		    <th>Адрес</th>
 		 </thead>
 		 <tbody>
 	 {% for q in qCustomer %}
@@ -14,24 +15,28 @@
 		 <td>
 			{{ q.name }}
 		 </td>
-         <td>
+     <td>
             {{ q.inn|default_if_none:'Не назначен'}}
-         </td>
-		    <td><div class="form-group">
+     </td>
+		 <td>
+		    {{ q.address|default_if_none:'Не назначен' }}
+		 </td>
+		 <td>
+			 <div class="form-group">
 			    <form action="update{{ q.pk }}" method="get">
 				    <button class="btn btn-info form-control">Изменить</button>
 			    </form>
-            </div>
-		    </td>
-		    <td>
-                <div class="form-group">
-                    <form action="{% url 'CustomerDelete' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="pk" value="{{ q.pk }}">
-				    <button class="btn btn-danger form-control delete-confirmation">Удалить</button>
-			    </form>
-                </div>
-		    </td>
+         </div>
+		  </td>
+		  <td>
+          <div class="form-group">
+              <form action="{% url 'CustomerDelete' %}" method="post">
+								{% csrf_token %}
+								<input type="hidden" name="pk" value="{{ q.pk }}">
+								<button class="btn btn-danger form-control delete-confirmation">Удалить</button>
+			        </form>
+          </div>
+		  </td>
 	    </tr>
 	 {% endfor %}
 		 </tbody>
@@ -39,11 +44,12 @@
  {% endif %}
      <form action="add" method="post">
         {% csrf_token %}
-        {{ form.as_table }}
+	     {% for field in form %}
+		     {% bootstrap_field field %}
+	     {% endfor %}
         <button class="btn btn-success">Добавить</button>
      </form>
  </div>
-</div>
     <script type="text/javascript">
         $(document).on('click', '.delete-confirmation', function()
         {

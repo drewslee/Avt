@@ -35,7 +35,7 @@ urlpatterns = [
 
     url(r'^Car/$', views.CarViewList.as_view(), name='CarList'),
     url(r'^Car/add$', views.CarAdd.as_view(), name='CarAdd'),
-    url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(template_name='Avtoregion/update_form.html'),
+    url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(),
         name='CarUpdate'),
     url(r'^Car/delete/$', views.CarDelete.as_view(), name='CarDelete'),
 

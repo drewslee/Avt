@@ -1,51 +1,59 @@
 {% extends "index.html" %}
+{% load bootstrap3 %}
 {% block content %}
- <div class="container col-lg-3 col-lg-offset-4">
- {% if qDriver %}
-   <div class="table-responsive">
-	 <table class="table table-hover">
-		 <thead>
-		 <th>ФИО Водителя</th>
-         <th>Действия</th>
-		 </thead>
-		 <tbody>
-	 {% for q in qDriver %}
-	    <tr>
-		 <td>
-			{{ q.name }}
-		 </td>
-		    <td>
-                <div class="form-group">
-			    <form action="update{{ q.pk }}" method="get">
-				    <button class="btn btn-info form-control">Изменить</button>
-			    </form>
-                </div>
-		    </td>
-		    <td>
-                <div class="form-group">
-			    <form action="{% url 'DriverDelete' %}" method="post">
-                    <input type="hidden" name="pk" value="{{ q.pk }}">
-				    <button class="btn btn-danger form-control delete-confirmation">Удалить</button>
-			    </form>
-                </div>
-		    </td>
-	    </tr>
-	 {% endfor %}
-		 </tbody>
-	 </table>
-   </div>
- {% endif %}
+		{% if qDriver %}
+			<div class="table-responsive">
+				<table class="table table-hover">
+					<thead>
+					<th>ФИО Водителя</th>
+					<th>Табельный номер</th>
+					<th>Удостоверение</th>
+					<th>Действия</th>
+					</thead>
+					<tbody>
+					{% for q in qDriver %}
+						<tr>
+							<td>
+								{{ q.name }}
+							</td>
+							<td>
+								{{ q.personnel_number }}
+							</td>
+							<td>
+								{{ q.driver_card }}
+							</td>
+							<td>
+								<div class="form-group">
+									<form action="update{{ q.pk }}" method="get">
+										<button class="btn btn-info form-control">Изменить</button>
+									</form>
+								</div>
+							</td>
+							<td>
+								<div class="form-group">
+									<form action="{% url 'DriverDelete' %}" method="post">
+										<input type="hidden" name="pk" value="{{ q.pk }}">
+										<button class="btn btn-danger form-control delete-confirmation">Удалить</button>
+									</form>
+								</div>
+							</td>
+						 </tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% endif %}
 
- <form action="add" method="post">
-    {% csrf_token %}
-    {{ form.as_table }}
-    <button class="btn btn-success">Добавить</button>
-</form>
- </div>
-    <script type="text/javascript">
-        $(document).on('click', '.delete-confirmation', function()
-        {
-            return confirm('Вы уверены, что хотите удалить?');
-        })
-    </script>
+		<form action="add" method="post">
+			{% csrf_token %}
+			{% for field in form %}
+				{% bootstrap_field field %}
+			{% endfor %}
+			<button class="btn btn-success">Добавить</button>
+		</form>
+	<script type="text/javascript">
+      $(document).on('click', '.delete-confirmation', function () {
+          return confirm('Вы уверены, что хотите удалить?');
+      })
+	</script>
 {% endblock %}

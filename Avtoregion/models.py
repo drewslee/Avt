@@ -30,7 +30,8 @@ class Supplier(models.Model):
 
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=10, verbose_name='Груз')
+    name = models.CharField(max_length=20, verbose_name='Название')
+    fraction = models.CharField(max_length=10, verbose_name='Фракция', blank=True)
 
     def __str__(self):
         return '%s' % self.name
@@ -82,6 +83,7 @@ class Driver(models.Model):
     full_name = models.CharField(max_length=100, blank=True)
     driver_card = models.CharField(max_length=50, blank=True)
     personnel_number = models.DecimalField(decimal_places=0, max_digits=10, blank=True, default=0)
+    date_med = models.DateField(blank=True)
 
     def __str__(self):
         return '%s' % self.name

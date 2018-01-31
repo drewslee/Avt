@@ -38,7 +38,8 @@
                     dataType: 'json',
                     success: function (resp)
                     {
-                        console.log('success' +resp);
+                        document.getElementById('id_gas_start').value = resp.gas_start;
+                        document.getElementById('id_s_milage').value = resp.s_milage;
                     }
                 })
 		});

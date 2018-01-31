@@ -32,7 +32,7 @@ class ConstantForm(ModelForm):
         fields = '__all__'
         labels = {'organization_unit_full': 'Название организации полностью',
                   'organization_unit_small': 'Короткое название организации',
-                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер'}
+                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер', 'ogrn': 'ОГРН'}
 
 
 class TrailerForm(ModelForm):
@@ -60,8 +60,8 @@ class SupplierForm(ModelForm):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ['name']
-        labels = {'name': 'Груз'}
+        fields = ['name', 'fraction']
+        labels = {'name': 'Название', 'fraction': 'Фракция'}
 
 
 class ShipmentForm(ModelForm):
@@ -86,10 +86,13 @@ class CustomerForm(ModelForm):
 
 
 class DriverForm(ModelForm):
+    date_med = DateField(widget=SelectDateWidget(), label='Дата мед. освидетельствования:')
+
     class Meta:
         model = Driver
-        fields = ['name', 'personnel_number', 'driver_card']
-        labels = {'name': 'Водитель:', 'personnel_number': 'Табельный номер', 'driver_card': 'Удостоверение'}
+        fields = ['name', 'personnel_number', 'driver_card', 'date_med']
+        labels = {'name': 'Водитель:', 'personnel_number': 'Табельный номер',
+                  'driver_card': 'Удостоверение',}
 
 
 class RaceForm(ModelForm):

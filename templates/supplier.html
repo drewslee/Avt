@@ -1,7 +1,6 @@
 {% extends "index.html" %}
-{% load verbose_names %}
+{% load bootstrap3 %}
 {% block content %}
- <div class="container col-lg-4 col-lg-offset-4">
  {% if qSupplier %}
      <div class="table-responsive">
 	 <table class="table table-hover">
@@ -11,6 +10,9 @@
 		 </th>
 		 <th>
 			 ИНН
+		 </th>
+		 <th>
+			 Адрес
 		 </th>
          <th>
              Действия
@@ -23,7 +25,10 @@
 			 {{ q.name }}
 		 </td>
 		    <td>
-			 {{ q.inn }}
+			 {{ q.inn|default_if_none:'Не назначен' }}
+		    </td>
+		    <td>
+			    {{ q.address}}
 		    </td>
 		 <div class="form-group">
 			 <td>
@@ -47,10 +52,11 @@
 
  <form action="add" method="post">
     {% csrf_token %}
-    {{ form.as_table }}
+	 {% for field in form %}
+		 {% bootstrap_field field %}
+	 {% endfor %}
     <button class="btn btn-success">Добавить</button>
 </form>
- </div>
     <script type="text/javascript">
         $(document).on('click', '.delete-confirmation', function()
         {
