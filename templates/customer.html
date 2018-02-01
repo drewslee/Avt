@@ -30,8 +30,8 @@
 		  </td>
 		  <td>
           <div class="form-group">
+	          {% csrf_token %}
               <form action="{% url 'CustomerDelete' %}" method="post">
-								{% csrf_token %}
 								<input type="hidden" name="pk" value="{{ q.pk }}">
 								<button class="btn btn-danger form-control delete-confirmation">Удалить</button>
 			        </form>

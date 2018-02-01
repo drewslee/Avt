@@ -3,6 +3,7 @@ import os
 import xlwt
 import openpyxl
 import json
+from openpyxl.styles import Border, Side
 from django.http.response import HttpResponseRedirect,Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -555,13 +556,14 @@ def save_excel(filename, values_list, col):
     return '/'.join(['temp', filename])
 
 
-def waybill(race_id):
-    filename = 'waybill.xlsx'
+def waybill_render(race_id):
+    filename = 'waybill_'
+    thick_border = Border(left=Side(style='thick'))
     wb = openpyxl.load_workbook(os.path.join(djangoSettings.BASE_DIR, 'static', 'way.xlsx'))
     ws1 = wb['1']
     ws2 = wb['2']
     const = Constants.objects.get(id=1)
-    race = Race.objects.get(id=int(race_id))
+    race = Race.objects.get(id_race=int(race_id))
     track = int(race.e_milage) - int(race.s_milage)
 
     ws1['BG5'] = race.race_date
@@ -602,12 +604,27 @@ def waybill(race_id):
     ws2['A7'] = race.supplier.address
     ws2['A8'] = race.customer.address
 
-    filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xlsx'
+    filename = filename + str(race_id) + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xlsx'
     path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
     wb.save(path_for_save)
     wb.close()
     return '/'.join(['temp', filename])
 
+
+def waybill(req):
+    qset = Car.objects.all()
+    if req.method == 'GET':
+        return render(request=req, template_name='Avtoregion/waybill.html', context={'qset': qset})
+    if req.method == 'POST':
+        start_date, end_date = date_to_str(req.POST['daterange'])
+        q_resp = Race.objects.filter(car__number__exact=req.POST.get('car'),
+                                     race_date__range=[start_date, end_date])
+        urls = []
+        idlist = q_resp.values_list('id_race')
+        for i in idlist:
+            urls.append(waybill_render(i[0]))
+        return render(request=req, template_name='Avtoregion/waybill.html',
+                      context={'qset': qset, 'urls': urls})
 
 def date_to_str(date):
     return date.split(' - ')

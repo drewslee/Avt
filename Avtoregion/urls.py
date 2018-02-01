@@ -85,5 +85,6 @@ urlpatterns = [
     url(r'^Customer/accumulate/$', views.accumulate_cus, name='CustomerAcc'),
     url(r'^Car/accumulate/$', views.accumulate_car, name='CarAcc'),
     url(r'^Driver/accumulate/$', views.accumulate_driver, name='DriverAcc'),
+    url(r'^waybill/$', views.waybill, name='WayBill'),
 
 ]

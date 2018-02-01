@@ -24,6 +24,7 @@
 		    </td>
 		    <td>
 			    <form action="{% url 'MediatorDelete' %}" method="post">
+				    {% csrf_token %}
                     <input type="hidden" name="pk" value="{{ q.pk }}">
 				    <button class="btn btn-danger delete-confirmation">Удалить</button>
 			    </form>
