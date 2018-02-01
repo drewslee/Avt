@@ -3,7 +3,8 @@ import os
 import xlwt
 import openpyxl
 import json
-from openpyxl.styles import Border, Side
+from openpyxl.styles.borders import Border, Side
+from openpyxl.styles import NamedStyle
 from django.http.response import HttpResponseRedirect,Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -558,7 +559,15 @@ def save_excel(filename, values_list, col):
 
 def waybill_render(race_id):
     filename = 'waybill_'
-    thick_border = Border(left=Side(style='thick'))
+    thin_border = Border(left=Side(style='thin'),
+                         right=Side(style='thin'),
+                         top=Side(style='thin'),
+                         bottom=Side(style='thin'))
+    thick_border = Border(left=Side(style='thick'),
+                          right=Side(style='thick'),
+                          top=Side(style='thick'),
+                          bottom=Side(style='thick'))
+    cell_style = NamedStyle(border=thick_border)
     wb = openpyxl.load_workbook(os.path.join(djangoSettings.BASE_DIR, 'static', 'way.xlsx'))
     ws1 = wb['1']
     ws2 = wb['2']
