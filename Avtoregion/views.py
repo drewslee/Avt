@@ -567,25 +567,34 @@ def waybill_render(race_id):
                           right=Side(style='thick'),
                           top=Side(style='thick'),
                           bottom=Side(style='thick'))
-    cell_style = NamedStyle(border=thick_border)
     wb = openpyxl.load_workbook(os.path.join(djangoSettings.BASE_DIR, 'static', 'way.xlsx'))
     ws1 = wb['1']
     ws2 = wb['2']
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
-    track = int(race.e_milage) - int(race.s_milage)
+    if int(race.e_milage) > int(race.s_milage):
+        track = int(race.e_milage) - int(race.s_milage)
+    else:
+        track = 0
 
     ws1['BG5'] = race.race_date
     ws1['Q6'] = const.organization_unit_full
     ws1['Q13'] = race.car.brand
     ws1['AB14'] = race.car.number
     ws1['CI14'] = race.car.garage_number
-    ws1['I21'] = race.car.trailer.brand_trailer
-    ws1['CI21'] = race.car.trailer.garage_number_trailer
-    ws1['AR21'] = race.car.trailer.number
+    if hasattr(race.car.trailer, 'brand_trailer'):
+        ws1['I21'].border = thick_border
+        ws1['I21'] = race.car.trailer.brand_trailer
+    if hasattr(race.car.trailer, 'garage_number_trailer'):
+        ws1['CI21'] = race.car.trailer.garage_number_trailer
+        ws1['CI21'].style = thick_border
+    if hasattr(race.car.trailer, 'number'):
+        ws1['AR21'] = race.car.trailer.number
     ws1['I15'] = race.driver.name
-    ws1['P17'] = race.driver.driver_card
-    ws1['CI15'] = race.driver.personnel_number
+    if hasattr(race.driver, 'driver_card'):
+        ws1['P17'] = race.driver.driver_card
+    if hasattr(race.driver, 'personnel_number'):
+        ws1['CI15'] = race.driver.personnel_number
     ws1['DM14'] = race.race_date
     ws1['DM15'] = race.race_date
     ws1['EV14'] = race.s_milage
@@ -599,10 +608,13 @@ def waybill_render(race_id):
     ws1['CO45'] = race.driver.name
     ws1['CF51'] = race.driver.name
     ws1['CF53'] = const.mechanic
-    ws1['DP36'] = race.product.name
+    if hasattr(race.product, 'name'):
+        ws1['DP36'] = race.product.name
     ws1['A36'] = const.organization_unit_small
-    ws1['AT36'] = race.supplier.name + race.supplier.address
-    ws1['CE36'] = race.customer.name + race.customer.address
+    if hasattr(race.supplier, 'name') and hasattr(race.supplier, 'address'):
+        ws1['AT36'] = race.supplier.name + race.supplier.address
+    if hasattr(race.customer, 'name') and hasattr(race.customer, 'address'):
+        ws1['CE36'] = race.customer.name + race.customer.address
     ws1['FL36'] = track
     ws2['DP36'] = track
     ws2['I36'] = int(race.gas_end) - int(race.gas_start)
