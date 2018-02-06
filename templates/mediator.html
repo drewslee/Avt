@@ -1,51 +1,50 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
- <div class="container">
- {% if qMediator %}
- <div class="table-responsive">
-	 <table class="table table-hover table-condensed">
-		 <thead>
-		    <th>Посредник</th>
-		 </thead>
-		 <tbody>
-	 {% for q in qMediator%}
-	    <tr>
-		 <td>
-			{{ q.address}}
-		 </td>
-         <td>
-            {{ q.inn|default_if_none:"Не назначен"}}
-         </td>
-		    <td>
-			    <form action="update{{ q.pk }}" method="get">
-				    <button class="btn btn-info">Изменить</button>
-			    </form>
-		    </td>
-		    <td>
-			    <form action="{% url 'MediatorDelete' %}" method="post">
-				    {% csrf_token %}
-                    <input type="hidden" name="pk" value="{{ q.pk }}">
-				    <button class="btn btn-danger delete-confirmation">Удалить</button>
-			    </form>
-		    </td>
-	    </tr>
-	 {% endfor %}
-		 </tbody>
-	 </table>
- </div>
- {% endif %}
- <form action="add" method="post">
-    {% csrf_token %}
-	  {% for field in form %}
-		 {% bootstrap_field field %}
-	  {% endfor %}
-    <button class="btn btn-success">Добавить</button>
-</form>
- </div>
+    <div class="container">
+        {% if qMediator %}
+            <div class="table-responsive">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <th>Посредник</th>
+                    </thead>
+                    <tbody>
+                    {% for q in qMediator %}
+                        <tr>
+                            <td>
+                                {{ q.address }}
+                            </td>
+                            <td>
+                                {{ q.inn|default_if_none:"Не назначен" }}
+                            </td>
+                            <td>
+                                <form action="update{{ q.pk }}" method="get">
+                                    <button class="btn btn-info">Изменить</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="{% url 'MediatorDelete' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="pk" value="{{ q.pk }}">
+                                    <button class="btn btn-danger delete-confirmation">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        <form action="add" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% bootstrap_field field %}
+            {% endfor %}
+            <button class="btn btn-success">Добавить</button>
+        </form>
+    </div>
     <script type="text/javascript">
-        $(document).on('click', '.delete-confirmation', function()
-        {
+        $(document).on('click', '.delete-confirmation', function () {
             return confirm('Вы уверены, что хотите удалить?');
         })
     </script>

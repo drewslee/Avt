@@ -5,7 +5,7 @@ import openpyxl
 import json
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import NamedStyle
-from django.http.response import HttpResponseRedirect,Http404, HttpResponse
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -87,7 +87,8 @@ class RaceViewList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.GET.get('daterange') is None:
-            queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()]).order_by('id_race')
+            queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()]).order_by(
+                'id_race')
         else:
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
             queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('id_race')
@@ -242,6 +243,7 @@ class DriverDelete(PermissionRequiredMixin, DeleteView):
 
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
+
 
 class SupplierAdd(PermissionRequiredMixin, CreateView):
     model = Supplier
@@ -646,6 +648,7 @@ def waybill(req):
             urls.append(waybill_render(i[0]))
         return render(request=req, template_name='Avtoregion/waybill.html',
                       context={'qset': qset, 'urls': urls})
+
 
 def date_to_str(date):
     return date.split(' - ')

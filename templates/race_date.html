@@ -64,7 +64,7 @@
 {% block content %}
     <div class="container-fluid">
         {% if qRace %}
-	        <div class="table-responsive"></div>
+            <div class="table-responsive"></div>
             <table class="table table-hover table-condensed table-bordered">
                 <thead>
                 <th>#</th>
@@ -87,7 +87,7 @@
                 {% for q in qRace %}
                     <tbody>
                     <tr>
-	                    <td>{{ forloop.counter }}</td>
+                        <td>{{ forloop.counter }}</td>
                         <td>
                             {{ q.race_date }}
                         </td>
@@ -131,7 +131,7 @@
                             {{ q.state }}
                         </td>
                         <td>
-                            <form action="{% url 'RaceUpdate' q.pk%}">
+                            <form action="{% url 'RaceUpdate' q.pk %}">
                                 <button class="btn btn-info">Изменить</button>
                             </form>
                             <form action="{% url 'RaceDelete' %}" method="post">
@@ -174,7 +174,7 @@
                     </ul>
                 </div>
             </div>
-	        </div>
+            </div>
         {% endif %}
 
     </div>

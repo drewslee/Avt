@@ -2,24 +2,24 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	  <meta charset="utf-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Main</title>
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
     <link rel="stylesheet" href="{% static 'css/rwd-table.min.css' %}">
-	<!-- jQuery library-->
-	<script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/popper-1.12.9.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/dropdown.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/collapse.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/transition.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
+    <!-- jQuery library-->
+    <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/popper-1.12.9.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/dropdown.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/collapse.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/transition.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
     <script type="text/javascript" src="{% static 'js/rwd-table.min.js' %}"></script>
 </head>
 {% if user.is_anonymous %}
@@ -30,53 +30,56 @@
 {% else %}
     <body>
     <nav class="navbar navbar-inverse">
-	    <div class="container-fluid">
-		    <ul class="nav navbar-nav">
-			    <li class="dropdown">
-				    <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'Race' %}">Рейсы<span class="caret"></span></a>
-				    <ul class="dropdown-menu">
-					    <li><a href="{% url 'RaceAll' %}">Все рейсы</a></li>
-					    <li><a href="{% url 'Race' %}">Текущие рейсы</a></li>
-					    <li><a href="{% url 'RaceCreate' %}">Добавить Рейсы</a></li>
-				    </ul>
-			    </li>
-			    <li class="dropdown">
-				    <a class="dropdown-toggle" href="index.html" data-toggle="dropdown">Справочники<span class="caret"></span></a>
-				    <ul class="dropdown-menu">
-					    <li><a href="{% url 'CarList' %}">Машины</a></li>
-					    <li><a href="{% url 'DriverList' %}">Водители</a></li>
-					    <li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
-					    <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
-					    <li><a href="{% url 'ProductList' %}">Груз</a></li>
-					    <li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
-					    <li><a href="{% url 'MediatorList' %}">Посредники</a></li>
-					    <li><a href="{% url 'ShipmentList' %}">Место разгрузки</a></li>
-                        <li><a href="{% url 'Constants' %}">Константы</a> </li>
-				    </ul>
-			    </li>
-			    <li class="dropdown">
-				    <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span class="caret"></span></a>
-				    <ul class="dropdown-menu">
-					    <li><a href="{% url 'SupplierAcc' %}">Реестр по поставщику</a></li>
-					    <li><a href="{% url 'CustomerAcc' %}">Реестр по покупателю</a></li>
-					    <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
-					    <li><a href="{% url 'CarAcc' %}">Реестр по автомобилю</a></li>
-					    <li><a href="{% url 'WayBill' %}">Путевые листы</a></li>
-					    <!--<li><a href="banned">Реестр по посреднику</a></li>-->
-				    </ul>
-			    </li>
-			    <li class="navbar-text">{{ user }}</li>
-			    <li><a class="navbar-link" href="{% url 'logout' %}">Выход</a></li>
-		    </ul>
-		    {% block datetime %}
-		    {% endblock %}
-	    </div>
-	    <script type="text/javascript">
-          $('.dropdown-toggle').dropdown();
-	    </script>
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'Race' %}">Рейсы<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'RaceAll' %}">Все рейсы</a></li>
+                        <li><a href="{% url 'Race' %}">Текущие рейсы</a></li>
+                        <li><a href="{% url 'RaceCreate' %}">Добавить Рейсы</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" href="index.html" data-toggle="dropdown">Справочники<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'CarList' %}">Машины</a></li>
+                        <li><a href="{% url 'DriverList' %}">Водители</a></li>
+                        <li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
+                        <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
+                        <li><a href="{% url 'ProductList' %}">Груз</a></li>
+                        <li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
+                        <li><a href="{% url 'MediatorList' %}">Посредники</a></li>
+                        <li><a href="{% url 'ShipmentList' %}">Место разгрузки</a></li>
+                        <li><a href="{% url 'Constants' %}">Константы</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="index.html">Отчёты<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'SupplierAcc' %}">Реестр по поставщику</a></li>
+                        <li><a href="{% url 'CustomerAcc' %}">Реестр по покупателю</a></li>
+                        <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
+                        <li><a href="{% url 'CarAcc' %}">Реестр по автомобилю</a></li>
+                        <li><a href="{% url 'WayBill' %}">Путевые листы</a></li>
+                        <!--<li><a href="banned">Реестр по посреднику</a></li>-->
+                    </ul>
+                </li>
+                <li class="navbar-text">{{ user }}</li>
+                <li><a class="navbar-link" href="{% url 'logout' %}">Выход</a></li>
+            </ul>
+            {% block datetime %}
+            {% endblock %}
+        </div>
+        <script type="text/javascript">
+            $('.dropdown-toggle').dropdown();
+        </script>
     </nav>
-		{% block content %}
-		{% endblock %}
+    {% block content %}
+    {% endblock %}
     </body>
 {% endif %}
 </html>

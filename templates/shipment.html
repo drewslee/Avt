@@ -1,57 +1,56 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
- <div class="container">
- {% if qShipment %}
-     <div class="table-responsive">
-	 <table class="table table-hover table-condensed">
-		 <thead>
-		 <th>Место разгрузки</th>
-         <th>Действия</th>
-		 </thead>
-		 <tbody>
-	 {% for q in qShipment%}
-	    <tr>
-		 <td>
-			{{ q.name }}
-		 </td>
-		    <td>
-                <div class="form-group">
-			    <form action="update{{ q.pk }}" method="get">
-				    <button class="btn btn-info form-control">Изменить</button>
-			    </form>
-                </div>
-		    </td>
-		    <td>
-                <div class="form-group">
-                <form action="{% url 'ShipmentDelete' %}" method="post">
-	                {% csrf_token %}
-                    <input type="hidden" name="pk" value="{{ q.pk }}">
-                    <button class="btn btn-danger form-control delete-confirmation">Удалить</button>
-                </form>
-                </div>
-		    </td>
-	    </tr>
-	 {% endfor %}
-		 </tbody>
-	 </table>
-     </div>
- {% endif %}
+    <div class="container">
+        {% if qShipment %}
+            <div class="table-responsive">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <th>Место разгрузки</th>
+                    <th>Действия</th>
+                    </thead>
+                    <tbody>
+                    {% for q in qShipment %}
+                        <tr>
+                            <td>
+                                {{ q.name }}
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <form action="update{{ q.pk }}" method="get">
+                                        <button class="btn btn-info form-control">Изменить</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <form action="{% url 'ShipmentDelete' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="pk" value="{{ q.pk }}">
+                                        <button class="btn btn-danger form-control delete-confirmation">Удалить</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
 
- <div class="form-group">
- <form action="add" method="post">
-    {% csrf_token %}
-     {% for field in form %}
-         {% bootstrap_field field %}
-     {% endfor %}
-    <button class="btn btn-success">Добавить</button>
-</form>
- </div>
-    <script type="text/javascript">
-        $(document).on('click', '.delete-confirmation', function()
-        {
-            return confirm('Вы уверены, что хотите удалить?');
-        })
-    </script>
- </div>
+        <div class="form-group">
+            <form action="add" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% bootstrap_field field %}
+                {% endfor %}
+                <button class="btn btn-success">Добавить</button>
+            </form>
+        </div>
+        <script type="text/javascript">
+            $(document).on('click', '.delete-confirmation', function () {
+                return confirm('Вы уверены, что хотите удалить?');
+            })
+        </script>
+    </div>
 {% endblock %}

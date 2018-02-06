@@ -2,71 +2,71 @@
 {% load static %}
 {% load bootstrap3 %}
 {% block content %}
- <div class="container-fluid">
- <div class="table-responsive">
- <table class="table table-hover">
- <thead>
-     <th>Дата</th>
-     <th>Номер рейса</th>
-     <th>Номер машины</th>
-     <th>Тип дохода</th>
-     <th>Поставщик</th>
-     <th>Клиент</th>
-     <th>Место разгрузки</th>
-     <th>Товар</th>
-     <th>Начало трека</th>
-     <th>Конец трека</th>
-     <th>Загружено</th>
-     <th>Выгружено</th>
-     <th>Состояние</th>
- </thead>
- <tbody>
- {% for q in q_resp %}
-	 <tr>
-         <td>
-            {{ q.race_date }}
-         </td>
-         <td>
-             {{ q.name_race}}
-         </td>
-         <td>
-             {{ q.car}}
-         </td>
-         <td>
-             {{ q.type_ship }}
-         </td>
-         <td>
-             {{ q.supplier}}
-         </td>
-         <td>
-             {{ q.customer}}
-         </td>
-         <td>
-             {{ q.shipment|default_if_none:'Не назначено'}}
-         </td>
-         <td>
-             {{ q.product}}
-         </td>
-         <td>
-             {{ q.s_milage}}
-         </td>
-         <td>
-             {{ q.e_milage}}
-         </td>
-         <td>
-             {{ q.weight_load}}
-         </td>
-         <td>
-             {{ q.weight_unload}}
-         </td>
-         <td>
-             {{ q.state}}
-         </td>
-	 </tr>
-{% endfor %}
- </tbody>
- </table>
- </div>
-     <a href='{% static filename %}' download><span class="glyphicon glyphicon-book"></span>В xls</a>
- </div>
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <th>Дата</th>
+                <th>Номер рейса</th>
+                <th>Номер машины</th>
+                <th>Тип дохода</th>
+                <th>Поставщик</th>
+                <th>Клиент</th>
+                <th>Место разгрузки</th>
+                <th>Товар</th>
+                <th>Начало трека</th>
+                <th>Конец трека</th>
+                <th>Загружено</th>
+                <th>Выгружено</th>
+                <th>Состояние</th>
+                </thead>
+                <tbody>
+                {% for q in q_resp %}
+                    <tr>
+                        <td>
+                            {{ q.race_date }}
+                        </td>
+                        <td>
+                            {{ q.name_race }}
+                        </td>
+                        <td>
+                            {{ q.car }}
+                        </td>
+                        <td>
+                            {{ q.type_ship }}
+                        </td>
+                        <td>
+                            {{ q.supplier }}
+                        </td>
+                        <td>
+                            {{ q.customer }}
+                        </td>
+                        <td>
+                            {{ q.shipment|default_if_none:'Не назначено' }}
+                        </td>
+                        <td>
+                            {{ q.product }}
+                        </td>
+                        <td>
+                            {{ q.s_milage }}
+                        </td>
+                        <td>
+                            {{ q.e_milage }}
+                        </td>
+                        <td>
+                            {{ q.weight_load }}
+                        </td>
+                        <td>
+                            {{ q.weight_unload }}
+                        </td>
+                        <td>
+                            {{ q.state }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href='{% static filename %}' download><span class="glyphicon glyphicon-book"></span>В xls</a>
+    </div>
 {% endblock %}

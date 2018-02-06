@@ -12,37 +12,35 @@
             {% endfor %}
         </ul>
     {% endif %}
- <div class="container table-responsive">
+    <div class="container table-responsive">
 
- <form action="{% url 'RaceCreate' %}" method="post">
-    {% csrf_token %}
- {% for field in form %}
-	 {% bootstrap_field field %}
- {% endfor %}
-	  {% buttons %}
-        <button class="btn btn-success"> {% bootstrap_icon "star" %} Добавить</button>
-	  {% endbuttons %}
-</form>
- </div>
-	<script type="text/javascript">
-	$(function ()
-{       var sel = document.getElementById('id_car');
-        sel.addEventListener("change" , function ()
-	    {
-	       var data = sel.value;
-            $.ajax(
-                {
-                    type: "GET",
-                    url: "{% url 'RaceAjax' %}",
-                    data: { id : data},
-                    dataType: 'json',
-                    success: function (resp)
+        <form action="{% url 'RaceCreate' %}" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% bootstrap_field field %}
+            {% endfor %}
+            {% buttons %}
+                <button class="btn btn-success"> {% bootstrap_icon "star" %} Добавить</button>
+            {% endbuttons %}
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var sel = document.getElementById('id_car');
+            sel.addEventListener("change", function () {
+                var data = sel.value;
+                $.ajax(
                     {
-                        document.getElementById('id_gas_start').value = resp.gas_start;
-                        document.getElementById('id_s_milage').value = resp.s_milage;
-                    }
-                })
-		});
-})
-	</script>
+                        type: "GET",
+                        url: "{% url 'RaceAjax' %}",
+                        data: {id: data},
+                        dataType: 'json',
+                        success: function (resp) {
+                            document.getElementById('id_gas_start').value = resp.gas_start;
+                            document.getElementById('id_s_milage').value = resp.s_milage;
+                        }
+                    })
+            });
+        })
+    </script>
 {% endblock %}
