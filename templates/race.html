@@ -1,16 +1,10 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet" href="{% static "css/datatables.min.css" %}">
-    <script type="text/javascript" src="{% static "js/datatables.min.js" %}"></script>
-    <script type="text/javascript">
-        $(function () {
-            $("#race").DataTable();
-        });
-    </script>
     <div class="container-fluid">
         {% if qRace %}
-            <table id="race" class="table table-hover table-condensed table-responsive">
+            <div class="table-responsive">
+            <table id="race" class="table table-small-font table-hover table-condensed">
                 <thead>
                 <th>Дата</th>
                 <th>Номер рейса</th>
@@ -26,6 +20,7 @@
                 <th>Загружено</th>
                 <th>Выгружено</th>
                 <th>Состояние</th>
+                <th>Действия</th>
                 </thead>
                 {% for q in qRace %}
                     <tbody>
@@ -86,6 +81,7 @@
                     </tbody>
                 {% endfor %}
             </table>
+            </div>
         {% endif %}
         {% if is_paginated %}
             <div class="text-center">
