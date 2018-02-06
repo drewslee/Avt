@@ -2,12 +2,12 @@
 {% load bootstrap3 %}
 {% block content %}
  <div class="container">
- <div class="table-responsive">
  {% if qMediator %}
-	 <table class="table table-hover">
+ <div class="table-responsive">
+	 <table class="table table-hover table-condensed">
 		 <thead>
-		 <th>Посредник</th>
-		    </thead>
+		    <th>Посредник</th>
+		 </thead>
 		 <tbody>
 	 {% for q in qMediator%}
 	    <tr>
@@ -33,8 +33,8 @@
 	 {% endfor %}
 		 </tbody>
 	 </table>
- {% endif %}
  </div>
+ {% endif %}
  <form action="add" method="post">
     {% csrf_token %}
 	  {% for field in form %}

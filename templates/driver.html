@@ -1,6 +1,7 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
+    <div class="container">
 		{% if qDriver %}
 			<div class="table-responsive">
 				<table class="table table-hover">
@@ -17,10 +18,10 @@
 								{{ q.name }}
 							</td>
 							<td>
-								{{ q.personnel_number }}
+								{{ q.personnel_number|default_if_none:'Не назначен' }}
 							</td>
 							<td>
-								{{ q.driver_card }}
+								{{ q.driver_card|default_if_none:'Не назначен' }}
 							</td>
 							<td>
 								<div class="form-group">
@@ -57,4 +58,5 @@
           return confirm('Вы уверены, что хотите удалить?');
       })
 	</script>
+    </div>
 {% endblock %}
