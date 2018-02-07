@@ -1,8 +1,6 @@
 {% extends "index.html" %}
 {% load staticfiles %}
 {% block datetime %}
-    <link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}">
-    <script type="text/javascript" href="{% static 'DataTables/datatables.min.js' %}"></script>
     <script type="text/javascript">
         $(function () {
             $('input[name="daterange"]').daterangepicker({
@@ -185,7 +183,11 @@
             return confirm('Вы уверены, что хотите удалить?');
         });
         $( function () {
-            $("#race_table").DataTable({});
+            $("#race_table").DataTable(
+		            {
+				            paging: false,
+		            }
+            )
         });
     </script>
 
