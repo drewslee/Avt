@@ -168,7 +168,18 @@ class Race(models.Model):
     def get_absolute_url(self):
         return reverse('RaceUpdate', kwargs={'pk': self.pk})
 
-#   @property
-#   def get_sum_weight(self):
-#       self.weight_load
+    def get_foreign_fields(self):
+        return [getattr(self, f.name) for f in self._meta.fields if type(f) == models.fields.related.ForeignKey]
+
+    @property
+    def gas_spent(self):
+        return self.gas_start + self.gas_given - self.gas_end
+
+    @property
+    def track(self):
+        if self.e_milage > self.s_milage:
+            track = self.e_milage - self.s_milage
+        else:
+            track = 0
+        return track
 

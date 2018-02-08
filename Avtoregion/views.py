@@ -3,6 +3,8 @@ import os
 import xlwt
 import openpyxl
 import json
+import zipfile
+import shutil
 from openpyxl.styles.borders import Border, Side
 from openpyxl.styles import NamedStyle
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
@@ -18,6 +20,7 @@ from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
 from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
+from django.template.loader import render_to_string
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -560,78 +563,16 @@ def save_excel(filename, values_list, col):
 
 
 def waybill_render(race_id):
-    filename = 'waybill_'
-    thin_border = Border(left=Side(style='thin'),
-                         right=Side(style='thin'),
-                         top=Side(style='thin'),
-                         bottom=Side(style='thin'))
-    thick_border = Border(left=Side(style='thick'),
-                          right=Side(style='thick'),
-                          top=Side(style='thick'),
-                          bottom=Side(style='thick'))
-    wb = openpyxl.load_workbook(os.path.join(djangoSettings.BASE_DIR, 'static', 'way.xlsx'))
-    ws1 = wb['1']
-    ws2 = wb['2']
+    static_root = os.path.join(djangoSettings.BASE_DIR, 'static')
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
-    if int(race.e_milage) > int(race.s_milage):
-        track = int(race.e_milage) - int(race.s_milage)
-    else:
-        track = 0
-
-    ws1['BG5'] = race.race_date
-    ws1['Q6'] = const.organization_unit_full
-    ws1['Q13'] = race.car.brand
-    ws1['AB14'] = race.car.number
-    ws1['CI14'] = race.car.garage_number
-    if hasattr(race.car.trailer, 'brand_trailer'):
-        ws1['I21'].border = thick_border
-        ws1['I21'] = race.car.trailer.brand_trailer
-    if hasattr(race.car.trailer, 'garage_number_trailer'):
-        ws1['CI21'] = race.car.trailer.garage_number_trailer
-        ws1['CI21'].style = thick_border
-    if hasattr(race.car.trailer, 'number'):
-        ws1['AR21'] = race.car.trailer.number
-    ws1['I15'] = race.driver.name
-    if hasattr(race.driver, 'driver_card'):
-        ws1['P17'] = race.driver.driver_card
-    if hasattr(race.driver, 'personnel_number'):
-        ws1['CI15'] = race.driver.personnel_number
-    ws1['DM14'] = race.race_date
-    ws1['DM15'] = race.race_date
-    ws1['EV14'] = race.s_milage
-    ws1['EV15'] = race.e_milage
-    ws1['DN24'] = race.gas_given
-    ws1['N43'] = race.gas_given
-    ws1['DY24'] = race.gas_start
-    ws1['EG24'] = race.gas_end
-    ws1['V45'] = const.dispatcher
-    ws1['CO43'] = const.mechanic
-    ws1['CO45'] = race.driver.name
-    ws1['CF51'] = race.driver.name
-    ws1['CF53'] = const.mechanic
-    if hasattr(race.product, 'name'):
-        ws1['DP36'] = race.product.name
-    ws1['A36'] = const.organization_unit_small
-    if hasattr(race.supplier, 'name') and hasattr(race.supplier, 'address'):
-        ws1['AT36'] = race.supplier.name + race.supplier.address
-    if hasattr(race.customer, 'name') and hasattr(race.customer, 'address'):
-        ws1['CE36'] = race.customer.name + race.customer.address
-    ws1['FL36'] = track
-    ws2['DP36'] = track
-    ws2['I36'] = int(race.gas_end) - int(race.gas_start)
-    ws2['DX36'] = race.shoulder
-    ws2['EF36'] = race.shoulder
-    ws2['AL7'] = race.race_date
-    ws2['AL8'] = race.race_date
-    ws2['A7'] = race.supplier.address
-    ws2['A8'] = race.customer.address
-
-    filename = filename + str(race_id) + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xlsx'
-    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
-    wb.save(path_for_save)
-    wb.close()
-    return '/'.join(['temp', filename])
+    buf = render_to_string('sharedStrings.xml', {'race': race, 'const': const})
+    with open(os.path.join(static_root, 'way', 'xl', 'sharedStrings.xml',), 'w', newline='\r\n') as f:
+        f.write(buf)
+    filename = 'waybill_' + str(race_id) + '_' + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S'))
+    shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', os.path.join(static_root, 'way'), '.')
+    os.rename(os.path.join(static_root,'temp', filename + '.zip'), os.path.join(static_root, 'temp', filename + '.xlsx'))
+    return '/'.join(['temp', filename + '.xlsx'])
 
 
 def waybill(req):
