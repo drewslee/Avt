@@ -1,12 +1,8 @@
 # -*- coding:utf-8 -*-
 import os
 import xlwt
-import openpyxl
 import json
-import zipfile
 import shutil
-from openpyxl.styles.borders import Border, Side
-from openpyxl.styles import NamedStyle
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
