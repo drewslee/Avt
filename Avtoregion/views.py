@@ -3,6 +3,7 @@ import os
 import xlwt
 import json
 import shutil
+import tempfile
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -563,11 +564,14 @@ def waybill_render(race_id):
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
     buf = render_to_string('sharedStrings.xml', {'race': race, 'const': const})
-    with open(os.path.join(static_root, 'way', 'xl', 'sharedStrings.xml',), 'w', newline='\r\n') as f:
-        f.write(buf)
     filename = 'waybill_' + str(race_id) + '_' + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S'))
-    shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', os.path.join(static_root, 'way'), '.')
-    os.rename(os.path.join(static_root,'temp', filename + '.zip'), os.path.join(static_root, 'temp', filename + '.xlsx'))
+    with tempfile.TemporaryDirectory() as tmpdir:
+        way = os.path.join(tmpdir, 'way')
+        shutil.copytree(os.path.join(static_root, 'way'), way)
+        with open(os.path.join(way, 'xl', 'sharedStrings.xml',), 'w', newline='\r\n') as f:
+            f.write(buf)
+        shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', way, '.')
+    os.rename(os.path.join(static_root, 'temp', filename + '.zip'), os.path.join(static_root, 'temp', filename + '.xlsx'))
     return '/'.join(['temp', filename + '.xlsx'])
 
 
