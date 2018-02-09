@@ -74,9 +74,11 @@
                         <button class="btn btn-success form-control"> {% bootstrap_icon "star" %}Сформировать</button>
                     {% endbuttons %}
                     {% if urls %}
+                        <div class="list-group">
                         {% for url in urls %}
-                            <a href="{% static url %}">Путевой лист {{ forloop.counter }}</a>
+                            <a href="{% static url %}" class="list-group-item">Путевой лист {{ forloop.counter }}</a>
                         {% endfor %}
+                        </div>
                     {% endif %}
                 </form>
             </div>
