@@ -1,187 +1,223 @@
 {% extends "index.html" %}
 {% load staticfiles %}
 {% block datetime %}
-    <script type="text/javascript">
-        $(function () {
-            $('input[name="daterange"]').daterangepicker({
-                "autoApply": true,
-                "alwaysShowCalendars": true,
-                ranges: {
-                    'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
-                    'Прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                },
-                locale: {
-                    "fromLabel": "C",
-                    "toLabel": "По",
-                    "monthNames": [
-                        "Январь",
-                        "Февраль",
-                        "Март",
-                        "Апрель",
-                        "Май",
-                        "Июнь",
-                        "Июль",
-                        "Август",
-                        "Сентябрь",
-                        "Октябрь",
-                        "Ноябрь",
-                        "Декабрь"
-                    ],
-                    customRangeLabel: 'Свой диапазон',
-                    format: 'YYYY-MM-DD',
-                    "firstDay": 1,
-                    "weekLabel": "Неделя",
-                    "daysOfWeek": [
-                        "Вс",
-                        "Пн",
-                        "Вт",
-                        "Ср",
-                        "Чт",
-                        "Пт",
-                        "Сб"
-                    ]
+	<script type="text/javascript">
+      $(function () {
+          $('input[name="daterange"]').daterangepicker({
+              "autoApply": true,
+              "alwaysShowCalendars": true,
+              ranges: {
+                  'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
+                  'Прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+              },
+              locale: {
+                  "fromLabel": "C",
+                  "toLabel": "По",
+                  "monthNames": [
+                      "Январь",
+                      "Февраль",
+                      "Март",
+                      "Апрель",
+                      "Май",
+                      "Июнь",
+                      "Июль",
+                      "Август",
+                      "Сентябрь",
+                      "Октябрь",
+                      "Ноябрь",
+                      "Декабрь"
+                  ],
+                  customRangeLabel: 'Свой диапазон',
+                  format: 'YYYY-MM-DD',
+                  "firstDay": 1,
+                  "weekLabel": "Неделя",
+                  "daysOfWeek": [
+                      "Вс",
+                      "Пн",
+                      "Вт",
+                      "Ср",
+                      "Чт",
+                      "Пт",
+                      "Сб"
+                  ]
 
-                }
-            });
-            $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
-                $('form[id="push_date"]').submit()
-            })
-        });
-    </script>
-    <ul class="nav navbar-nav navbar-form navbar-right">
-        <li>
-            <div class="input-group date" id="datetimepicker">
-                <form id="push_date" action="" method="get">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                        <input type="text" class="form-control" name="daterange"
-                               value="{{ start_date }} - {{ end_date }}">
-                    </div>
-                </form>
-            </div>
-        </li>
-    </ul>
+              }
+          });
+          $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+              $('form[id="push_date"]').submit()
+          })
+      });
+	</script>
+	<ul class="nav navbar-nav navbar-form navbar-right">
+		<li>
+			<div class="input-group date" id="datetimepicker">
+				<form id="push_date" action="" method="get">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+						<input type="text" class="form-control" name="daterange"
+						       value="{{ start_date }} - {{ end_date }}">
+					</div>
+				</form>
+			</div>
+		</li>
+	</ul>
 {% endblock %}
 {% block content %}
-<div class="container-fluid">
-    {% if qRace %}
-        <div class="table-responsive">
-        <table id="race_table" class="table table-small-font table-hover table-condensed table-bordered">
-            <thead>
-            <th>#</th>
-            <th>Дата</th>
-            <th>Номер рейса</th>
-            <th>Номер машины</th>
-            <th>Водитель</th>
-            <th>Тип операции</th>
-            <th>Поставщик</th>
-            <th>Клиент</th>
-            <th>Место разгрузки</th>
-            <th>Товар</th>
-            <th>Начало трека</th>
-            <th>Конец трека</th>
-            <th>Загружено</th>
-            <th>Выгружено</th>
-            <th>Состояние</th>
-            <th>Действия</th>
-            </thead>
-            {% for q in qRace %}
-                <tbody>
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>
-                        {{ q.race_date }}
-                    </td>
-                    <td>
-                        {{ q.id_race }}
-                    </td>
-                    <td>
-                        {{ q.car }}
-                    </td>
-                    <td>
-                        {{ q.driver }}
-                    </td>
-                    <td>
-                        {{ q.type_ship }}
-                    </td>
-                    <td>
-                        {{ q.supplier }}
-                    </td>
-                    <td>
-                        {{ q.customer }}
-                    </td>
-                    <td>
-                        {{ q.shipment|default_if_none:"Нет" }}
-                    </td>
-                    <td>
-                        {{ q.product }}
-                    </td>
-                    <td>
-                        {{ q.s_milage }}
-                    </td>
-                    <td>
-                        {{ q.e_milage }}
-                    </td>
-                    <td>
-                        {{ q.weight_load }}
-                    </td>
-                    <td>
-                        {{ q.weight_unload }}
-                    </td>
-                    <td>
-                        {{ q.state }}
-                    </td>
-                    <td>
-                        <form action="{% url 'RaceUpdate' q.pk %}">
-                            <button class="btn btn-info">Изменить</button>
-                        </form>
-                        <form action="{% url 'RaceDelete' %}" method="post">
-                            {% csrf_token %}
-                            <button class="btn btn-danger delete-confirmation">Удалить</button>
-                            <input type="hidden" name="pk" value="{{ q.pk }}">
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            {% endfor %}
-        </table>
-        </div>
-    {% endif %}
-{% if is_paginated %}
-    <div class="row">
-        <div class="col-sm-offset-5">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li>
-                        <a href="?daterange={{ start_date }}+-+{{ end_date }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
-                    </li>
-                {% else %}
-                    <li class="disabled"><span>&laquo;</span></li>
-                {% endif %}
-                {% for i in paginator.page_range %}
-                    {% if page_obj.number == i %}
-                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
-                    {% else %}
-                        <li><a href="?daterange={{ start_date }}+-+{{ end_date }}&page={{ i }}">{{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
+	<div class="container-fluid">
+		{% if qRace %}
+			<div class="table-responsive">
+				<table id="race_table" class="table table-small-font table-condensed table-bordered">
+					<thead>
+					<tr>
+						<th >#</th>
+						<th>Дата</th>
+						<th>Номер рейса</th>
+						<th>Номер машины</th>
+						<th>Водитель</th>
+						<th>Тип операции</th>
+						<th>Поставщик</th>
+						<th>Клиент</th>
+						<th>Место разгрузки</th>
+						<th>Товар</th>
+						<th>Начало трека</th>
+						<th>Конец трека</th>
+						<th>Загружено</th>
+						<th>Выгружено</th>
+						<th>Состояние</th>
+						<th>Действия</th>
+					</tr>
+					</thead>
+					{% for q in qRace %}
+						<tbody>
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>
+								{{ q.race_date }}
+							</td>
+							<td>
+								{{ q.id_race }}
+							</td>
+							<td>
+								{{ q.car }}
+							</td>
+							<td>
+								{{ q.driver }}
+							</td>
+							<td>
+								{{ q.type_ship }}
+							</td>
+							<td>
+								{{ q.supplier }}
+							</td>
+							<td>
+								{{ q.customer }}
+							</td>
+							<td>
+								{{ q.shipment|default_if_none:"Нет" }}
+							</td>
+							<td>
+								{{ q.product }}
+							</td>
+							<td>
+								{{ q.s_milage }}
+							</td>
+							<td>
+								{{ q.e_milage }}
+							</td>
+							<td>
+								{{ q.weight_load }}
+							</td>
+							<td>
+								{{ q.weight_unload }}
+							</td>
+							<td>
+								{{ q.state }}
+							</td>
+							<td>
+								<form action="{% url 'RaceUpdate' q.pk %}">
+									<button class="btn btn-info">Изменить</button>
+								</form>
+								<form action="{% url 'RaceDelete' %}" method="post">
+									{% csrf_token %}
+									<button class="btn btn-danger delete-confirmation">Удалить</button>
+									<input type="hidden" name="pk" value="{{ q.pk }}">
+								</form>
+							</td>
+						</tr>
+						</tbody>
+					{% endfor %}
+				</table>
+			</div>
+		{% endif %}
+		{% if is_paginated %}
+			<div class="row">
+				<div class="col-sm-offset-5">
+					<ul class="pagination">
+						{% if page_obj.has_previous %}
+							<li>
+								<a href="?daterange={{ start_date }}+-+{{ end_date }}&page={{ page_obj.previous_page_number }}">&laquo;</a>
+							</li>
+						{% else %}
+							<li class="disabled"><span>&laquo;</span></li>
+						{% endif %}
+						{% for i in paginator.page_range %}
+							{% if page_obj.number == i %}
+								<li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+							{% else %}
+								<li><a href="?daterange={{ start_date }}+-+{{ end_date }}&page={{ i }}">{{ i }}</a></li>
+							{% endif %}
+						{% endfor %}
 
-                {% if page_obj.has_next %}
-                    <li>
-                        <a href="?daterange={{ start_date }}+-+{{ end_date }}&page={{ page_obj.next_page_number }}">&raquo;</a>
-                    </li>
-                {% else %}
-                    <li class="disabled"><span>&raquo;</span></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-{% endif %}
-</div>
-    <script type="text/javascript">
-        $(document).on('click', '.delete-confirmation', function () {
-            return confirm('Вы уверены, что хотите удалить?');
-        });
-    </script>
+						{% if page_obj.has_next %}
+							<li>
+								<a href="?daterange={{ start_date }}+-+{{ end_date }}&page={{ page_obj.next_page_number }}">&raquo;</a>
+							</li>
+						{% else %}
+							<li class="disabled"><span>&raquo;</span></li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+	<script type="text/javascript">
+      $(document).on('click', '.delete-confirmation', function () {
+          return confirm('Вы уверены, что хотите удалить?');
+      });
+	</script>
+<script type="text/css">
+	table {
+		border-top-right-radius: 20px;
+		border-top-left-radius: 20px;
+		border-bottom-right-radius: 20px;
+		border-bottom-left-radius: 20px;
+		border-collapse: collapse;
+		border-spacing: 0px;
+	}
 
+	th {
+		background: #3c3c3c;
+		color: white;
+		text-shadow: 0 1px 1px #2D2020;
+		padding: 10px 20px;
+	}
+
+	th:first-child {
+		border-top-left-radius: 10px;
+	}
+	th:last-child {
+		border-top-right-radius: 10px;
+	}
+	tr:last-child td:first-child {
+		border-radius: 0 0 0 10px;
+	}
+	tr:last-child td:last-child {
+		border-radius: 0 0 10px 0;
+	}
+	tr td:last-child {
+		border-right: none;
+	}
+
+</script>
 {% endblock %}
+
