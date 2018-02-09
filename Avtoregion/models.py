@@ -132,8 +132,8 @@ class Race(models.Model):
         (CREATE, 'Создан'),
         (LOAD, 'Зазгружен'),
         (UNLOAD, 'Выгружен'),
-        (FINISH, 'Закончена'),
-        (END, 'Проведена'),
+        (FINISH, 'Закончен'),
+        (END, 'Проведен'),
         (ACCIDENT, 'Авария'),
     )
     TYPE = (

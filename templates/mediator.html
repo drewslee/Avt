@@ -19,14 +19,12 @@
                             </td>
                             <td>
                                 <form action="update{{ q.pk }}" method="get">
-                                    <button class="btn btn-info">Изменить</button>
+                                    <button class="btn btn-info btn-sm form-control">Изменить</button>
                                 </form>
-                            </td>
-                            <td>
                                 <form action="{% url 'MediatorDelete' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="pk" value="{{ q.pk }}">
-                                    <button class="btn btn-danger delete-confirmation">Удалить</button>
+                                    <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                 </form>
                             </td>
                         </tr>

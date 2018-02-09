@@ -88,10 +88,10 @@ class RaceViewList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         if self.request.GET.get('daterange') is None:
             queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()]).order_by(
-                'id_race')
+                'race_date')
         else:
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
-            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('id_race')
+            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('race_date')
         return queryset
 
     def get_context_data(self, **kwargs):
