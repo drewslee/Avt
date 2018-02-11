@@ -86,8 +86,8 @@
                         <th>Действия</th>
                     </tr>
                     </thead>
+                    <tbody>
                     {% for q in qRace %}
-                        <tbody>
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>
@@ -145,8 +145,8 @@
                                 </div>
                             </td>
                         </tr>
-                        </tbody>
                     {% endfor %}
+                    </tbody>
                 </table>
             </div>
         {% endif %}
@@ -202,7 +202,7 @@
                         $(state[i]).parents("tr").addClass('alert-success');
                         break;
                     case "Авария":
-                         $(state[i]).parents("tr").addClass('alert-danger')
+                        $(state[i]).parents("tr").addClass('alert-danger')
                 }
             }
 
