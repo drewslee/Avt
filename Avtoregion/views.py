@@ -4,6 +4,7 @@ import xlwt
 import json
 import shutil
 import tempfile
+from datetime import timedelta
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -87,7 +88,9 @@ class RaceViewList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.GET.get('daterange') is None:
-            queryset = Race.objects.filter(race_date__range=[timezone.now().date(), timezone.now().date()]).order_by(
+            end_date = Race.objects.latest().race_date
+            start_date = end_date - timedelta(weeks=1)
+            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by(
                 'race_date')
         else:
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
@@ -99,8 +102,8 @@ class RaceViewList(LoginRequiredMixin, ListView):
         if self.request.GET.get('daterange') is not None:
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
         else:
-            start_date = timezone.now().date()
-            end_date = timezone.now().date()
+            end_date = Race.objects.latest().race_date
+            start_date = end_date - timedelta(weeks=1)
         ctx['start_date'] = str(start_date)
         ctx['end_date'] = str(end_date)
         return ctx

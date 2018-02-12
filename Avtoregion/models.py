@@ -131,7 +131,7 @@ class Race(models.Model):
     ACCIDENT = 'Авария'
     STATE = (
         (CREATE, 'Создан'),
-        (LOAD, 'Зазгружен'),
+        (LOAD, 'Загружен'),
         (UNLOAD, 'Выгружен'),
         (FINISH, 'Закончен'),
         (END, 'Проведен'),
@@ -163,6 +163,9 @@ class Race(models.Model):
     gas_given = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     shoulder = models.FloatField(default=0)
     create_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        get_latest_by = 'race_date'
 
     def __str__(self):
         return '%s' % self.id_race
