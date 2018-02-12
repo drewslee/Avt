@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date
+from django.utils import timezone
 from django.shortcuts import reverse
 
 
@@ -141,7 +142,8 @@ class Race(models.Model):
         ('Услуга', 'Услуга')
     )
     id_race = models.AutoField(primary_key=True)
-    race_date = models.DateField(default=date.today)
+    race_date = models.DateTimeField(default=timezone.now)
+    arrival_time = models.DateTimeField(default=timezone.now)
     car = models.ForeignKey(Car)
     driver = models.ForeignKey(Driver)
     type_ship = models.CharField(default=TYPE[0], choices=TYPE, max_length=10)

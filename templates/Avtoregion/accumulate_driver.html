@@ -10,47 +10,7 @@
     <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
     <script type="text/javascript">
-        $(function () {
-            $('input[name="daterange"]').daterangepicker({
-                "autoApply": true,
-                "alwaysShowCalendars": true,
-                ranges: {
-                    'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
-                    'Прошлый месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                },
-                locale: {
-                    "fromLabel": "C",
-                    "toLabel": "По",
-                    "monthNames": [
-                        "Январь",
-                        "Февраль",
-                        "Март",
-                        "Апрель",
-                        "Май",
-                        "Июнь",
-                        "Июль",
-                        "Август",
-                        "Сентябрь",
-                        "Октябрь",
-                        "Ноябрь",
-                        "Декабрь"
-                    ],
-                    customRangeLabel: 'Свой диапазон',
-                    format: 'YYYY-MM-DD',
-                    "firstDay": 1,
-                    "weekLabel": "Неделя",
-                    "daysOfWeek": [
-                        "Вс",
-                        "Пн",
-                        "Вт",
-                        "Ср",
-                        "Чт",
-                        "Пт",
-                        "Сб"
-                    ]
-
-                }
-            });
+    $(function () {
             $('select[name="driver"]').chosen({
                 placeholder_text_single: 'Выберите водителя',
 

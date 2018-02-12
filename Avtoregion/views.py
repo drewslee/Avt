@@ -76,7 +76,7 @@ class RaceAllList(LoginRequiredMixin, ListView):
     template_name = 'race.html'
     context_object_name = 'qRace'
     paginate_by = 7
-    queryset = Race.objects.order_by('id_race')
+    queryset = Race.objects.order_by('race_date')
 
 
 class RaceViewList(LoginRequiredMixin, ListView):

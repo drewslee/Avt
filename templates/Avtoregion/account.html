@@ -2,37 +2,41 @@
 {% load bootstrap3 %}
 {% load static %}
 {% block content %}
-    <div class="container">
-        <table id="tab" class="table table-hover">
-            <thead>
-            <th>Дата</th>
-            <th>Номер машины</th>
-            <th>Вес</th>
-            <th>Фракция</th>
-            </thead>
-            <tbody>
-            {% for q in q_resp %}
-                <tr>
-                    <td>{{ q.race_date }}</td>
-                    <td>{{ q.car }}</td>
-                    {% if q.weight_load %}
-                        <td>{{ q.weight_load }}</td>
-                    {% endif %}
-                    {% if q.weight_unload %}
-                        <td>{{ q.weight_unload }}</td>
-                    {% endif %}
-                    <td>{{ q.product }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <label>Всего загружено:</label>
-        {% if q_weight.weight_unload__sum %}
-            {{ q_weight.weight_unload__sum }}
-        {% endif %}
-        {% if q_weight.weight_load__sum %}
-            {{ q_weight.weight_load__sum }}
-        {% endif %}
-        <a href='{% static filename %}' download><span class="glyphicon glyphicon-book"></span>В xls</a>
-    </div>
+	<div class="container">
+		<div class="table-responsive">
+			<table id="tab" class="table table-hover table-condensed">
+				<thead>
+				<th>#</th>
+				<th>Дата</th>
+				<th>Номер машины</th>
+				<th>Вес</th>
+				<th>Фракция</th>
+				</thead>
+				<tbody>
+				{% for q in q_resp %}
+					<tr>
+						<td>{{ forloop.counter }}</td>
+						<td>{{ q.race_date }}</td>
+						<td>{{ q.car }}</td>
+						{% if q.weight_load %}
+							<td>{{ q.weight_load }}</td>
+						{% endif %}
+						{% if q.weight_unload %}
+							<td>{{ q.weight_unload }}</td>
+						{% endif %}
+						<td>{{ q.product }}</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<label>Всего загружено:</label>
+		{% if q_weight.weight_unload__sum %}
+			{{ q_weight.weight_unload__sum }}
+		{% endif %}
+		{% if q_weight.weight_load__sum %}
+			{{ q_weight.weight_load__sum }}
+		{% endif %}
+		<a href='{% static filename %}' download><span class="glyphicon glyphicon-book"></span>В xls</a>
+	</div>
 {% endblock %}

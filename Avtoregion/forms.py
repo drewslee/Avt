@@ -3,7 +3,7 @@
 from django.forms import ModelForm, CharField, TextInput, PasswordInput
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.forms.widgets import SelectDateWidget
-from django.forms import DateField
+from django.forms import DateField, DateTimeField
 from django.utils import timezone
 from .models import *
 
@@ -92,11 +92,13 @@ class DriverForm(ModelForm):
         model = Driver
         fields = ['name', 'personnel_number', 'driver_card', 'date_med']
         labels = {'name': 'Водитель:', 'personnel_number': 'Табельный номер',
-                  'driver_card': 'Удостоверение',}
+                  'driver_card': 'Удостоверение'}
 
 
 class RaceForm(ModelForm):
-    race_date = DateField(widget=SelectDateWidget(), initial=timezone.now, label='Дата:')
+    race_date = DateTimeField(initial=timezone.now,
+                              label='Дата выезда:')
+    arrival_time = DateTimeField(initial=timezone.now, label='Дата приезда:')
 
     class Meta:
         model = Race
@@ -111,6 +113,7 @@ class RaceForm(ModelForm):
             'product': 'Груз',
             's_milage': 'Начало трeка',
             'e_milage': 'Конец трeка',
+            'mediator': 'Посредник',
             'weight_unload': 'Разгружено',
             'weight_load': 'Загружено',
             'shoulder': 'Плечо',

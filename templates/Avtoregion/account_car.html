@@ -6,8 +6,8 @@
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
+                <th>#</th>
                 <th>Дата</th>
-                <th>Номер рейса</th>
                 <th>Номер машины</th>
                 <th>Водитель</th>
                 <th>Реализация</th>
@@ -24,11 +24,11 @@
                 <tbody>
                 {% for q in q_resp %}
                     <tr>
+	                      <td>
+		                      {{ forloop.counter }}
+	                      </td>
                         <td>
                             {{ q.race_date }}
-                        </td>
-                        <td>
-                            {{ q.name_race }}
                         </td>
                         <td>
                             {{ q.car }}
