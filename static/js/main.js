@@ -54,6 +54,8 @@ $(function () {
         "autoApply": true,
         "timePicker": true,
         "timePicker24Hour": true,
+        "startDate": new Date(),
+        "endDate" : new Date(),
         locale: {
             "monthNames": [
                 "Январь",
@@ -91,6 +93,8 @@ $(function () {
         "autoApply": true,
         "timePicker": true,
         "timePicker24Hour": true,
+        "startDate": new Date(),
+        "endDate" : new Date(),
         locale: {
             "monthNames": [
                 "Январь",

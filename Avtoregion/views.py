@@ -546,6 +546,7 @@ def save_excel(filename, values_list, col):
     font_style.font.bold = True
     font_style.font.name = 'Times New Roman'
 
+
     for col_num in range(len(col)):
         ws.write(row_num, col_num, col[col_num], font_style)
 
