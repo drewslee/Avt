@@ -19,16 +19,16 @@
     <div class="container-fluid">
         {% if qRace %}
             <div class="table-responsive">
-                <table id="race_table" class="table table-small-font table-condensed">
-                    <thead>
-                    <tr>
+                <table id="race_table" data-toggle="table" data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+                    <thead class="small">
+                    <tr class="small">
                         <th>#</th>
                         <th>Дата</th>
-                        <th>Машина</th>
-                        <th>Водитель</th>
+                        <th data-sortable="true">Машина</th>
+                        <th data-sortable="true">Водитель</th>
                         <th>Операция</th>
-                        <th>Поставщик</th>
-                        <th>Клиент</th>
+                        <th data-sortable="true">Поставщик</th>
+                        <th data-sortable="true">Клиент</th>
                         <th>Место разгрузки</th>
                         <th>Груз</th>
                         <th>Начало трека</th>

@@ -122,11 +122,11 @@ $(function () {
         }
     });
 });
-$( function () { $('#race_table').DataTable({
+/*$( function () { $('#race_table').DataTable({
       "paging": false,
       "responsive": true,
     })
-});
+});*/
 /*"responsive":    {
     breakpoints: [
         {name: 'bigdesktop', width: Infinity},
