@@ -31,12 +31,14 @@ from .forms import ShipmentForm
 from .forms import SupplierForm
 from .forms import TrailerForm
 from .forms import ConstantForm
+from .forms import UnitsForm
 from .models import Car
 from .models import Customer
 from .models import Driver
 from .models import Mediator
 from .models import Product
 from .models import Race
+from .models import Units
 from .models import Shipment
 from .models import Supplier
 from .models import Trailer
@@ -106,8 +108,8 @@ class RaceViewList(LoginRequiredMixin, ListView):
         else:
             end_date = Race.objects.latest().race_date
             start_date = end_date - timedelta(weeks=1)
-            ctx['start_date'] = str(start_date)
-            ctx['end_date'] = str(end_date)
+            ctx['start_date'] = str(start_date.strftime('%Y-%m-%d'))
+            ctx['end_date'] = str(end_date.strftime('%Y-%m-%d'))
         return ctx
 
 
@@ -158,6 +160,17 @@ class TrailerViewList(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = TrailerForm()
+        return context
+
+
+class UnitsViewList(LoginRequiredMixin, ListView):
+    model = Units
+    template_name = 'units.html'
+    context_object_name = 'qUnits'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = UnitsForm()
         return context
 
 
@@ -271,6 +284,29 @@ class SupplierDelete(PermissionRequiredMixin, DeleteView):
 
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class UnitDelete(PermissionRequiredMixin, DeleteView):
+    model = Units
+    success_url = reverse_lazy('UnitList')
+    permission_required = ('units.delete_supplier',)
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class UnitAdd(PermissionRequiredMixin, CreateView):
+    model = Units
+    success_url = reverse_lazy('UnitList')
+    form_class = UnitsForm
+    permission_required = ('units.add_car',)
+
+
+class UnitUpdate(PermissionRequiredMixin, UpdateView):
+    model = Units
+    success_url = reverse_lazy('UnitList')
+    form_class = UnitsForm
+    permission_required = ('units.update_car',)
 
 
 class CarAdd(PermissionRequiredMixin, CreateView):

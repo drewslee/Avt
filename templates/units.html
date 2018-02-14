@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+{% load bootstrap3 %}
+{% block content %}
+    <div class="container">
+        {% if qUnits %}
+            <div class="table-responsive">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <th>Название</th>
+                    <th>Короткое название</th>
+                    </thead>
+                    <tbody>
+                    {% for q in qUnits %}
+                        <tr>
+                            <td>
+                                {{ q.name }}
+                            </td>
+                            <td>
+                                {{ q.short_name|default_if_none:"Не назначен" }}
+                            </td>
+                            <td>
+                                <form action="update{{ q.pk }}" method="get">
+                                    <button class="btn btn-info btn-sm form-control">Изменить</button>
+                                </form>
+                                <form action="{% url 'UnitDelete' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="pk" value="{{ q.pk }}">
+                                    <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        <form action="add" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% bootstrap_field field %}
+            {% endfor %}
+            <button class="btn btn-success">Добавить</button>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(document).on('click', '.delete-confirmation', function () {
+            return confirm('Вы уверены, что хотите удалить?');
+        })
+    </script>
+{% endblock %}

@@ -60,8 +60,8 @@ class SupplierForm(ModelForm):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'units']
-        labels = {'name': 'Название', 'fraction': 'Фракция', 'units': 'Единица измерения'}
+        fields = ['name', ]
+        labels = {'name': 'Название', 'fraction': 'Фракция', }
 
 
 class ShipmentForm(ModelForm):
@@ -84,6 +84,12 @@ class CustomerForm(ModelForm):
         fields = ['name', 'inn', 'address']
         labels = {'name': 'Клиент', 'inn': 'ИНН', 'address': 'Адрес организации'}
 
+
+class UnitsForm(ModelForm):
+    class Meta:
+        model = Units
+        fields = ['name', 'short_name']
+        labels = {'name': 'Название', 'short_name': 'Короткое название'}
 
 class DriverForm(ModelForm):
     date_med = DateField(widget=SelectDateWidget(), label='Дата мед. освидетельствования:')
@@ -122,4 +128,5 @@ class RaceForm(ModelForm):
             'gas_given': 'Горючего выдано на рейс',
             'gas_start': 'Горючего остаток на начало рейса',
             'gas_end': 'Горючего остаток на конец рейса',
+            'unit': 'Единица измерения'
         }

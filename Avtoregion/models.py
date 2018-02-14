@@ -32,7 +32,6 @@ class Supplier(models.Model):
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20, verbose_name='Название')
-    units = models.CharField(max_length=5, blank=True)
 
     def __str__(self):
         return '%s' % self.name
@@ -122,6 +121,14 @@ class Car(models.Model):
         return reverse('CarList', kwargs={'pk': self.pk})
 
 
+class Units(models.Model):
+    name = models.CharField(max_length=10)
+    short_name = models.CharField(max_length=3, blank=True)
+
+    def __str__(self):
+        return '%s' % self.short_name
+
+
 class Race(models.Model):
     CREATE = 'Создан'
     LOAD = 'Загружен'
@@ -156,6 +163,7 @@ class Race(models.Model):
     e_milage = models.FloatField(default=0)
     weight_load = models.FloatField(default=0)
     weight_unload = models.FloatField(default=0)
+    unit = models.ForeignKey(Units, null=True, blank=True)
     comm = models.TextField(null=True, blank=True)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=9)
     gas_start = models.DecimalField(max_digits=5, decimal_places=0, default=0)
@@ -188,3 +196,6 @@ class Race(models.Model):
             track = 0
         return track
 
+    @property
+    def get_supplier_name(self):
+        return self.supplier.name

@@ -39,6 +39,12 @@ urlpatterns = [
         name='CarUpdate'),
     url(r'^Car/delete/$', views.CarDelete.as_view(), name='CarDelete'),
 
+    url(r'^Unit/$', views.UnitsViewList.as_view(), name='UnitList'),
+    url(r'^Unit/add$', views.UnitAdd.as_view(), name='UnitAdd'),
+    url(r'^Unit/update(?P<pk>\d+)/$', views.UnitUpdate.as_view(),
+        name='UnitUpdate'),
+    url(r'^Unit/delete/$', views.UnitDelete.as_view(), name='UnitDelete'),
+
     url(r'^Product/$', views.ProductViewList.as_view(), name='ProductList'),
     url(r'^Product/add$', views.ProductAdd.as_view(), name='ProductAdd'),
     url(r'^Product/update(?P<pk>\d+)/$', views.ProductUpdate.as_view(template_name='Avtoregion/update_form.html'),

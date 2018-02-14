@@ -2,50 +2,67 @@
 {% load bootstrap3 %}
 {% load static %}
 {% block content %}
-	<script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
-	<div class="container">
-		<div class="table-responsive">
-			<table id="tab" class="table table-hover table-condensed">
-				<thead>
-				<th>#</th>
-				<th>Дата</th>
-				<th>Номер машины</th>
-				<th>Вес</th>
-				<th>Груз</th>
-				<th>Единиа измерения</th>
-				</thead>
-				<tbody>
-				{% for q in q_resp %}
-					<tr>
-						<td>{{ forloop.counter }}</td>
-						<td>{{ q.race_date }}</td>
-						<td>{{ q.car }}</td>
-						{% if q.weight_load %}
-							<td>{{ q.weight_load }}</td>
-						{% endif %}
-						{% if q.weight_unload %}
-							<td>{{ q.weight_unload }}</td>
-						{% endif %}
-						<td>{{ q.product }}</td>
-						<td>{{ q.product.units }}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		<label>Всего загружено:</label>
-		{% if q_weight.weight_unload__sum %}
-			{{ q_weight.weight_unload__sum }}
-		{% endif %}
-		{% if q_weight.weight_load__sum %}
-			{{ q_weight.weight_load__sum }}
-		{% endif %}
-		<script type="text/javascript">
-			$( function () {
-          $('#tab').tableExport({type: 'excel'});
-      });
-		</script>
-	</div>
+    <script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
+    <div class="container">
+        <div class="table-responsive">
+            <table id="tab" class="table table-hover table-condensed">
+                <tr>
+                    <h1>{{ q_resp.first.supplier.name }} </h1>
+                </tr>
+                <thead>
+                <th>#</th>
+                <th>Дата</th>
+                <th>Номер машины</th>
+                <th>Водитель</th>
+                <th>Вес</th>
+                <th>Груз</th>
+                <th>Ед. изм.</th>
+                </thead>
+                <tfoot>
+                <tr>
+                    <td>Всего загружено:</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                    </td>
+                    <td>
+                        {% if q_weight.weight_unload__sum %}
+                            {{ q_weight.weight_unload__sum }}
+                        {% endif %}
+                        {% if q_weight.weight_load__sum %}
+                            {{ q_weight.weight_load__sum }}
+                        {% endif %}
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                </tfoot>
+                <tbody>
+                {% for q in q_resp %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ q.race_date }}</td>
+                        <td>{{ q.car }}</td>
+                        <td>{{ q.driver.name }}</td>
+                        {% if q_weight.weight_load__sum %}
+                            <td>{{ q.weight_load }}</td>
+                        {% endif %}
+                        {% if q_weight.weight_unload__sum %}
+                            <td>{{ q.weight_unload }}</td>
+                        {% endif %}
+                        <td>{{ q.product.name }}</td>
+                        <td>{{ q.unit.short_name|default_if_none:'т.' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel'});">
+                В Excel
+            </button>
+        </div>
+    </div>
 {% endblock %}
