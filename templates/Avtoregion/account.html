@@ -2,6 +2,9 @@
 {% load bootstrap3 %}
 {% load static %}
 {% block content %}
+	<script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
 	<div class="container">
 		<div class="table-responsive">
 			<table id="tab" class="table table-hover table-condensed">
@@ -10,7 +13,8 @@
 				<th>Дата</th>
 				<th>Номер машины</th>
 				<th>Вес</th>
-				<th>Фракция</th>
+				<th>Груз</th>
+				<th>Единиа измерения</th>
 				</thead>
 				<tbody>
 				{% for q in q_resp %}
@@ -25,6 +29,7 @@
 							<td>{{ q.weight_unload }}</td>
 						{% endif %}
 						<td>{{ q.product }}</td>
+						<td>{{ q.product.units }}</td>
 					</tr>
 				{% endfor %}
 				</tbody>
@@ -37,6 +42,10 @@
 		{% if q_weight.weight_load__sum %}
 			{{ q_weight.weight_load__sum }}
 		{% endif %}
-		<a href='{% static filename %}' download><span class="glyphicon glyphicon-book"></span>В xls</a>
+		<script type="text/javascript">
+			$( function () {
+          $('#tab').tableExport({type: 'excel'});
+      });
+		</script>
 	</div>
 {% endblock %}

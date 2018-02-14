@@ -60,8 +60,8 @@ class SupplierForm(ModelForm):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'fraction']
-        labels = {'name': 'Название', 'fraction': 'Фракция'}
+        fields = ['name', 'units']
+        labels = {'name': 'Название', 'fraction': 'Фракция', 'units': 'Единица измерения'}
 
 
 class ShipmentForm(ModelForm):

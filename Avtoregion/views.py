@@ -101,11 +101,13 @@ class RaceViewList(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         if self.request.GET.get('daterange') is not None:
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
+            ctx['start_date'] = start_date
+            ctx['end_date'] = end_date
         else:
             end_date = Race.objects.latest().race_date
             start_date = end_date - timedelta(weeks=1)
-        ctx['start_date'] = str(start_date)
-        ctx['end_date'] = str(end_date)
+            ctx['start_date'] = str(start_date)
+            ctx['end_date'] = str(end_date)
         return ctx
 
 
@@ -419,7 +421,6 @@ def accumulate_sup(req):
         start_date, end_date = date_to_str(req.POST['daterange'])
         fields = [field.name for field in Race._meta.fields]
         fields.remove('weight_unload')
-        fields_list = ['race_date', 'car__number', 'weight_load', 'product__name']
         query = Q(supplier__id_supplier__exact=req.POST.get('supplier'),
                   race_date__range=[start_date, end_date]
                   )
@@ -427,29 +428,13 @@ def accumulate_sup(req):
             prod = req.POST.getlist('product')
             for v in prod:
                 query.add(Q(product__name=v), Q.OR)
-            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0).values(*fields)
+            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
         else:
-            q_resp = Race.objects.filter(query).filter(weight_load__gt=0).values(*fields)
-        sum_products = []
-        for obj in q_resp:
-            obj['car'] = Car.objects.get(id_car=obj.get('car')).number
-            obj['product'] = Product.objects.get(id_product=obj.get('product')).name
-            sum_products.append([obj.get('product'), obj.get('weight_load')])
-        i = 0
-        while True:
-            try:
-                if sum_products[i][0] == sum_products[i + 1][0]:
-                    sum_products[i][1] += sum_products[i + 1][1]
-                    del sum_products[i + 1]
-                else:
-                    i += 1
-            except IndexError:
-                break
+            q_resp = Race.objects.filter(query).filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
-        filename = save_excel('supplier', q_resp.values_list(*fields_list), ['Дата', 'Номер', 'Вес', 'Фракция'])
 
         return render(request=req, template_name='Avtoregion/account.html',
-                      context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
+                      context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
 class Accumulate(LoginRequiredMixin, ListView):

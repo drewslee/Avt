@@ -32,7 +32,7 @@ class Supplier(models.Model):
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20, verbose_name='Название')
-    fraction = models.CharField(max_length=10, verbose_name='Фракция', blank=True)
+    units = models.CharField(max_length=5, blank=True)
 
     def __str__(self):
         return '%s' % self.name
