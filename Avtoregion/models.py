@@ -128,6 +128,9 @@ class Units(models.Model):
     def __str__(self):
         return '%s' % self.short_name
 
+    def get_absolute_url(self):
+        return reverse('UnitList', kwargs={'pk': self.pk})
+
 
 class Race(models.Model):
     CREATE = 'Создан'
