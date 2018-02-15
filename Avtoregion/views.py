@@ -460,8 +460,11 @@ def accumulate_sup(req):
                   )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
-            for v in prod:
-                query.add(Q(product__name=v), Q.OR)
+            if len(prod) == 1:
+                query.add(Q(product__name=prod[0]), Q.AND)
+            else:
+                for v in prod:
+                    query.add(Q(product__name=v), Q.OR)
             q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
         else:
             q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
@@ -481,6 +484,7 @@ def accumulate_cus(req):
     qset = Customer.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
+        print(req.GET)
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
@@ -490,9 +494,12 @@ def accumulate_cus(req):
                   )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
-            for v in prod:
-                query.add(Q(product__name=v), Q.OR)
-            q_resp = Race.objects.filter(query).order_by('product').filter(weight_unload__gt=0)
+            if len(prod) == 1:
+                query.add(Q(product__name=prod[0]), Q.AND)
+            else:
+                for v in prod:
+                    query.add(Q(product__name=v), Q.OR)
+            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0)
         else:
             q_resp = Race.objects.filter(query).filter(weight_unload__gt=0)
 

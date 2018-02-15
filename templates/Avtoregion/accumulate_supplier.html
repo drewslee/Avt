@@ -33,7 +33,7 @@
                         <option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
                     {% endfor %}
                 </select>
-                <select name="product" multiple="product" class="form-control">
+                <select name="product" multiple class="form-control">
                     {% for field in q_prod %}
                         <option value="{{ field.name }}">{{ field.name }}</option>
                     {% endfor %}
