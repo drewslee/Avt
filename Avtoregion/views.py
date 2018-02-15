@@ -462,9 +462,9 @@ def accumulate_sup(req):
             prod = req.POST.getlist('product')
             for v in prod:
                 query.add(Q(product__name=v), Q.OR)
-            q_resp = Race.objects.filter(query).filter(weight_load__gt=0)
+            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
         else:
-            q_resp = Race.objects.filter(query).filter(weight_load__gt=0)
+            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
 
         return render(request=req, template_name='Avtoregion/account.html',
