@@ -19,9 +19,12 @@
     <div class="container-fluid">
         {% if qRace %}
             <div class="table-responsive">
-                <table id="race_table" data-toggle="table" data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+                <table id="race_table" data-id-field="id" data-show-toggle="true" data-toggle="table" data-search="true"
+                       data-click-to-select="true"
+                       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
                     <thead class="small">
                     <tr>
+	                      <th data-checkbox="true"></th>
                         <th>#</th>
                         <th>Дата</th>
                         <th data-sortable="true">Машина</th>
@@ -29,10 +32,10 @@
                         <th>Операция</th>
                         <th data-sortable="true">Поставщик</th>
                         <th data-sortable="true">Клиент</th>
-                        <th>Место разгрузки</th>
+                        <th data-visible="false">Место разгрузки</th>
                         <th>Груз</th>
-                        <th>Начало трека</th>
-                        <th>Конец трека</th>
+                        <th data-visible="false">Начало трека</th>
+                        <th data-visible="false">Конец трека</th>
                         <th>Загружено</th>
                         <th>Выгружено</th>
                         <th>Состояние</th>
@@ -42,6 +45,7 @@
                     <tbody>
                     {% for q in qRace %}
                         <tr>
+                            <td></td>
                             <td>{{ forloop.counter }}</td>
                             <td>
                                 {{ q.race_date }}
@@ -136,6 +140,7 @@
     </div>
     <script type="text/javascript">
         $(function () {
+            $('#race_table').
             var state = document.getElementsByClassName('alert');
             for (i = 0; i < state.length; i++) {
                 switch (state[i].innerText) {
