@@ -37,7 +37,7 @@
                         <option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
                     {% endfor %}
                 </select>
-                <select multiple name="product" class="form-control icon-select">
+                <select  name="product" multiple="product" class="form-control icon-select">
                     {% for field in q_prod %}
                         <option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
                     {% endfor %}
