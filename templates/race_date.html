@@ -26,19 +26,19 @@
                     <tr>
 	                      <th data-checkbox="true"></th>
                         <th>#</th>
-                        <th>Дата</th>
-                        <th data-sortable="true">Машина</th>
-                        <th data-sortable="true">Водитель</th>
-                        <th>Операция</th>
-                        <th data-sortable="true">Поставщик</th>
-                        <th data-sortable="true">Клиент</th>
-                        <th data-visible="false">Место разгрузки</th>
+                        <th data-field="Дата">Дата</th>
+                        <th data-field="Машина" data-sortable="true">Машина</th>
+                        <th data-field="Водитель" data-sortable="true">Водитель</th>
+                        <th data-field="Операция" >Операция</th>
+                        <th data-field="Поставщик" data-sortable="true">Поставщик</th>
+                        <th data-field="Клиент" data-sortable="true">Клиент</th>
+                        <th data-field="Место разгрузки" data-visible="false">Место разгрузки</th>
                         <th>Груз</th>
                         <th data-visible="false">Начало трека</th>
                         <th data-visible="false">Конец трека</th>
                         <th>Загружено</th>
                         <th>Выгружено</th>
-                        <th>Состояние</th>
+                        <th data-cell-style="cellStyle">Состояние</th>
                         <th>Действия</th>
                     </tr>
                     </thead>
@@ -138,33 +138,5 @@
             </div>
         {% endif %}
     </div>
-    <script type="text/javascript">
-        $(function () {
-            $('#race_table').
-            var state = document.getElementsByClassName('alert');
-            for (i = 0; i < state.length; i++) {
-                switch (state[i].innerText) {
-                    case "Создан":
-                        $(state[i]).parents("tr").addClass('alert-warning');
-                        break;
-                    case "Загружен":
-                        $(state[i]).parents("tr").addClass('alert-info');
-                        break;
-                    case "Выгружен":
-                        $(state[i]).parents("tr").addClass('alert-info');
-                        break;
-                    case "Закончен":
-                        $(state[i]).parents("tr").addClass('alert-success');
-                        break;
-                    case "Проведён":
-                        $(state[i]).parents("tr").addClass('alert-success');
-                        break;
-                    case "Авария":
-                        $(state[i]).parents("tr").addClass('alert-danger')
-                }
-            }
-
-        });
-    </script>
 {% endblock %}
 
