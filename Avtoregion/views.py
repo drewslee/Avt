@@ -455,18 +455,19 @@ def accumulate_sup(req):
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         start_date, end_date = date_to_str(req.POST['daterange'])
-        fields = [field.name for field in Race._meta.fields]
-        fields.remove('weight_unload')
         query = Q(supplier__id_supplier__exact=req.POST.get('supplier'),
                   race_date__range=[start_date, end_date]
                   )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
-            for v in prod:
-                query.add(Q(product__name=v), Q.OR)
+            if len(prod) == 1:
+                query.add(Q(product__name=prod[0]), Q.AND)
+            else:
+                for v in prod:
+                    query.add(Q(product__name=v), Q.OR)
             q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
         else:
-            q_resp = Race.objects.filter(query).filter(weight_load__gt=0)
+            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
 
         return render(request=req, template_name='Avtoregion/account.html',
@@ -483,31 +484,28 @@ def accumulate_cus(req):
     qset = Customer.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
+        print(req.GET)
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         start_date, end_date = date_to_str(req.POST['daterange'])
-        fields = [field.name for field in Race._meta.fields]
-        fields_list = ['race_date', 'car__number', 'weight_unload', 'product__name']
-        fields.remove('weight_load')
         query = Q(customer__id_customer__exact=req.POST.get('customer'),
                   race_date__range=[start_date, end_date]
                   )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
-            for v in prod:
-                query.add(Q(product__name=v), Q.OR)
-            q_resp = Race.objects.filter(query).order_by('product').filter(weight_unload__gt=0).values(*fields)
+            if len(prod) == 1:
+                query.add(Q(product__name=prod[0]), Q.AND)
+            else:
+                for v in prod:
+                    query.add(Q(product__name=v), Q.OR)
+            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0)
         else:
-            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0).values(*fields)
+            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0)
 
-        for obj in q_resp:
-            obj['car'] = Car.objects.get(id_car=obj.get('car')).number
-            obj['product'] = Product.objects.get(id_product=obj.get('product')).name
         q_weight = q_resp.aggregate(Sum('weight_unload'))
-        filename = save_excel('customer', q_resp.values_list(*fields_list), ['Дата', 'Номер', 'Вес', 'Фракция'])
         return render(request=req, template_name='Avtoregion/account.html',
-                      context={'q_resp': q_resp, 'q_weight': q_weight, 'filename': filename})
+                      context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
 def accumulate_car(req):

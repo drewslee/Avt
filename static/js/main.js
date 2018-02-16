@@ -125,12 +125,12 @@ $(function () {
 
         }
     });
+
+    $('#race_table').bootstrapTable({
+        showColumns: true
+    });
+    $('.dropdown-toggle').dropdown();
 });
-/*$( function () { $('#race_table').DataTable({
-      "paging": false,
-      "responsive": true,
-    })
-});*/
 /*"responsive":    {
     breakpoints: [
         {name: 'bigdesktop', width: Infinity},

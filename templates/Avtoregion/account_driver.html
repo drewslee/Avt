@@ -1,10 +1,13 @@
 {% extends "index.html" %}
-{% load static %}
+{% load staticfiles %}
 {% load bootstrap3 %}
 {% block content %}
+	<script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
     <div class="container-fluid">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table id="tab" class="table table-hover table-condensed">
                 <thead>
                 <th>#</th>
                 <th>Дата</th>
@@ -66,7 +69,9 @@
                 {% endfor %}
                 </tbody>
             </table>
+	        <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel'});">
+		        В Excel
+	        </button>
         </div>
-        <a href='{% static filename %}' download><span class="glyphicon glyphicon-book"></span>В xls</a>
     </div>
 {% endblock %}

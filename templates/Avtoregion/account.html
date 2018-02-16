@@ -9,7 +9,12 @@
         <div class="table-responsive">
             <table id="tab" class="table table-hover table-condensed">
                 <tr>
+	                {% if q_weight.weight_load__sum %}
                     <h1>{{ q_resp.first.supplier.name }} </h1>
+	                {% endif %}
+	                {% if q_weight.weight_unload__sum %}
+                    <h1>{{ q_resp.first.customer.name }}</h1>
+                  {% endif %}
                 </tr>
                 <thead>
                 <th>#</th>
