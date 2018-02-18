@@ -29,7 +29,8 @@ urlpatterns = [
     url(r'^Race$', views.RaceViewList.as_view(), name='Race'),
     url(r'^RaceAll$', views.RaceAllList.as_view(), name='RaceAll'),
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
-    url(r'^Race/add/ajax', views.ajaxhandler, name='RaceAjax'),
+    url(r'^Race/add/ajax', views.ajax_handler, name='RaceAjax'),
+    url(r'^Race/update/ajax', views.AjaxUpdateState.as_view(), name='RaceUpdateAjax'),
     url(r'^Race/update(?P<pk>\d+)/$', views.RaceUpdate.as_view(), name='RaceUpdate'),
     url(r'^Race/delete/$', views.RaceDelete.as_view(), name='RaceDelete'),
 
@@ -89,8 +90,8 @@ urlpatterns = [
 
     url(r'^Supplier/accumulate/$', views.accumulate_sup, name='SupplierAcc'),
     url(r'^Customer/accumulate/$', views.accumulate_cus, name='CustomerAcc'),
-    url(r'^Car/accumulate/$', views.accumulate_car, name='CarAcc'),
-    url(r'^Driver/accumulate/$', views.accumulate_driver, name='DriverAcc'),
+    url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
+    url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
     url(r'^waybill/$', views.waybill, name='WayBill'),
 
 ]

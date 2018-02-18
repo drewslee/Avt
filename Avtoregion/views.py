@@ -15,7 +15,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin, View
 from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
@@ -86,7 +86,7 @@ class RaceViewList(LoginRequiredMixin, ListView):
     model = Race
     template_name = 'race_date.html'
     context_object_name = 'qRace'
-    paginate_by = 7
+    paginate_by = 0
 
     def get_queryset(self):
         if self.request.GET.get('daterange') is None:
@@ -286,13 +286,6 @@ class SupplierDelete(PermissionRequiredMixin, DeleteView):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-class UnitDelete(PermissionRequiredMixin, DeleteView):
-    model = Units
-    success_url = reverse_lazy('UnitList')
-    permission_required = ('units.delete_supplier',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class UnitAdd(PermissionRequiredMixin, CreateView):
@@ -307,6 +300,15 @@ class UnitUpdate(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('UnitList')
     form_class = UnitsForm
     permission_required = ('units.update_car',)
+
+
+class UnitDelete(PermissionRequiredMixin, DeleteView):
+    model = Units
+    success_url = reverse_lazy('UnitList')
+    permission_required = ('units.delete_supplier',)
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CarAdd(PermissionRequiredMixin, CreateView):
@@ -508,44 +510,30 @@ def accumulate_cus(req):
                       context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
-def accumulate_car(req):
-    qset = Car.objects.all()
-    if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
-    if req.method == 'POST':
-        start_date, end_date = date_to_str(req.POST['daterange'])
-        q_resp = Race.objects.filter(car__number__exact=req.POST.get('car'),
+class CarResponce(View):
+    def get(self, *args, **kwargs):
+        qset = Car.objects.all()
+        return render(request=self.request, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
+
+    def post(self, *args, **kwargs):
+        start_date, end_date = date_to_str(self.request.POST['daterange'])
+        q_resp = Race.objects.filter(car__number__exact=self.request.POST.get('car'),
                                      race_date__range=[start_date, end_date])
-        field_list = ['race_date', 'id_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
-                      'customer__name', 'shipment__name', 'product__name', 's_milage', 'e_milage', 'weight_load',
-                      'weight_unload', 'state']
-        col = (
-            'Дата', 'Номер рейса', 'Номер машины', 'Водитель', 'Реализация', 'Поставщик', 'Клиент', 'Место разгрузки',
-            'Товар',
-            'Начало трека', 'Конец трека', 'Загружено', 'Выгружено', 'Состояние')
-        filename = save_excel('car', q_resp.values_list(*field_list), col)
-        return render(request=req, template_name='Avtoregion/account_car.html',
-                      context={'q_resp': q_resp, 'filename': filename})
+        return render(request=self.request, template_name='Avtoregion/account_car.html',
+                      context={'q_resp': q_resp})
 
 
-def accumulate_driver(req):
-    qset = Driver.objects.all()
-    if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
-    if req.method == 'POST':
-        start_date, end_date = date_to_str(req.POST['daterange'])
-        q_resp = Race.objects.filter(driver__name__exact=req.POST.get('driver'),
+class DriverResponce(View):
+    def get(self, *args, **kwargs):
+        qset = Driver.objects.all()
+        return render(request=self.request, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
+
+    def post(self, *args, **kwargs):
+        start_date, end_date = date_to_str(self.request.POST['daterange'])
+        q_resp = Race.objects.filter(driver__name__exact=self.request.POST.get('driver'),
                                      race_date__range=[start_date, end_date])
-        field_list = ['race_date', 'id_race', 'car__number', 'driver__name', 'type_ship', 'supplier__name',
-                      'customer__name', 'shipment__name', 'product__name', 's_milage', 'e_milage', 'weight_load',
-                      'weight_unload', 'state']
-        col = (
-            'Дата', 'Номер рейса', 'Номер машины', 'Водитель', 'Реализация', 'Поставщик', 'Клиент', 'Место разгрузки',
-            'Товар',
-            'Начало трека', 'Конец трека', 'Загружено', 'Выгружено', 'Состояние')
-        filename = save_excel('driver', q_resp.values_list(*field_list), col)
-        return render(request=req, template_name='Avtoregion/account_driver.html',
-                      context={'q_resp': q_resp, 'filename': filename})
+        return render(request=self.request, template_name='Avtoregion/account_driver.html',
+                      context={'q_resp': q_resp})
 
 
 def accumulate_mediator(req):
@@ -618,7 +606,7 @@ def date_to_str(date):
     return date.split(' - ')
 
 
-def ajaxhandler(req):
+def ajax_handler(req):
     if req.is_ajax():
         id_car = req.GET.get('id')
         if id_car is not None:
@@ -632,3 +620,11 @@ def ajaxhandler(req):
 
         else:
             raise Http404
+
+
+class AjaxUpdateState(View):
+    def post(self, *args, **kwargs):
+        if self.request.is_ajax():
+            id_list = self.request.POST['data'].getlist()
+            state = self.request.POST['state']
+        return HttpResponse(content={'success': True}, content_type='application/json')
