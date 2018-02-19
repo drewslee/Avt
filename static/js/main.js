@@ -198,16 +198,19 @@ $(function () {
         var rows = document.getElementsByClassName('selected'),
             list = [];
         for (var i = 0; i < rows.length; ++i) {
-            list.append(rows[i].id);
+            list.push(rows[i].id);
         }
+        var state = $('#status_select option:selected').text();
         $.ajax(
             {
-                type: "POST",
-                url: "{% url 'AjaxRaceUpdate' %}",
-                data: {ids_race: list, state: state},
+                url: 'Race/update/ajax',
+                method: 'POST',
+                traditional: true,
+                data: JSON.stringify({data: [{ "id_list" : list, "state": state }]}),
                 dataType: 'json',
                 success: function (resp) {
-                    alert('YEAH')
+                    $('#ModalUpdate').modal('hide');
+                    location.reload(true);
                 }
             })
     });

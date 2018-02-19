@@ -5,7 +5,7 @@ import json
 import shutil
 import tempfile
 from datetime import timedelta
-from django.http.response import HttpResponseRedirect, Http404, HttpResponse
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse, HttpResponseServerError
 from django.conf import settings as djangoSettings
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -19,6 +19,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMi
 from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
+from django.contrib import messages
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -74,19 +75,10 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
         return HttpResponseRedirect(redirect_to='Constants')
 
 
-class RaceAllList(LoginRequiredMixin, ListView):
-    model = Race
-    template_name = 'race.html'
-    context_object_name = 'qRace'
-    paginate_by = 7
-    queryset = Race.objects.order_by('race_date')
-
-
 class RaceViewList(LoginRequiredMixin, ListView):
     model = Race
     template_name = 'race_date.html'
     context_object_name = 'qRace'
-    paginate_by = 0
 
     def get_queryset(self):
         if self.request.GET.get('daterange') is None:
@@ -101,6 +93,7 @@ class RaceViewList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        ctx['select_state'] = (x[1] for x in self.model.STATE)
         if self.request.GET.get('daterange') is not None:
             start_date, end_date = date_to_str(self.request.GET.get('daterange'))
             ctx['start_date'] = start_date
@@ -623,8 +616,23 @@ def ajax_handler(req):
 
 
 class AjaxUpdateState(View):
+    model = Race
+
     def post(self, *args, **kwargs):
         if self.request.is_ajax():
-            id_list = self.request.POST['data'].getlist()
-            state = self.request.POST['state']
-        return HttpResponse(content={'success': True}, content_type='application/json')
+            json_data = json.loads(self.request.body.decode('utf-8'))
+            try:
+                data = json_data['data'][0]
+                if len(data['id_list']) != 0:
+                    try:
+                        for id in data['id_list']:
+                            self.model.objects.filter(id_race=int(id)).update(state=data['state'])
+                        messages.add_message(self.request, messages.INFO, 'Статус обновлён')
+                        return HttpResponse(content={'success': True}, content_type='application/json')
+                    except ObjectDoesNotExist:
+                        return HttpResponse(content={'success': False}, content_type='application/json')
+                else:
+                    return HttpResponse(content={'success': False}, content_type='application/json')
+            except KeyError:
+                HttpResponseServerError('Malformed data!')
+
