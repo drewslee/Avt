@@ -20,6 +20,7 @@ from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from django.contrib import messages
+from django.contrib.messages import constants as messages_constants
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -77,7 +78,7 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
 
 class RaceViewList(LoginRequiredMixin, ListView):
     model = Race
-    template_name = 'race_date.html'
+    template_name = 'race.html'
     context_object_name = 'qRace'
 
     def get_queryset(self):
@@ -627,12 +628,18 @@ class AjaxUpdateState(View):
                     try:
                         for id in data['id_list']:
                             self.model.objects.filter(id_race=int(id)).update(state=data['state'])
-                        messages.add_message(self.request, messages.INFO, 'Статус обновлён')
-                        return HttpResponse(content={'success': True}, content_type='application/json')
+                        messages.add_message(self.request, messages.SUCCESS, 'Состояние обновленo.')
+                        data = json.dumps({'success': True})
+                        return HttpResponse(content=data, content_type='application/json')
                     except ObjectDoesNotExist:
-                        return HttpResponse(content={'success': False}, content_type='application/json')
+                        messages.add_message(self.request, messages.WARNING, 'Не найдены объекты рейсов в базе данных')
+                        data = json.dumps({'success': False})
+                        return HttpResponse(content=data, content_type='application/json')
                 else:
-                    return HttpResponse(content={'success': False}, content_type='application/json')
+                    messages.add_message(self.request, messages.WARNING, 'Не выбраны рейсы для обновления статуса.')
+                    data = json.dumps({'success': False})
+                    return HttpResponse(content=data, content_type='application/json')
             except KeyError:
+                messages.add_message(self.request, messages.ERROR, 'Проблемы сервера, обратитесь к администратору')
                 HttpResponseServerError('Malformed data!')
 

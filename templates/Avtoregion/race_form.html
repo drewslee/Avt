@@ -2,17 +2,8 @@
 {% load bootstrap3 %}
 {% load staticfiles %}
 {% block content %}
-    {% if messages %}
-        <ul class="messagelist">
-            {% for msg in messages %}
-                <li class="alert alert-{{ msg.level_tag }}" role="alert">
-                    {{ msg.message }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
     <div class="container table-responsive">
-
+        {% include 'messages.html' %}
         <form action="{% url 'RaceCreate' %}" method="post">
             {% csrf_token %}
             {% for field in form %}

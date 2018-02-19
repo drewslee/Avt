@@ -1,0 +1,9 @@
+{% if messages %}
+    <ul id="popup-messages" class="messagelist">
+        {% for msg in messages %}
+            <li class="alert alert-{{ msg.level_tag }}" role="alert">
+                {{ msg.message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

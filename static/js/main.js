@@ -209,8 +209,11 @@ $(function () {
                 data: JSON.stringify({data: [{ "id_list" : list, "state": state }]}),
                 dataType: 'json',
                 success: function (resp) {
-                    $('#ModalUpdate').modal('hide');
-                    location.reload(true);
+                    $('#ModalUpdate').hide();
+                    $('.modal-backdrop').hide();
+                },
+                complete: function (resp) {
+                    location.reload();
                 }
             })
     });
