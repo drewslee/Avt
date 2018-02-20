@@ -46,7 +46,7 @@ class LoadingPlace(models.Model):
     address = models.CharField(max_length=255, verbose_name='Место загрузки')
 
     def __str__(self):
-        return self.address
+        return '%s' % self.address
 
 
 class Shipment(models.Model):

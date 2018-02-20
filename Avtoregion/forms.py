@@ -71,6 +71,12 @@ class ShipmentForm(ModelForm):
         labels = {'name': 'Место разгрузки'}
 
 
+class LoadForm(ModelForm):
+    class Meta:
+        model = LoadingPlace
+        fields = ['address']
+        labels = {'address': 'Место разгрузки'}
+
 class MediatorForm(ModelForm):
     class Meta:
         model = Mediator

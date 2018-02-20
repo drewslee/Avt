@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^Supplier/update(?P<pk>\d+)/$', views.SupplierUpdate.as_view(template_name='Avtoregion/update_form.html'),
         name='SupplierUpdate'),
     url(r'^Supplier/delete/$', views.SupplierDelete.as_view(), name='SupplierDelete'),
+    url(r'^Supplier/load_place/$', views.LoadPlaceViewList.as_view(), name='LoadPlaceList'),
 
     url(r'^Customer/$', views.CustomerViewList.as_view(), name='CustomerList'),
     url(r'^Customer/add$', views.CustomerAdd.as_view(), name='CustomerAdd'),

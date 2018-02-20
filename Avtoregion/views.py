@@ -34,6 +34,7 @@ from .forms import SupplierForm
 from .forms import TrailerForm
 from .forms import ConstantForm
 from .forms import UnitsForm
+from .forms import LoadForm
 from .models import Car
 from .models import Customer
 from .models import Driver
@@ -45,6 +46,7 @@ from .models import Shipment
 from .models import Supplier
 from .models import Trailer
 from .models import Constants
+from .models import LoadingPlace
 
 
 class LoginViewMix(LoginView):
@@ -223,6 +225,18 @@ class ShipmentViewList(LoginRequiredMixin, ListView):
         return context
 
 
+class LoadPlaceViewList(LoginRequiredMixin, View):
+    model = LoadingPlace
+    template_name = 'loadplace.html'
+
+    def post(self, *args, **kwargs):
+        context = {}
+        supplier = int(self.request.POST.get('id_supplier'))
+        context['qLoadplace'] = self.model.objects.filter(supplier=supplier)
+        context['form'] = LoadForm(initial={'supplier': supplier})
+        return render(self.request, self.template_name, context)
+
+
 class MediatorViewList(LoginRequiredMixin, ListView):
     model = Mediator
     template_name = 'mediator.html'
@@ -284,20 +298,20 @@ class UnitAdd(PermissionRequiredMixin, CreateView):
     model = Units
     success_url = reverse_lazy('UnitList')
     form_class = UnitsForm
-    permission_required = ('units.add_car',)
+    permission_required = ('units.add_unit',)
 
 
 class UnitUpdate(PermissionRequiredMixin, UpdateView):
     model = Units
     success_url = reverse_lazy('UnitList')
     form_class = UnitsForm
-    permission_required = ('units.update_car',)
+    permission_required = ('units.update_unit',)
 
 
 class UnitDelete(PermissionRequiredMixin, DeleteView):
     model = Units
     success_url = reverse_lazy('UnitList')
-    permission_required = ('units.delete_supplier',)
+    permission_required = ('units.delete_unit',)
 
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
