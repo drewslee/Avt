@@ -42,6 +42,7 @@
                 {% for field in form %}
                     {% bootstrap_field field %}
                 {% endfor %}
+                <input hidden name="supplier" value="{{ supplier }}">
                 <button class="btn btn-success">Добавить</button>
             </form>
         </div>

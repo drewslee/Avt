@@ -3,7 +3,7 @@
 from django.forms import ModelForm, CharField, TextInput, PasswordInput
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.forms.widgets import SelectDateWidget
-from django.forms import DateField, DateTimeField
+from django.forms import DateField, DateTimeField, HiddenInput
 from django.utils import timezone
 from .models import *
 
@@ -74,8 +74,11 @@ class ShipmentForm(ModelForm):
 class LoadForm(ModelForm):
     class Meta:
         model = LoadingPlace
-        fields = ['address']
-        labels = {'address': 'Место разгрузки'}
+        widgets = {
+            'supplier': HiddenInput
+        }
+        fields = ['address', 'supplier']
+        labels = {'address': 'Место погрузки'}
 
 class MediatorForm(ModelForm):
     class Meta:
@@ -96,6 +99,7 @@ class UnitsForm(ModelForm):
         model = Units
         fields = ['name', 'short_name']
         labels = {'name': 'Название', 'short_name': 'Короткое название'}
+
 
 class DriverForm(ModelForm):
     date_med = DateField(widget=SelectDateWidget(), label='Дата мед. освидетельствования:')
@@ -120,6 +124,7 @@ class RaceForm(ModelForm):
             'driver': 'Водитель',
             'type_ship': 'Реализация',
             'supplier': 'Поставщик',
+            'place_load': 'Адрес погрузки',
             'customer': 'Клиент',
             'shipment': 'Место разгрузки',
             'product': 'Груз',

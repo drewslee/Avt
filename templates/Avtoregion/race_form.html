@@ -16,18 +16,41 @@
     </div>
     <script type="text/javascript">
         $(function () {
-            var sel = document.getElementById('id_car');
-            sel.addEventListener("change", function () {
-                var data = sel.value;
+            var id_car = document.getElementById('id_car');
+            var id_supplier = document.getElementById('id_supplier');
+            var select_load = document.getElementById('id_place_load');
+            id_car.addEventListener("change", function () {
+                var data = id_supplier.value;
                 $.ajax(
                     {
                         type: "GET",
-                        url: "{% url 'RaceAjax' %}",
+                        url: "{% url 'RaceAjaxTrack' %}",
                         data: {id: data},
                         dataType: 'json',
                         success: function (resp) {
                             document.getElementById('id_gas_start').value = resp.gas_start;
                             document.getElementById('id_s_milage').value = resp.s_milage;
+                        }
+                    })
+            });
+            id_supplier.addEventListener("change", function () {
+                var data = id_supplier.value;
+                $.ajax(
+                    {
+                        type: "GET",
+                        url: "{% url 'RaceAjaxSup' %}",
+                        data: {id: data},
+                        dataType: 'json',
+                        success: function (resp) {
+                            while (select_load.length > 1) {
+                                select_load.remove(select_load.length - 1)
+                            }
+                            for (i = 0; i < resp.length; i++) {
+                                var option = document.createElement('option');
+                                option.text = resp[i].address;
+                                option.value = resp[i].id_load_place;
+                                select_load.add(option)
+                            }
                         }
                     })
             });

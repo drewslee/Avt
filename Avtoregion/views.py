@@ -231,9 +231,12 @@ class LoadPlaceViewList(LoginRequiredMixin, View):
 
     def post(self, *args, **kwargs):
         context = {}
-        supplier = int(self.request.POST.get('id_supplier'))
+        supplier = int(self.request.POST.get('supplier'))
+        print(supplier)
         context['qLoadplace'] = self.model.objects.filter(supplier=supplier)
         context['form'] = LoadForm(initial={'supplier': supplier})
+        context['supplier'] = supplier
+        print(context)
         return render(self.request, self.template_name, context)
 
 
@@ -246,6 +249,20 @@ class MediatorViewList(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = MediatorForm()
         return context
+
+
+class LoadAdd(PermissionRequiredMixin, CreateView):
+    model = LoadingPlace
+    success_url = reverse_lazy('SupplierList')
+    form_class = LoadForm
+    permission_required = ('units.add_unit',)
+
+
+class LoadUpdate(PermissionRequiredMixin, UpdateView):
+    model = LoadingPlace
+    success_url = reverse_lazy('SupplierList')
+    form_class = LoadForm
+    permission_required = ('drivers.update_driver',)
 
 
 class DriverAdd(PermissionRequiredMixin, CreateView):
@@ -473,9 +490,9 @@ def accumulate_sup(req):
             else:
                 for v in prod:
                     query.add(Q(product__name=v), Q.OR)
-            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
+            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         else:
-            q_resp = Race.objects.filter(query).order_by('product').filter(weight_load__gt=0)
+            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
 
         return render(request=req, template_name='Avtoregion/account.html',
@@ -507,9 +524,9 @@ def accumulate_cus(req):
             else:
                 for v in prod:
                     query.add(Q(product__name=v), Q.OR)
-            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0)
+            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
         else:
-            q_resp = Race.objects.filter(query).filter(weight_unload__gt=0)
+            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
 
         q_weight = q_resp.aggregate(Sum('weight_unload'))
         return render(request=req, template_name='Avtoregion/account.html',
@@ -524,7 +541,7 @@ class CarResponce(View):
     def post(self, *args, **kwargs):
         start_date, end_date = date_to_str(self.request.POST['daterange'])
         q_resp = Race.objects.filter(car__number__exact=self.request.POST.get('car'),
-                                     race_date__range=[start_date, end_date])
+                                     race_date__range=[start_date, end_date]).order_by('race_date')
         return render(request=self.request, template_name='Avtoregion/account_car.html',
                       context={'q_resp': q_resp})
 
@@ -537,7 +554,7 @@ class DriverResponce(View):
     def post(self, *args, **kwargs):
         start_date, end_date = date_to_str(self.request.POST['daterange'])
         q_resp = Race.objects.filter(driver__name__exact=self.request.POST.get('driver'),
-                                     race_date__range=[start_date, end_date])
+                                     race_date__range=[start_date, end_date]).order_by('race_date')
         return render(request=self.request, template_name='Avtoregion/account_driver.html',
                       context={'q_resp': q_resp})
 
@@ -612,7 +629,7 @@ def date_to_str(date):
     return date.split(' - ')
 
 
-def ajax_handler(req):
+def ajax_track(req):
     if req.is_ajax():
         id_car = req.GET.get('id')
         if id_car is not None:
@@ -621,6 +638,22 @@ def ajax_handler(req):
                 data = json.dumps({'gas_start': float(rce.gas_end), 's_milage': float(rce.e_milage)})
             except ObjectDoesNotExist:
                 data = json.dumps({'gas_start': 0, 's_milage': 0})
+            finally:
+                return HttpResponse(data, content_type='application/json')
+
+        else:
+            raise Http404
+
+
+def ajax_sup(req):
+    if req.is_ajax():
+        id_supplier = req.GET.get('id')
+        if id_supplier is not None:
+            try:
+                sup = list(LoadingPlace.objects.filter(supplier=int(id_supplier)).values())
+                data = json.dumps(sup)
+            except ObjectDoesNotExist:
+                data = json.dumps({})
             finally:
                 return HttpResponse(data, content_type='application/json')
 

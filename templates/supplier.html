@@ -35,7 +35,7 @@
                                 <td>
                                     <form action="load_place/" method="post">
                                         {% csrf_token %}
-                                        <input type="hidden" name="id_supplier" value="{{ q.pk }}">
+                                        <input type="hidden" name="supplier" value="{{ q.pk }}">
 		                                <button class="btn btn-info btn-sm form-control">Адреса погрузки</button>
 	                                </form>
                                     <form action="update{{ q.pk }}" method="get">
