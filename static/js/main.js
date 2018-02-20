@@ -209,8 +209,7 @@ $(function () {
                 data: JSON.stringify({data: [{ "id_list" : list, "state": state }]}),
                 dataType: 'json',
                 success: function (resp) {
-                    $('#ModalUpdate').hide();
-                    $('.modal-backdrop').hide();
+                    $('#ModalUpdate').modal('hide');
                 },
                 complete: function (resp) {
                     location.reload();

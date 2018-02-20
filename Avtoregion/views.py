@@ -280,8 +280,6 @@ class SupplierDelete(PermissionRequiredMixin, DeleteView):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-
-
 class UnitAdd(PermissionRequiredMixin, CreateView):
     model = Units
     success_url = reverse_lazy('UnitList')

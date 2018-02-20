@@ -40,8 +40,18 @@ class Product(models.Model):
         return reverse('ProductList', kwargs={'pk': self.pk})
 
 
+class LoadingPlace(models.Model):
+    id_load_place = models.AutoField(primary_key=True)
+    supplier = models.ForeignKey('Supplier')
+    address = models.CharField(max_length=255, verbose_name='Место загрузки')
+
+    def __str__(self):
+        return self.address
+
+
 class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
+    customer = models.ForeignKey('Customer')
     name = models.CharField(max_length=100, verbose_name='Место разгрузки')
 
     def __str__(self):
@@ -158,6 +168,7 @@ class Race(models.Model):
     driver = models.ForeignKey(Driver)
     type_ship = models.CharField(default=TYPE[0], choices=TYPE, max_length=10)
     supplier = models.ForeignKey(Supplier)
+    place_load = models.ForeignKey(LoadingPlace, null=True, blank=True)
     customer = models.ForeignKey(Customer)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)

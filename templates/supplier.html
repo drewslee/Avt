@@ -33,6 +33,9 @@
                             </td>
                             <div class="form-group">
                                 <td>
+	                                <form action="load_place/{{ q.pk }}" method="get">
+		                                <button class="btn btn-info btn-sm form-control">Адреса погрузки</button>
+	                                </form>
                                     <form action="update{{ q.pk }}" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
