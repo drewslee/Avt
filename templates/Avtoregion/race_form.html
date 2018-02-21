@@ -16,6 +16,80 @@
     </div>
     <script type="text/javascript">
         $(function () {
+            $('input[name="arrival_time"]').daterangepicker({
+                "singleDatePicker": true,
+                "autoApply": true,
+                "timePicker": true,
+                "timePicker24Hour": true,
+                "startDate": new Date(),
+                "endDate" : new Date(),
+                locale: {
+                    "monthNames": [
+                        "Январь",
+                        "Февраль",
+                        "Март",
+                        "Апрель",
+                        "Май",
+                        "Июнь",
+                        "Июль",
+                        "Август",
+                        "Сентябрь",
+                        "Октябрь",
+                        "Ноябрь",
+                        "Декабрь"
+                    ],
+                    format: 'YYYY-MM-DD H:mm',
+                    "firstDay": 1,
+                    "weekLabel": "Неделя",
+                    "daysOfWeek": [
+                        "Вс",
+                        "Пн",
+                        "Вт",
+                        "Ср",
+                        "Чт",
+                        "Пт",
+                        "Сб"
+                    ]
+
+                }
+            });
+            $('input[name="race_date"]').daterangepicker({
+                "singleDatePicker": true,
+                "autoApply": true,
+                "timePicker": true,
+                "timePicker24Hour": true,
+                "startDate": new Date(),
+                "endDate" : new Date(),
+                locale: {
+                    "monthNames": [
+                        "Январь",
+                        "Февраль",
+                        "Март",
+                        "Апрель",
+                        "Май",
+                        "Июнь",
+                        "Июль",
+                        "Август",
+                        "Сентябрь",
+                        "Октябрь",
+                        "Ноябрь",
+                        "Декабрь"
+                    ],
+                    format: 'YYYY-MM-DD H:mm',
+                    "firstDay": 1,
+                    "weekLabel": "Неделя",
+                    "daysOfWeek": [
+                        "Вс",
+                        "Пн",
+                        "Вт",
+                        "Ср",
+                        "Чт",
+                        "Пт",
+                        "Сб"
+                    ]
+
+                }
+            });
             var id_car = document.getElementById('id_car');
             var id_supplier = document.getElementById('id_supplier');
             var select_load = document.getElementById('id_place_load');
