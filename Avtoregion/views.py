@@ -121,7 +121,7 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
 class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
     form_class = RaceForm
-    template_name = 'Avtoregion/update_form.html'
+    template_name = 'Avtoregion/race_update_form.html'
     success_url = reverse_lazy('Race')
     success_message = "Рейс обновлён успешно"
     permission_required = ('races.update_race',)
