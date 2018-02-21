@@ -82,10 +82,10 @@
                                 {{ q.e_milage }}
                             </td>
                             <td>
-                                {{ q.weight_load }}
+                                {{ q.weight_load }}{{ q.unit_load.short_name}}
                             </td>
                             <td>
-                                {{ q.weight_unload }}
+                                {{ q.weight_unload }}{{ q.unit_unload.short_name}}
                             </td>
                             <td>
                                 {{ q.state }}

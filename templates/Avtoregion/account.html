@@ -55,12 +55,14 @@
                         <td>{{ q.driver.name }}</td>
                         {% if q_weight.weight_load__sum %}
                             <td>{{ q.weight_load }}</td>
+	                          <td>{{ q.product.name }}</td>
+	                          <td>{{ q.unit_load.short_name|default_if_none:'т.' }}</td>
                         {% endif %}
                         {% if q_weight.weight_unload__sum %}
                             <td>{{ q.weight_unload }}</td>
+	                          <td>{{ q.product.name }}</td>
+	                          <td>{{ q.unit_unload.short_name|default_if_none:'т.' }}</td>
                         {% endif %}
-                        <td>{{ q.product.name }}</td>
-                        <td>{{ q.unit.short_name|default_if_none:'т.' }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
