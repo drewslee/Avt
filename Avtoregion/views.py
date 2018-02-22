@@ -480,9 +480,15 @@ def accumulate_sup(req):
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         start_date, end_date = date_to_str(req.POST['daterange'])
-        query = Q(supplier__id_supplier__exact=req.POST.get('supplier'),
+        check = req.POST.get('usluga')
+        if check is None:
+            query = Q(type_ship=Race.TYPE[0], supplier__id_supplier__exact=req.POST.get('supplier'),
                   race_date__range=[start_date, end_date]
                   )
+        else:
+            query = Q(supplier__id_supplier__exact=req.POST.get('supplier'),
+                      race_date__range=[start_date, end_date]
+                      )
         if req.POST.get('product') is not None:
             prod = req.POST.getlist('product')
             if len(prod) == 1:

@@ -33,6 +33,9 @@
                         <option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
                     {% endfor %}
                 </select>
+                <div class="text-left">
+                    <input name="usluga" type="checkbox" class="form-control"/>
+                </div>
                 <select name="product" multiple class="form-control">
                     {% for field in q_prod %}
                         <option value="{{ field.name }}">{{ field.name }}</option>
