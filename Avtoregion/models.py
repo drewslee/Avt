@@ -214,3 +214,15 @@ class Race(models.Model):
     @property
     def get_supplier_name(self):
         return self.supplier.name
+
+    @property
+    def get_shipper(self):
+        if self.mediator is None and (self.type_ship == self.TYPE[0][0] or self.type_ship == self.TYPE[1][0]):
+            return self.supplier.name + ", " + self.supplier.address
+
+    @property
+    def get_consignee(self):
+        if self.mediator is None and self.type_ship == self.TYPE[0][0]:
+            return self.customer.name + ", " + self.customer.address
+        elif self.mediator is None and self.type_ship == self.TYPE[1][0]:
+            return ""
