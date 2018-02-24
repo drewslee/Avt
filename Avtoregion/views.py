@@ -4,6 +4,8 @@ import xlwt
 import json
 import shutil
 import tempfile
+from operator import __or__ as OR
+from functools import reduce
 from datetime import timedelta
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse, HttpResponseServerError
 from django.conf import settings as djangoSettings
@@ -480,16 +482,13 @@ def accumulate_sup(req):
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
         start_date, end_date = date_to_str(req.POST['daterange'])
-        check = req.POST.get('usluga')
-        print(check)
-        print(Race.TYPE[0])
+        check = req.POST.get('service')
         if check is None:
             query = Q(type_ship__exact=Race.TYPE[0][0], supplier__id_supplier__exact=req.POST.get('supplier'),
-                      race_date__range=[start_date, end_date]
+                      race_date__range=[start_date, end_date],
                       )
-            print()
         else:
-            query = Q(supplier__id_supplier__exact=req.POST.get('supplier'),
+            query = Q(type_ship__exact=Race.TYPE[1][0], supplier__id_supplier__exact=req.POST.get('supplier'),
                       race_date__range=[start_date, end_date]
                       )
         if req.POST.get('product') is not None:
@@ -497,8 +496,10 @@ def accumulate_sup(req):
             if len(prod) == 1:
                 query.add(Q(product__name=prod[0]), Q.AND)
             else:
+                lst = []
                 for v in prod:
-                    query.add(Q(product__name=v), Q.OR)
+                    lst.append(Q(product__name=v))
+                query.add(reduce(OR, lst), Q.AND)
             q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         else:
             q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
@@ -531,8 +532,10 @@ def accumulate_cus(req):
             if len(prod) == 1:
                 query.add(Q(product__name=prod[0]), Q.AND)
             else:
+                lst = []
                 for v in prod:
-                    query.add(Q(product__name=v), Q.OR)
+                    lst.append(Q(product__name=v))
+                query.add(reduce(OR, lst), Q.AND)
             q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
         else:
             q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)

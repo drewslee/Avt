@@ -9,7 +9,7 @@
     <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
     <script type="text/javascript">
-    $( function () {
+        $(function () {
             $('select[multiple]').chosen({
                 placeholder_text_multiple: 'Выберите фракцию',
             });
@@ -20,29 +20,31 @@
             $(".icon-select").chosenIcon({});
         });
     </script>
-    <div class="container-fluid">
+    <div class="container">
         <div class="form-group">
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                    <input name="daterange" type="text" class="form-control"/>
+                    <input name="daterange" type="text" class="form-control-static small"/>
                 </div>
-                <select name="supplier" class="form-control icon-select">
-                    {% for field in qset %}
-                        <option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
-                    {% endfor %}
-                </select>
-                <div class="text-left">
-                    <input name="usluga" type="checkbox" class="form-control"/>
+                <div class="form-inline">
+                    <select name="supplier" class="form-control icon-select">
+                        {% for field in qset %}
+                            <option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="checkbox">
+                        <label><input id="service" name="service" type="checkbox"/>Только услуги</label>
+                    </div>
                 </div>
-                <select name="product" multiple class="form-control">
+                <select name="product" multiple class="form-control-static col-xs-4">
                     {% for field in q_prod %}
                         <option value="{{ field.name }}">{{ field.name }}</option>
                     {% endfor %}
                 </select>
                 {% buttons %}
-                    <button class="btn btn-success form-control"> {% bootstrap_icon "star" %}Сформировать</button>
+                    <button class="btn btn-success btn-sm"> {% bootstrap_icon "star" %}Сформировать</button>
                 {% endbuttons %}
             </form>
         </div>
