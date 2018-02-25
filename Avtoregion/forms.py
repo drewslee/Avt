@@ -32,7 +32,7 @@ class ConstantForm(ModelForm):
         fields = '__all__'
         labels = {'organization_unit_full': 'Название организации полностью',
                   'organization_unit_small': 'Короткое название организации',
-                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер', 'ogrn': 'ОГРН'}
+                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер', 'ogrn': 'ОГРН', 'address': 'Адрес организации'}
 
 
 class TrailerForm(ModelForm):
@@ -80,6 +80,7 @@ class LoadForm(ModelForm):
         fields = ['address', 'supplier']
         labels = {'address': 'Место погрузки'}
 
+
 class MediatorForm(ModelForm):
     class Meta:
         model = Mediator
@@ -123,6 +124,7 @@ class RaceForm(ModelForm):
             'car': 'Машина',
             'driver': 'Водитель',
             'type_ship': 'Реализация',
+            'order_type_race': 'Заказчик',
             'supplier': 'Поставщик',
             'place_load': 'Адрес погрузки',
             'customer': 'Клиент',

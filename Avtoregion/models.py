@@ -7,6 +7,7 @@ from django.shortcuts import reverse
 class Constants(models.Model):
     organization_unit_full = models.CharField(max_length=256, blank=True)
     organization_unit_small = models.CharField(max_length=50, blank=True)
+    address = models.CharField(max_length=256, blank=True)
     mechanic = models.CharField(max_length=50, blank=True)
     dispatcher = models.CharField(max_length=50, blank=True)
     ogrn = models.CharField(max_length=13, blank=True)
@@ -161,6 +162,12 @@ class Race(models.Model):
         ('Реализация', 'Реализация'),
         ('Услуга', 'Услуга')
     )
+    CUSTOMER = 'Поставщик'
+    CLIENT = 'Покупатель'
+    ORDER = (
+        (CUSTOMER, 'Поставщик'),
+        (CLIENT, 'Покупатель')
+    )
     id_race = models.AutoField(primary_key=True)
     race_date = models.DateTimeField(default=timezone.now)
     arrival_time = models.DateTimeField(default=timezone.now)
@@ -170,6 +177,7 @@ class Race(models.Model):
     supplier = models.ForeignKey(Supplier)
     place_load = models.ForeignKey(LoadingPlace, null=True, blank=True)
     customer = models.ForeignKey(Customer)
+    order_type_race = models.CharField(default=ORDER[0], choices=ORDER, max_length=256)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)
     mediator = models.ForeignKey(Mediator, null=True, blank=True)
@@ -217,12 +225,23 @@ class Race(models.Model):
 
     @property
     def get_shipper(self):
-        if self.mediator is None and (self.type_ship == self.TYPE[0][0] or self.type_ship == self.TYPE[1][0]):
-            return self.supplier.name + ", " + self.supplier.address
+        if self.mediator is None and (self.type_ship == self.TYPE[0][0]):
+            return Constants.organization_unit_full + ", " + Constants.address
+        if self.mediator is not None and (self.type_ship == self.TYPE[0][0]):
+            return Constants.organization_unit_full + ", " + Constants.address
+        if self.mediator is None and (self.type_ship == self.TYPE[1][0]) and (self.order_type_race == self.ORDER[0][0]):
+            return self.supplier.name + " " + self.supplier.address
+        if self.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
+                (self.order_type_race == self.ORDER[0][0]):
+            return self.supplier.name + " " + self.supplier.address
+        if self.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
+                (self.order_type_race == self.ORDER[1][1]):
+            return self.customer.name + " " + self.customer.address
 
     @property
     def get_consignee(self):
-        if self.mediator is None and self.type_ship == self.TYPE[0][0]:
             return self.customer.name + ", " + self.customer.address
-        elif self.mediator is None and self.type_ship == self.TYPE[1][0]:
-            return ""
+
+    @property
+    def get_car(self):
+        return self.car.brand + " " + self.car.number + " " + self.car.trailer.number
