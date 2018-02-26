@@ -234,11 +234,9 @@ class LoadPlaceViewList(LoginRequiredMixin, View):
     def post(self, *args, **kwargs):
         context = {}
         supplier = int(self.request.POST.get('supplier'))
-        print(supplier)
         context['qLoadplace'] = self.model.objects.filter(supplier=supplier)
         context['form'] = LoadForm(initial={'supplier': supplier})
         context['supplier'] = supplier
-        print(context)
         return render(self.request, self.template_name, context)
 
 
@@ -519,7 +517,6 @@ def accumulate_cus(req):
     qset = Customer.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
-        print(req.GET)
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
