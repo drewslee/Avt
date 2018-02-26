@@ -23,6 +23,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
+from django.views.decorators.cache import never_cache
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -78,7 +79,6 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
         kwargs['id'] = 1
         self.model.objects.update(**kwargs)
         return HttpResponseRedirect(redirect_to='Constants')
-
 
 class RaceViewList(LoginRequiredMixin, ListView):
     model = Race

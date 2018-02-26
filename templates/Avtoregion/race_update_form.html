@@ -85,6 +85,48 @@
 
             }
         });
+        var id_supplier = document.getElementById('id_supplier');
+        var select_load = document.getElementById('id_place_load');
+        var data = id_supplier.value;
+        $.ajax(
+            {
+                type: "GET",
+                url: "{% url 'RaceAjaxSup' %}",
+                data: {id: data},
+                dataType: 'json',
+                success: function (resp) {
+                    while (select_load.length > 1) {
+                        select_load.remove(select_load.length - 1)
+                    }
+                    for (i = 0; i < resp.length; i++) {
+                        var option = document.createElement('option');
+                        option.text = resp[i].address;
+                        option.value = resp[i].id_load_place;
+                        select_load.add(option)
+                    }
+                }
+            })
+        id_supplier.addEventListener("change", function () {
+            var data = id_supplier.value;
+            $.ajax(
+                {
+                    type: "GET",
+                    url: "{% url 'RaceAjaxSup' %}",
+                    data: {id: data},
+                    dataType: 'json',
+                    success: function (resp) {
+                        while (select_load.length > 1) {
+                            select_load.remove(select_load.length - 1)
+                        }
+                        for (i = 0; i < resp.length; i++) {
+                            var option = document.createElement('option');
+                            option.text = resp[i].address;
+                            option.value = resp[i].id_load_place;
+                            select_load.add(option)
+                        }
+                    }
+                })
+        });
 		    });
     </script>
 {% endblock %}

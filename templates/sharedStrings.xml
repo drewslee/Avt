@@ -632,10 +632,10 @@
         <t>{{ race.gas_spent }}</t>
     </si>
     <si>
-        <t>{{ race.race_date|date:"y.m.d" }}</t>
+        <t>{{ race.race_date|date:"d.m.y" }}</t>
     </si>
     <si>
-        <t>{{ race.arrival_time|date:"y.m.d" }}</t>
+        <t>{{ race.arrival_time|date:"d.m.y" }}</t>
     </si>
     <si>
         <t>{{ race.place_load.address }}</t>
@@ -647,6 +647,6 @@
         <t>{{ race.driver.name }}</t>
     </si>
     <si>
-        <t>{{ race.race_date|date:"y.m.d" }}</t>
+        <t>{{ race.race_date|date:"d.m.y" }}</t>
     </si>
 </sst>

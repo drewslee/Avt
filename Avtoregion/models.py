@@ -245,3 +245,18 @@ class Race(models.Model):
     @property
     def get_car(self):
         return self.car.brand + " " + self.car.number + " " + self.car.trailer.number
+
+    @property
+    def get_carrier(self):
+        if self.mediator is not None and (self.type_ship != self.TYPE[1][0]):
+            return self.mediator.name + " " + self.mediator.address
+        else:
+            return Constants.organization_unit_full + " " + Constants.address
+
+    @property
+    def get_load(self):
+        return Constants.organization_unit_full + ", " + self.place_load.address
+
+    @property
+    def put_unload(self):
+        return self.supplier.name + ", " + self.shipment.name
