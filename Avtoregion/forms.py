@@ -126,7 +126,7 @@ class RaceForm(ModelForm):
             'type_ship': 'Реализация',
             'order_type_race': 'Заказчик',
             'supplier': 'Поставщик',
-            'place_load': 'Адрес погрузки',
+            'place_load': 'Место погрузки',
             'customer': 'Клиент',
             'shipment': 'Место разгрузки',
             'product': 'Груз',

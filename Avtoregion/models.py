@@ -253,10 +253,3 @@ class Race(models.Model):
         else:
             return Constants.organization_unit_full + " " + Constants.address
 
-    @property
-    def get_load(self):
-        return Constants.organization_unit_full + ", " + self.place_load.address
-
-    @property
-    def put_unload(self):
-        return self.supplier.name + ", " + self.shipment.name
