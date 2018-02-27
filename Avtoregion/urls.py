@@ -20,7 +20,6 @@ from django.contrib.auth.views import LoginView, LogoutView
 from . import views
 
 urlpatterns = [
-    url(r'test/$', views.waybill, ),
     url(r'^login/$', views.LoginViewMix.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(next_page=reverse_lazy('login')), name='logout'),
     url(r'^admin/', admin.site.urls),
@@ -96,6 +95,6 @@ urlpatterns = [
     url(r'^Customer/accumulate/$', views.accumulate_cus, name='CustomerAcc'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
-    url(r'^waybill/$', views.waybill, name='WayBill'),
+    url(r'^waybill/$', views.Waybill.as_view(), name='WayBill'),
 
 ]

@@ -24,6 +24,7 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from django.views.decorators.cache import never_cache
+from braces.views import JSONRequestResponseMixin
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -79,6 +80,7 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
         kwargs['id'] = 1
         self.model.objects.update(**kwargs)
         return HttpResponseRedirect(redirect_to='Constants')
+
 
 class RaceViewList(LoginRequiredMixin, ListView):
     model = Race
@@ -585,7 +587,6 @@ def save_excel(filename, values_list, col):
     font_style.font.bold = True
     font_style.font.name = 'Times New Roman'
 
-
     for col_num in range(len(col)):
         ws.write(row_num, col_num, col[col_num], font_style)
 
@@ -602,36 +603,39 @@ def save_excel(filename, values_list, col):
     return '/'.join(['temp', filename])
 
 
-def waybill_render(race_id):
+def waybill_render(race_id, prefname, template_name, tmp_name):
     static_root = os.path.join(djangoSettings.BASE_DIR, 'static')
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
-    buf = render_to_string('sharedStrings.xml', {'race': race, 'const': const})
-    filename = 'waybill_' + str(race_id) + '_' + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S'))
+    buf = render_to_string(template_name, {'race': race, 'const': const})
+    filename = prefname + '_' + str(race_id) + '_' + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S'))
     with tempfile.TemporaryDirectory() as tmpdir:
-        way = os.path.join(tmpdir, 'way')
-        shutil.copytree(os.path.join(static_root, 'way'), way)
-        with open(os.path.join(way, 'xl', 'sharedStrings.xml',), 'w', newline='\r\n') as f:
+        tmpf_name = os.path.join(tmpdir, tmp_name)
+        shutil.copytree(os.path.join(static_root, tmp_name), tmpf_name)
+        with open(os.path.join(tmpf_name, 'xl', 'sharedStrings.xml', ), 'w', newline='\r\n') as f:
             f.write(buf)
-        shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', way, '.')
-    os.rename(os.path.join(static_root, 'temp', filename + '.zip'), os.path.join(static_root, 'temp', filename + '.xlsx'))
+        shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', tmpf_name, '.')
+    os.rename(os.path.join(static_root, 'temp', filename + '.zip'),
+              os.path.join(static_root, 'temp', filename + '.xlsx'))
     return '/'.join(['temp', filename + '.xlsx'])
 
 
-def waybill(req):
-    qset = Car.objects.all()
-    if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/waybill.html', context={'qset': qset})
-    if req.method == 'POST':
-        start_date, end_date = date_to_str(req.POST['daterange'])
-        q_resp = Race.objects.filter(car__number__exact=req.POST.get('car'),
+class Waybill(View):
+    queryset = Car.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        return render(request=request, template_name='Avtoregion/waybill.html', context={'qset': self.queryset})
+
+    def post(self, request, *args, **kwargs):
+        start_date, end_date = date_to_str(request.POST['daterange'])
+        q_resp = Race.objects.filter(car__number__exact=request.POST.get('car'),
                                      race_date__range=[start_date, end_date])
         urls = []
         idlist = q_resp.values_list('id_race')
         for i in idlist:
-            urls.append(waybill_render(i[0]))
-        return render(request=req, template_name='Avtoregion/waybill.html',
-                      context={'qset': qset, 'urls': urls})
+            urls.append(waybill_render(i[0], 'waybill', 'sharedStrings.xml', 'way'))
+        return render(request=request, template_name='Avtoregion/waybill.html',
+                      context={'qset': self.queryset, 'urls': urls})
 
 
 def date_to_str(date):
@@ -696,4 +700,3 @@ class AjaxUpdateState(View):
             except KeyError:
                 messages.add_message(self.request, messages.ERROR, 'Проблемы сервера, обратитесь к администратору')
                 HttpResponseServerError('Malformed data!')
-
