@@ -24,7 +24,7 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from django.views.decorators.cache import never_cache
-from braces.views import CsrfExemptMixin, JSONRequestResponseMixin, AjaxResponseMixin
+from braces.views import CsrfExemptMixin, JSONRequestResponseMixin
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -603,7 +603,7 @@ def save_excel(filename, values_list, col):
     return '/'.join(['temp', filename])
 
 
-def waybill_render(race_id, prefname, template_name, tmp_name):
+def ooxml_render(race_id, prefname, template_name, tmp_name):
     static_root = os.path.join(djangoSettings.BASE_DIR, 'static')
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
@@ -633,7 +633,7 @@ class Waybill(View):
         urls = []
         idlist = q_resp.values_list('id_race')
         for i in idlist:
-            urls.append(waybill_render(i[0], 'waybill', 'sharedStrings.xml', 'way'))
+            urls.append(ooxml_render(i[0], 'waybill', 'sharedStrings.xml', 'way'))
         return render(request=request, template_name='Avtoregion/waybill.html',
                       context={'qset': self.queryset, 'urls': urls})
 
@@ -674,7 +674,6 @@ def ajax_sup(req):
             raise Http404
 
 
-
 class AjaxUpdateState(View):
     model = Race
 
@@ -704,12 +703,16 @@ class AjaxUpdateState(View):
 
 
 class PackingView(JSONRequestResponseMixin, View):
-    require_json = False
+    require_json = True
 
-    def post_ajax(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        urls = []
         try:
             ids = self.request_json["id_list"]
-            print(ids)
+            if len(ids) > 0:
+                for id in ids:
+                    urls.append(ooxml_render(id, 'packing', 'sharedStrings2.xml', 'packing'))
         except KeyError:
-            print('Key error: key not found!')
-        return self.render_json_response({'urls': 'OK'})
+            print('Key not found!')
+        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls})
+        return self.render_json_response({'data': templated})

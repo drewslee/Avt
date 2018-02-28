@@ -3,7 +3,7 @@
 from django.forms import ModelForm, CharField, TextInput, PasswordInput
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.forms.widgets import SelectDateWidget
-from django.forms import DateField, DateTimeField, HiddenInput
+from django.forms import DateField, DateTimeField, HiddenInput, ModelChoiceField, ChoiceField
 from django.utils import timezone
 from .models import *
 
@@ -116,6 +116,8 @@ class RaceForm(ModelForm):
     race_date = DateTimeField(initial=timezone.now,
                               label='Дата выезда:')
     arrival_time = DateTimeField(initial=timezone.now, label='Дата приезда:')
+    unit_load = ModelChoiceField(queryset=Units.objects.all(), initial='т.', label='Ед. изм. загружено')
+    unit_unload = ModelChoiceField(queryset=Units.objects.all(), initial='т.', label='Ед. изм. выгружено')
 
     class Meta:
         model = Race
@@ -134,9 +136,7 @@ class RaceForm(ModelForm):
             'e_milage': 'Конец трeка',
             'mediator': 'Посредник',
             'weight_unload': 'Разгружено',
-            'unit_unload': 'Ед. изм. выгружено',
             'weight_load': 'Загружено',
-            'unit_load': 'Ед. изм. загружено',
             'shoulder': 'Плечо',
             'comm': 'Комментарий',
             'state': 'Состояние',

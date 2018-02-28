@@ -1,5 +1,4 @@
 from django.db import models
-from datetime import date
 from django.utils import timezone
 from django.shortcuts import reverse
 
@@ -220,20 +219,26 @@ class Race(models.Model):
         return track
 
     @property
-    def get_supplier_name(self):
-        return self.supplier.name
-
-    @property
     def get_shipper(self):
+        const = Constants.objects.get(pk=1)
+        # реализация без посредника
         if self.mediator is None and (self.type_ship == self.TYPE[0][0]):
-            return Constants.organization_unit_full + ", " + Constants.address
+            return const.organization_unit_full + " " + const.address
+        #реализация с посредником
         if self.mediator is not None and (self.type_ship == self.TYPE[0][0]):
-            return Constants.organization_unit_full + ", " + Constants.address
+            return const.organization_unit_full + " " + const.address
+        #услуги без посредника, заказчик поставщик
         if self.mediator is None and (self.type_ship == self.TYPE[1][0]) and (self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
+        #услуги с посредником, заказчик поставщик
         if self.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
                 (self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
+        # услуги без посредника, заказчик покупатель
+        if self.mediator is None and (self.type_ship == self.TYPE[1][0]) and \
+                (self.order_type_race == self.ORDER[1][1]):
+            return self.customer.name + " " + self.customer.address
+        # услуги с посредником, заказчик покупатель
         if self.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
                 (self.order_type_race == self.ORDER[1][1]):
             return self.customer.name + " " + self.customer.address
@@ -244,12 +249,13 @@ class Race(models.Model):
 
     @property
     def get_car(self):
-        return self.car.brand + " " + self.car.number + " " + self.car.trailer.number
+        return self.car.brand + " " + self.car.number + " " + \
+               self.car.trailer.brand_trailer + " " + self.car.trailer.number
 
     @property
     def get_carrier(self):
+        const = Constants.objects.get(pk=1)
         if self.mediator is not None and (self.type_ship != self.TYPE[1][0]):
             return self.mediator.name + " " + self.mediator.address
         else:
-            return Constants.organization_unit_full + " " + Constants.address
-
+            return const.organization_unit_full + " " + const.address

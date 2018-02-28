@@ -152,7 +152,7 @@ $(document).on('click', '.delete-confirmation', function () {
                 data: JSON.stringify({ "id_list" : list }),
                 dataType: 'json',
                 success: function (data) {
-                    $('#result').html(data);
+                    $('#result').html(data['data']);
                     $('#ModalPackingList').modal('show');
                 }
             })
