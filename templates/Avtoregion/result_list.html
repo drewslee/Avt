@@ -1,0 +1,5 @@
+<div id="result">
+{% for url in urls %}
+	<a href="{% static url %}" class="list-group-item">Товарная накладная {{ forloop.counter }}</a>
+{% endfor %}
+</div>

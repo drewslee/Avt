@@ -137,6 +137,26 @@ $(document).on('click', '.delete-confirmation', function () {
                 }
             })
     });
+    $(document).on("submit", '#packing_list', function (event) {
+        event.preventDefault();
+        var rows = document.getElementsByClassName('selected'),
+            list = [];
+        for (var i = 0; i < rows.length; ++i) {
+            list.push(rows[i].id);
+        }
+        $.ajax(
+            {
+                url: 'Race/packing_list/ajax',
+                method: 'POST',
+                traditional: true,
+                data: JSON.stringify({data: [{ "id_list" : list }]}),
+                dataType: 'json',
+                success: function (resp) {
+                    $('#result').html(resp);
+                    $('#ModalPackingList').modal('show');
+                }
+            })
+    });
 
 });
 
