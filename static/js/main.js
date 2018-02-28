@@ -137,7 +137,7 @@ $(document).on('click', '.delete-confirmation', function () {
                 }
             })
     });
-    $(document).on("submit", '#packing_list', function (event) {
+    $(document).on("click", '#packing_list', function (event) {
         event.preventDefault();
         var rows = document.getElementsByClassName('selected'),
             list = [];
@@ -146,13 +146,13 @@ $(document).on('click', '.delete-confirmation', function () {
         }
         $.ajax(
             {
-                url: 'Race/packing_list/ajax',
+                url: 'Race/packing/ajax',
                 method: 'POST',
                 traditional: true,
-                data: JSON.stringify({data: [{ "id_list" : list }]}),
+                data: JSON.stringify({ "id_list" : list }),
                 dataType: 'json',
-                success: function (resp) {
-                    $('#result').html(resp);
+                success: function (data) {
+                    $('#result').html(data);
                     $('#ModalPackingList').modal('show');
                 }
             })

@@ -24,7 +24,7 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from django.views.decorators.cache import never_cache
-from braces.views import JSONRequestResponseMixin
+from braces.views import CsrfExemptMixin, JSONRequestResponseMixin, AjaxResponseMixin
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -674,6 +674,7 @@ def ajax_sup(req):
             raise Http404
 
 
+
 class AjaxUpdateState(View):
     model = Race
 
@@ -700,3 +701,15 @@ class AjaxUpdateState(View):
             except KeyError:
                 messages.add_message(self.request, messages.ERROR, 'Проблемы сервера, обратитесь к администратору')
                 HttpResponseServerError('Malformed data!')
+
+
+class PackingView(JSONRequestResponseMixin, View):
+    require_json = False
+
+    def post_ajax(self, request, *args, **kwargs):
+        try:
+            ids = self.request_json["id_list"]
+            print(ids)
+        except KeyError:
+            print('Key error: key not found!')
+        return self.render_json_response({'urls': 'OK'})
