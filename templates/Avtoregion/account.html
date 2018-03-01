@@ -5,7 +5,7 @@
 {% block content %}
     <script type="text/javascript" src="{% static "js/js-xlsx/dist/xlsx.core.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/FileSaver/FileSaver.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/tableExport19.10.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/tableExport5.min.js" %}"></script>
     <div class="container">
         <div class="table-responsive">
             <table id="tab" class="table table-hover table-condensed">
@@ -51,29 +51,26 @@
                 {% for q in q_resp %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ q.race_date }}</td>
+                        <td>{{ q.race_date|date:"d.m.y" }}</td>
                         <td>{{ q.car }}</td>
                         <td>{{ q.driver.name }}</td>
                         {% if q_weight.weight_load__sum %}
-                            <td>{{ q.weight_load }}</td>
+                            <td>{{ q.weight_load|floatformat:"2" }}</td>
 	                          <td>{{ q.product.name }}</td>
-	                          <td>{{ q.unit_load.short_name|default_if_none:'т.' }}</td>
+                            <td>{{ q.unit_load.short_name|default:'т.' }}</td>
                         {% endif %}
                         {% if q_weight.weight_unload__sum %}
-                            <td>{{ q.weight_unload }}</td>
+                            <td>{{ q.weight_unload|floatformat:"2" }}</td>
 	                          <td>{{ q.product.name }}</td>
-	                          <td>{{ q.unit_unload.short_name|default_if_none:'т.' }}</td>
+                            <td>{{ q.unit_unload.short_name|default:'т.' }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-            <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel',
-              excelFileFormat:'xmlss', displayTableName: true,
-fileName: '{% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %}'
-                          });">
-                В Excel
-            </button>
         </div>
     </div>
+    <script type="text/javascript">$('#tab').tableExport({formats: ['csv'], bootstrap: true});
+    </script>
+    {% comment %}  {% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %} {% endcomment %}
 {% endblock %}
