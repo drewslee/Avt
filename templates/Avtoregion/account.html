@@ -1,10 +1,11 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% load static %}
+{% load hyphen_string %}
 {% block content %}
     <script type="text/javascript" src="{% static "js/js-xlsx/dist/xlsx.core.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/FileSaver/FileSaver.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/tableExport19.10.min.js" %}"></script>
     <div class="container">
         <div class="table-responsive">
             <table id="tab" class="table table-hover table-condensed">
@@ -34,10 +35,10 @@
                     </td>
                     <td>
                         {% if q_weight.weight_unload__sum %}
-                            {{ q_weight.weight_unload__sum }}
+                            {{ q_weight.weight_unload__sum|floatformat:2 }}
                         {% endif %}
                         {% if q_weight.weight_load__sum %}
-                            {{ q_weight.weight_load__sum }}
+                            {{ q_weight.weight_load__sum|floatformat:2 }}
                         {% endif %}
                     </td>
                     <td>
@@ -67,7 +68,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel'});">
+            <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel',
+              excelFileFormat:'xmlss', displayTableName: true,
+fileName: '{% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %}'
+                          });">
                 В Excel
             </button>
         </div>

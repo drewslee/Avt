@@ -25,6 +25,7 @@ from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from django.views.decorators.cache import never_cache
 from braces.views import CsrfExemptMixin, JSONRequestResponseMixin
+from Avtoregion.templatetags import hyphen_string
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -94,7 +95,7 @@ class RaceViewList(LoginRequiredMixin, ListView):
             queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by(
                 'race_date')
         else:
-            start_date, end_date = date_to_str(self.request.GET.get('daterange'))
+            start_date, end_date = datestr_to_dateaware(self.request.GET.get('daterange'))
             queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('race_date')
         return queryset
 
@@ -102,9 +103,9 @@ class RaceViewList(LoginRequiredMixin, ListView):
         ctx = super().get_context_data(**kwargs)
         ctx['select_state'] = (x[1] for x in self.model.STATE)
         if self.request.GET.get('daterange') is not None:
-            start_date, end_date = date_to_str(self.request.GET.get('daterange'))
-            ctx['start_date'] = start_date
-            ctx['end_date'] = end_date
+            start_date, end_date = datestr_to_dateaware(self.request.GET.get('daterange'))
+            ctx['start_date'] = str(start_date)
+            ctx['end_date'] = str(end_date)
         else:
             end_date = Race.objects.latest().race_date
             start_date = end_date - timedelta(weeks=1)
@@ -481,7 +482,7 @@ def accumulate_sup(req):
         return render(request=req, template_name='Avtoregion/accumulate_supplier.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
-        start_date, end_date = date_to_str(req.POST['daterange'])
+        start_date, end_date = datestr_to_dateaware(req.POST['daterange'])
         check = req.POST.get('service')
         if check is None:
             query = Q(type_ship__exact=Race.TYPE[0][0], supplier__id_supplier__exact=req.POST.get('supplier'),
@@ -522,7 +523,7 @@ def accumulate_cus(req):
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
                       context={'qset': qset, 'q_prod': q_prod})
     if req.method == 'POST':
-        start_date, end_date = date_to_str(req.POST['daterange'])
+        start_date, end_date = datestr_to_dateaware(req.POST['daterange'])
         query = Q(customer__id_customer__exact=req.POST.get('customer'),
                   race_date__range=[start_date, end_date]
                   )
@@ -550,7 +551,7 @@ class CarResponce(View):
         return render(request=self.request, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
 
     def post(self, *args, **kwargs):
-        start_date, end_date = date_to_str(self.request.POST['daterange'])
+        start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
         q_resp = Race.objects.filter(car__number__exact=self.request.POST.get('car'),
                                      race_date__range=[start_date, end_date]).order_by('race_date')
         return render(request=self.request, template_name='Avtoregion/account_car.html',
@@ -563,7 +564,7 @@ class DriverResponce(View):
         return render(request=self.request, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
 
     def post(self, *args, **kwargs):
-        start_date, end_date = date_to_str(self.request.POST['daterange'])
+        start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
         q_resp = Race.objects.filter(driver__name__exact=self.request.POST.get('driver'),
                                      race_date__range=[start_date, end_date]).order_by('race_date')
         return render(request=self.request, template_name='Avtoregion/account_driver.html',
@@ -627,7 +628,7 @@ class Waybill(View):
         return render(request=request, template_name='Avtoregion/waybill.html', context={'qset': self.queryset})
 
     def post(self, request, *args, **kwargs):
-        start_date, end_date = date_to_str(request.POST['daterange'])
+        start_date, end_date = datestr_to_dateaware(request.POST['daterange'])
         q_resp = Race.objects.filter(car__number__exact=request.POST.get('car'),
                                      race_date__range=[start_date, end_date])
         urls = []
@@ -638,8 +639,11 @@ class Waybill(View):
                       context={'qset': self.queryset, 'urls': urls})
 
 
-def date_to_str(date):
-    return date.split(' - ')
+def datestr_to_dateaware(date):
+    start_date, end_date = date.split(' - ')
+    start_date = timezone.make_aware(timezone.datetime.strptime(start_date, '%Y-%m-%d'), is_dst=True)
+    end_date = timezone.make_aware(timezone.datetime.strptime(end_date, '%Y-%m-%d'), is_dst=True)
+    return  start_date, end_date
 
 
 def ajax_track(req):
