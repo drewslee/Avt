@@ -108,7 +108,10 @@ class RaceViewList(LoginRequiredMixin, ListView):
             ctx['end_date'] = str(end_date)
         else:
             end_date = Race.objects.latest().race_date
+            print(end_date)
             start_date = end_date - timedelta(weeks=1)
+            print(start_date)
+            print(type(start_date))
             ctx['start_date'] = str(start_date.strftime('%Y-%m-%d'))
             ctx['end_date'] = str(end_date.strftime('%Y-%m-%d'))
         return ctx
@@ -641,9 +644,10 @@ class Waybill(View):
 
 def datestr_to_dateaware(date):
     start_date, end_date = date.split(' - ')
-    start_date = timezone.make_aware(timezone.datetime.strptime(start_date, '%Y-%m-%d'), is_dst=True)
-    end_date = timezone.make_aware(timezone.datetime.strptime(end_date, '%Y-%m-%d'), is_dst=True)
-    return  start_date, end_date
+    start_date = timezone.make_aware(timezone.datetime.strptime(start_date, '%Y-%m-%d'), timezone=timezone.utc)
+    end_date = timezone.make_aware(timezone.datetime.strptime(end_date, '%Y-%m-%d'),
+                                   timezone=timezone.utc) + timedelta(days=1)
+    return start_date, end_date
 
 
 def ajax_track(req):
