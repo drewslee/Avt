@@ -5,7 +5,7 @@
 {% block content %}
     <script type="text/javascript" src="{% static "js/js-xlsx/dist/xlsx.core.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/FileSaver/FileSaver.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/tableExport5.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
     <div class="container">
         <div class="table-responsive">
             <table id="tab" class="table table-hover table-condensed">
@@ -68,9 +68,10 @@
                 {% endfor %}
                 </tbody>
             </table>
+            <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel'});">
+                В Excel
+            </button>
         </div>
     </div>
-    <script type="text/javascript">$('#tab').tableExport({formats: ['csv'], bootstrap: true});
-    </script>
     {% comment %}  {% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %} {% endcomment %}
 {% endblock %}
