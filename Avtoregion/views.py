@@ -478,25 +478,28 @@ class CustomerDelete(PermissionRequiredMixin, DeleteView):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-def accumulate_sup(req):
-    qset = Supplier.objects.all()
-    q_prod = Product.objects.all()
-    if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate_supplier.html',
-                      context={'qset': qset, 'q_prod': q_prod})
-    if req.method == 'POST':
-        start_date, end_date = datestr_to_dateaware(req.POST['daterange'])
-        check = req.POST.get('service')
+class AccumulateSupplier(View):
+    q_sup = Supplier.objects.all().select_related()
+    q_prod = Product.objects.all().select_related()
+    q_cus = Customer.objects.all().select_related()
+
+    def get(self, *args, **kwargs):
+        return render(request=self.request, template_name='Avtoregion/account.html',
+                      context={'qset': self.q_sup, 'q_prod': self.q_prod})
+
+    def post(self, *args, **kwargs):
+        start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
+        check = self.request.POST.get('service')
         if check is None:
-            query = Q(type_ship__exact=Race.TYPE[0][0], supplier__id_supplier__exact=req.POST.get('supplier'),
+            query = Q(type_ship__exact=Race.TYPE[0][0], supplier__id_supplier__exact=self.request.POST.get('supplier'),
                       race_date__range=[start_date, end_date],
                       )
         else:
-            query = Q(type_ship__exact=Race.TYPE[1][0], supplier__id_supplier__exact=req.POST.get('supplier'),
+            query = Q(type_ship__exact=Race.TYPE[1][0], supplier__id_supplier__exact=self.request.POST.get('supplier'),
                       race_date__range=[start_date, end_date]
                       )
-        if req.POST.get('product') is not None:
-            prod = req.POST.getlist('product')
+        if self.request.POST.get('product') is not None:
+            prod = self.request.POST.getlist('product')
             if len(prod) == 1:
                 query.add(Q(product__name=prod[0]), Q.AND)
             else:
@@ -509,8 +512,9 @@ def accumulate_sup(req):
             q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
 
-        return render(request=req, template_name='Avtoregion/account.html',
-                      context={'q_resp': q_resp, 'q_weight': q_weight})
+        return render(request=self.request, template_name='Avtoregion/account.html',
+                      context={'q_sup': self.q_sup,'q_cus':self.q_cus,
+                               'q_prod': self.q_prod, 'q_resp': q_resp, 'q_weight': q_weight})
 
 
 class Accumulate(LoginRequiredMixin, ListView):
@@ -520,11 +524,11 @@ class Accumulate(LoginRequiredMixin, ListView):
 
 
 def accumulate_cus(req):
-    qset = Customer.objects.all()
+    q_sup = Customer.objects.all()
     q_prod = Product.objects.all()
     if req.method == 'GET':
         return render(request=req, template_name='Avtoregion/accumulate_customer.html',
-                      context={'qset': qset, 'q_prod': q_prod})
+                      context={'qset': q_sup, 'q_prod': q_prod})
     if req.method == 'POST':
         start_date, end_date = datestr_to_dateaware(req.POST['daterange'])
         query = Q(customer__id_customer__exact=req.POST.get('customer'),

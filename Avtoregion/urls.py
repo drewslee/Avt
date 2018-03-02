@@ -92,7 +92,7 @@ urlpatterns = [
         name='ShipmentUpdate'),
     url(r'^Shipment/delete/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
-    url(r'^Supplier/accumulate/$', views.accumulate_sup, name='SupplierAcc'),
+    url(r'^Supplier/accumulate/$', views.AccumulateSupplier.as_view(), name='SupplierAcc'),
     url(r'^Customer/accumulate/$', views.accumulate_cus, name='CustomerAcc'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
