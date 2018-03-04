@@ -492,6 +492,7 @@ class Accumulate(View):
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
         if self.request.POST.get('supplier') is not None:
+            type = 'supplier'
             check = self.request.POST.get('service')
             if check is None:
                 query = Q(type_ship__exact=Race.TYPE[0][0],
@@ -516,7 +517,9 @@ class Accumulate(View):
             else:
                 q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
             q_weight = q_resp.aggregate(Sum('weight_load'))
+            q_resp.select_related('car', 'driver', 'product')
         if self.request.POST.get('customer') is not None:
+            type = 'customer'
             query = Q(customer__id_customer__exact=self.request.POST.get('customer'),
                       race_date__range=[start_date, end_date]
                       )
@@ -534,7 +537,9 @@ class Accumulate(View):
                 q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
 
             q_weight = q_resp.aggregate(Sum('weight_unload'))
+            q_resp.select_related('car', 'driver', 'product')
         if self.request.POST.get('mediator') is not None:
+            type = 'mediator'
             query = Q(car__mediator__id_mediator__exact=self.request.POST.get('mediator'),
                       race_date__range=[start_date, end_date]
                       )
@@ -551,11 +556,15 @@ class Accumulate(View):
             else:
                 q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
             q_weight = q_resp.aggregate(Sum('weight_load'))
+            q_resp.select_related('car', 'driver', 'product')
+        else:
+            q_resp = {}
+            q_weight = {}
+            type = ""
 
-        q_resp.select_related('car', 'driver', 'product')
         return render(request=self.request, template_name='Avtoregion/account.html',
                       context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med,
-                               'q_prod': self.q_prod, 'q_resp': q_resp, 'q_weight': q_weight})
+                               'q_prod': self.q_prod, 'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type})
 
 
 class CarResponce(View):

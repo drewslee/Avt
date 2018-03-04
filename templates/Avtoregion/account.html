@@ -129,11 +129,14 @@
         <div class="container">
             <div class="table-responsive">
                 <table id="tab" class="table table-hover table-condensed">
-                    {% if q_weight.weight_load__sum %}
+                    {% if type_name == 'supplier' %}
                         <h1 id="organization">{{ q_resp.first.supplier.name }} </h1>
                     {% endif %}
-                    {% if q_weight.weight_unload__sum %}
+                    {% if type_name == 'customer' %}
                         <h1 id="organization">{{ q_resp.first.customer.name }}</h1>
+                    {% endif %}
+                    {% if type_name == 'mediator' %}
+                        <h1 id="organization">{{ q_resp.first.car.mediator.name }}</h1>
                     {% endif %}
                     <thead>
                     <th>#</th>
