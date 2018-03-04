@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import os
-import xlwt
 import ast
 import xlsxwriter
 import json
