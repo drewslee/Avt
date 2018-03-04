@@ -92,8 +92,8 @@ urlpatterns = [
         name='ShipmentUpdate'),
     url(r'^Shipment/delete/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
-    url(r'^Supplier/accumulate/$', views.AccumulateSupplier.as_view(), name='SupplierAcc'),
-    url(r'^Customer/accumulate/$', views.accumulate_cus, name='CustomerAcc'),
+    url(r'^Accumulate/$', views.Accumulate.as_view(), name='Acc'),
+    url(r'^Accumulate/Excel$', views.save_excel, name='AccExcel'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
     url(r'^waybill/$', views.Waybill.as_view(), name='WayBill'),

@@ -81,7 +81,7 @@ class Mediator(models.Model):
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
 
     def __str__(self):
-        return '%s' % self.address
+        return '%s' % self.name
 
     def get_absolute_url(self):
         return reverse('MediatorList', kwargs={'pk': self.pk})
@@ -179,7 +179,6 @@ class Race(models.Model):
     order_type_race = models.CharField(default=ORDER[0], choices=ORDER, max_length=256)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)
-    mediator = models.ForeignKey(Mediator, null=True, blank=True)
     s_milage = models.FloatField(default=0)
     e_milage = models.FloatField(default=0)
     weight_load = models.FloatField(default=0)
@@ -222,24 +221,25 @@ class Race(models.Model):
     def get_shipper(self):
         const = Constants.objects.get(pk=1)
         # реализация без посредника
-        if self.mediator is None and (self.type_ship == self.TYPE[0][0]):
+        if self.car.mediator is None and (self.type_ship == self.TYPE[0][0]):
             return const.organization_unit_full + " " + const.address
         #реализация с посредником
-        if self.mediator is not None and (self.type_ship == self.TYPE[0][0]):
+        if self.car.mediator is not None and (self.type_ship == self.TYPE[0][0]):
             return const.organization_unit_full + " " + const.address
         #услуги без посредника, заказчик поставщик
-        if self.mediator is None and (self.type_ship == self.TYPE[1][0]) and (self.order_type_race == self.ORDER[0][0]):
+        if self.car.mediator is None and (self.type_ship == self.TYPE[1][0]) and (
+                self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
         #услуги с посредником, заказчик поставщик
-        if self.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
+        if self.car.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
                 (self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
         # услуги без посредника, заказчик покупатель
-        if self.mediator is None and (self.type_ship == self.TYPE[1][0]) and \
+        if self.car.mediator is None and (self.type_ship == self.TYPE[1][0]) and \
                 (self.order_type_race == self.ORDER[1][1]):
             return self.customer.name + " " + self.customer.address
         # услуги с посредником, заказчик покупатель
-        if self.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
+        if self.car.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
                 (self.order_type_race == self.ORDER[1][1]):
             return self.customer.name + " " + self.customer.address
 
@@ -255,7 +255,7 @@ class Race(models.Model):
     @property
     def get_carrier(self):
         const = Constants.objects.get(pk=1)
-        if self.mediator is not None and (self.type_ship != self.TYPE[1][0]):
-            return self.mediator.name + " " + self.mediator.address
+        if self.car.mediator is not None and (self.type_ship != self.TYPE[1][0]):
+            return self.car.mediator.name + " " + self.car.mediator.address
         else:
             return const.organization_unit_full + " " + const.address

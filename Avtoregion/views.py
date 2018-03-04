@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 import os
 import xlwt
+import ast
+import xlsxwriter
 import json
 import shutil
 import tempfile
@@ -478,78 +480,83 @@ class CustomerDelete(PermissionRequiredMixin, DeleteView):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-class AccumulateSupplier(View):
-    q_sup = Supplier.objects.all().select_related()
-    q_prod = Product.objects.all().select_related()
-    q_cus = Customer.objects.all().select_related()
+class Accumulate(View):
+    q_sup = Supplier.objects.all()
+    q_prod = Product.objects.all()
+    q_cus = Customer.objects.all()
+    q_med = Mediator.objects.all()
 
     def get(self, *args, **kwargs):
         return render(request=self.request, template_name='Avtoregion/account.html',
-                      context={'qset': self.q_sup, 'q_prod': self.q_prod})
+                      context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod})
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
-        check = self.request.POST.get('service')
-        if check is None:
-            query = Q(type_ship__exact=Race.TYPE[0][0], supplier__id_supplier__exact=self.request.POST.get('supplier'),
-                      race_date__range=[start_date, end_date],
-                      )
-        else:
-            query = Q(type_ship__exact=Race.TYPE[1][0], supplier__id_supplier__exact=self.request.POST.get('supplier'),
+        if self.request.POST.get('supplier') is not None:
+            check = self.request.POST.get('service')
+            if check is None:
+                query = Q(type_ship__exact=Race.TYPE[0][0],
+                          supplier__id_supplier__exact=self.request.POST.get('supplier'),
+                          race_date__range=[start_date, end_date],
+                          )
+            else:
+                query = Q(type_ship__exact=Race.TYPE[1][0],
+                          supplier__id_supplier__exact=self.request.POST.get('supplier'),
+                          race_date__range=[start_date, end_date]
+                          )
+            if self.request.POST.get('product') is not None:
+                prod = self.request.POST.getlist('product')
+                if len(prod) == 1:
+                    query.add(Q(product__name=prod[0]), Q.AND)
+                else:
+                    lst = []
+                    for v in prod:
+                        lst.append(Q(product__name=v))
+                    query.add(reduce(OR, lst), Q.AND)
+                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+            else:
+                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+            q_weight = q_resp.aggregate(Sum('weight_load'))
+        if self.request.POST.get('customer') is not None:
+            query = Q(customer__id_customer__exact=self.request.POST.get('customer'),
                       race_date__range=[start_date, end_date]
                       )
-        if self.request.POST.get('product') is not None:
-            prod = self.request.POST.getlist('product')
-            if len(prod) == 1:
-                query.add(Q(product__name=prod[0]), Q.AND)
+            if self.request.POST.get('product') is not None:
+                prod = self.request.POST.getlist('product')
+                if len(prod) == 1:
+                    query.add(Q(product__name=prod[0]), Q.AND)
+                else:
+                    lst = []
+                    for v in prod:
+                        lst.append(Q(product__name=v))
+                    query.add(reduce(OR, lst), Q.AND)
+                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
             else:
-                lst = []
-                for v in prod:
-                    lst.append(Q(product__name=v))
-                query.add(reduce(OR, lst), Q.AND)
-            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
-        else:
-            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
-        q_weight = q_resp.aggregate(Sum('weight_load'))
+                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
 
+            q_weight = q_resp.aggregate(Sum('weight_unload'))
+        if self.request.POST.get('mediator') is not None:
+            query = Q(car__mediator__id_mediator__exact=self.request.POST.get('mediator'),
+                      race_date__range=[start_date, end_date]
+                      )
+            if self.request.POST.get('product') is not None:
+                prod = self.request.POST.getlist('product')
+                if len(prod) == 1:
+                    query.add(Q(product__name=prod[0]), Q.AND)
+                else:
+                    lst = []
+                    for v in prod:
+                        lst.append(Q(product__name=v))
+                    query.add(reduce(OR, lst), Q.AND)
+                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+            else:
+                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+            q_weight = q_resp.aggregate(Sum('weight_load'))
+
+        q_resp.select_related('car', 'driver', 'product')
         return render(request=self.request, template_name='Avtoregion/account.html',
-                      context={'q_sup': self.q_sup,'q_cus':self.q_cus,
+                      context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med,
                                'q_prod': self.q_prod, 'q_resp': q_resp, 'q_weight': q_weight})
-
-
-class Accumulate(LoginRequiredMixin, ListView):
-    context_object_name = 'qset'
-    template_name = 'Avtoregion/accumulate_customer.html'
-    model = Customer
-
-
-def accumulate_cus(req):
-    q_sup = Customer.objects.all()
-    q_prod = Product.objects.all()
-    if req.method == 'GET':
-        return render(request=req, template_name='Avtoregion/accumulate_customer.html',
-                      context={'qset': q_sup, 'q_prod': q_prod})
-    if req.method == 'POST':
-        start_date, end_date = datestr_to_dateaware(req.POST['daterange'])
-        query = Q(customer__id_customer__exact=req.POST.get('customer'),
-                  race_date__range=[start_date, end_date]
-                  )
-        if req.POST.get('product') is not None:
-            prod = req.POST.getlist('product')
-            if len(prod) == 1:
-                query.add(Q(product__name=prod[0]), Q.AND)
-            else:
-                lst = []
-                for v in prod:
-                    lst.append(Q(product__name=v))
-                query.add(reduce(OR, lst), Q.AND)
-            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
-        else:
-            q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
-
-        q_weight = q_resp.aggregate(Sum('weight_unload'))
-        return render(request=req, template_name='Avtoregion/account.html',
-                      context={'q_resp': q_resp, 'q_weight': q_weight})
 
 
 class CarResponce(View):
@@ -578,37 +585,72 @@ class DriverResponce(View):
                       context={'q_resp': q_resp})
 
 
-def accumulate_mediator(req):
-    pass
+def save_excel(request):
+    filename = 'name'
+    json_data = json.loads(request.body.decode('utf-8'))
+    json_data = ast.literal_eval(json_data)
+    response = HttpResponse(content_type='vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename={}.xlsx'.format(filename)
 
-
-def save_excel(filename, values_list, col):
-    filename = filename + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S')) + '.xls'
-
-    wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('List1')
+    wb = xlsxwriter.Workbook(response, {'in_memory': True})
+    ws = wb.add_worksheet(name='List1')
+    format = wb.add_format({
+        'bold': True,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+    })
+    format_border = wb.add_format({'border': 1})
+    ws.set_column('A:A', 5)
+    ws.set_column('B:B', 20)
+    ws.set_column('C:C', 20)
+    ws.set_column('D:D', 20)
+    ws.set_column('F:F', 20)
+    ws.set_column('G:G', 5)
 
     # Sheet header, first row
-    row_num = 0
+    ws.merge_range('A1:G2',
+                   'РЕЕСТР ПЕРЕВОЗОК {} для {} \n за период с {:%d.%m.%y} по {:%d.%m.%y}'.format('ООО \"Авторегион\"',
+                                                                                                 'Поставщика/Клиента',
+                                                                                                 timezone.now(),
+                                                                                                 timezone.now()),
+                   format)
+    col = 0
+    for title in ['№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.']:
+        ws.write_string(3, col, title, format)
+        col += 1
+    i = 0
+    row = 4
+    while i < len(json_data):
+        col = 0
+        for value in json_data.get(str(i)):
+            if col == 4:
+                ws.write_number(row, col, float(value.replace(',', '.')), format_border)
+            else:
+                ws.write(row, col, value, format_border)
+            col += 1
+        row += 1
+        i += 1
+    else:
+        ws.merge_range('A{}:D{}'.format(row + 1, row + 1), 'ИТОГО:', format)
+        ws.write_formula(row, 4, '=SUM(E5:E{})'.format(row), format)
 
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-    font_style.font.name = 'Times New Roman'
-
-    for col_num in range(len(col)):
-        ws.write(row_num, col_num, col[col_num], font_style)
-
-    # Sheet body, remaining rows
-    font_style = xlwt.XFStyle()
-    font_style.font.name = 'Times New Roman'
-    for row in values_list:
-        row_num += 1
-        for col_num in range(len(row)):
-            ws.write(row_num, col_num, str(row[col_num]), font_style)
-
-    path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
-    wb.save(filename_or_stream=path_for_save)
-    return '/'.join(['temp', filename])
+    # row_num = 2
+    #
+    # for col_num in range(len(col)):
+    #     ws.write(row_num, col_num, col[col_num] )
+    # row_num += 1
+    # # Sheet body, remaining rows
+    # font_style = xlwt.XFStyle()
+    # font_style.font.name = 'Times New Roman'
+    # for row in values_list:
+    #     row_num += 1
+    #     for col_num in range(len(row)):
+    #         ws.write(row_num, col_num, str(row[col_num]), font_style)
+    #
+    # path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
+    # wb.save(filename_or_stream=path_for_save)
+    return response
 
 
 def ooxml_render(race_id, prefname, template_name, tmp_name):

@@ -42,6 +42,8 @@ $(function () {
             !(/^(\/\/|http:|https:).*/.test(url));
     }
 
+    $.xml
+
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
@@ -52,7 +54,6 @@ $(function () {
             }
         }
     });
-
 
 
     $('input[name="daterange"]').daterangepicker({
@@ -99,10 +100,59 @@ $(function () {
         $('form[id="push_date"]').submit()
     })
 
-$(document).on('click', '.delete-confirmation', function () {
-    return confirm('Вы уверены, что хотите удалить?');
-});
+    $(document).on('click', '.delete-confirmation', function () {
+        return confirm('Вы уверены, что хотите удалить?');
+    });
 
+
+    $("#excel").on("click", function () {
+
+// Data to post
+        function html2json() {
+            var json = '{';
+            var otArr = [];
+            var tbl2 = $('#tab_body tr').each(function (i) {
+                x = $(this).children();
+                var itArr = [];
+                x.each(function () {
+                    itArr.push('"' + $(this).text() + '"');
+                });
+                otArr.push('"' + i + '": [' + itArr.join(',') + ']');
+            });
+            //otArr.push('"org": ["' + $('#organization').innerText + '"]');
+            json += otArr.join(",") + '}';
+
+            return json;
+        }
+
+        var $data = html2json();
+        console.log(JSON.stringify($data));
+
+// Use XMLHttpRequest instead of Jquery $ajax
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            var a;
+            if (xhttp.readyState === 4 && xhttp.status === 200) {
+                // Trick for making downloadable link
+                a = document.createElement('a');
+                a.href = window.URL.createObjectURL(xhttp.response);
+                // Give filename you wish to download
+                a.download = "file.xlsx";
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+            }
+        };
+// Post data to URL which handles post request
+        xhttp.open("POST", "/Accumulate/Excel");
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        if (!csrfSafeMethod("POST") && sameOrigin("/Accumulate/Excel")) {
+            xhttp.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+// You should set responseType as blob for binary responses
+        xhttp.responseType = 'blob';
+        xhttp.send(JSON.stringify($data));
+    });
     $('#race_table').bootstrapTable({
         showColumns: true,
         pagination: true,
@@ -127,7 +177,7 @@ $(document).on('click', '.delete-confirmation', function () {
                 url: 'Race/update/ajax',
                 method: 'POST',
                 traditional: true,
-                data: JSON.stringify({data: [{ "id_list" : list, "state": state }]}),
+                data: JSON.stringify({data: [{"id_list": list, "state": state}]}),
                 dataType: 'json',
                 success: function (resp) {
                     $('#ModalUpdate').modal('hide');
@@ -149,7 +199,7 @@ $(document).on('click', '.delete-confirmation', function () {
                 url: 'Race/packing/ajax',
                 method: 'POST',
                 traditional: true,
-                data: JSON.stringify({ "id_list" : list }),
+                data: JSON.stringify({"id_list": list}),
                 dataType: 'json',
                 success: function (data) {
                     $('#result').html(data['data']);

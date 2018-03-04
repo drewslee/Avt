@@ -3,165 +3,194 @@
 {% load static %}
 {% load hyphen_string %}
 {% block content %}
-	<link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
-	<link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
-	<link rel="stylesheet" href="{% static "css/chosenIcon.css" %}">
-  <script type="text/javascript" src="{% static "js/js-xlsx/dist/xlsx.core.min.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/FileSaver/FileSaver.min.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
-	<script type="text/javascript">
-      $(function () {
-          $('select[multiple]').chosen({
-              placeholder_text_multiple: 'Выберите фракцию',
-          });
-          $('select[name="supplier"]').chosen({
-              placeholder_text_single: 'Выберите организацию',
+    <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
+    <link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/chosenIcon.css" %}">
+    <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('select[multiple]').chosen({
+                placeholder_text_multiple: 'Выберите фракцию',
+            });
+            $('select[name="supplier"]').chosen({
+                placeholder_text_single: 'Выберите организацию',
 
-          });
-          $('select[name="customer"]').chosen({
-              placeholder_text_single: 'Выберите организацию',
-              inherit_select_classes: false
+            });
+            $('select[name="customer"]').chosen({
+                placeholder_text_single: 'Выберите организацию',
+                inherit_select_classes: false
 
-          });
-          $(".icon-select").chosenIcon({});
-      });
-	</script>
-	<div class="container">
-		<div class="col-lg-4">
-			<h2>По поставщику</h2>
-			<form action="" method="post">
-				{% csrf_token %}
-				<div class="form-group">
-					<div class="input-group">
-						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-						<input name="daterange" type="text" class="form-control"/>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="form-inline">
-						<select name="supplier" class="icon-select">
-							{% for field in q_sup %}
-								<option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
-							{% endfor %}
-						</select>
-						<div class="checkbox">
-							<label><input id="service" name="service" type="checkbox"/>Только услуги</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<select name="product" multiple class="form-control">
-						{% for field in q_prod %}
-							<option value="{{ field.name }}">{{ field.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-				{% buttons %}
-					<button class="btn btn-success btn-sm"> {% bootstrap_icon "star" %}Сформировать</button>
-				{% endbuttons %}
-			</form>
-		</div>
-		<div class="col-lg-4">
-			<h2>По покупателю</h2>
-			<form action="" method="post">
-				{% csrf_token %}
-				<div class="form-group">
-					<div class="input-group">
+            });
+            $(".icon-select").chosenIcon({});
+        });
+    </script>
+    <div class="container">
+        <div class="col-lg-4">
+            <h2>По поставщику</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                        <input name="daterange" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-inline">
+                        <select name="supplier" class="icon-select">
+                            {% for field in q_sup %}
+                                <option data-icon="fa-building"
+                                        value="{{ field.id_supplier }}">{{ field.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="checkbox">
+                            <label><input id="service" name="service" type="checkbox"/>Только услуги</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <select name="product" multiple class="form-control">
+                        {% for field in q_prod %}
+                            <option value="{{ field.name }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% buttons %}
+                    <button class="btn btn-success btn-sm"> {% bootstrap_icon "star" %}Сформировать</button>
+                {% endbuttons %}
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <h2>По покупателю</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-group">
 			<span class="input-group-addon">
 				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;</span>
-						<input name="daterange" type="text" class="form-control">
-					</div>
-				</div>
-				<div class="form-group">
-					<select name="customer" class="form-control icon-select">
+                        <input name="daterange" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <select name="customer" class="form-control icon-select">
 
-						{% for field in q_sup %}
-							<option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-				<div class="form-group">
-					<select name="product" multiple class="form-control icon-select">
-						{% for field in q_prod %}
-							<option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
-						{% endfor %}
-					</select>
-				</div>
-				{% buttons %}
-					<button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
-				{% endbuttons %}
-			</form>
-		</div>
-	</div>
-    <div class="container">
-        <div class="table-responsive">
-            <table id="tab" class="table table-hover table-condensed">
-                <tr>
-	                {% if q_weight.weight_load__sum %}
-                    <h1>{{ q_resp.first.supplier.name }} </h1>
-	                {% endif %}
-	                {% if q_weight.weight_unload__sum %}
-                    <h1>{{ q_resp.first.customer.name }}</h1>
-                  {% endif %}
-                </tr>
-                <thead>
-                <th>#</th>
-                <th>Дата</th>
-                <th>Номер машины</th>
-                <th>Водитель</th>
-                <th>Вес</th>
-                <th>Груз</th>
-                <th>Ед. изм.</th>
-                </thead>
-                <tfoot>
-                <tr>
-                    <td>Всего загружено:</td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                    </td>
-                    <td>
-                        {% if q_weight.weight_unload__sum %}
-                            {{ q_weight.weight_unload__sum|floatformat:2 }}
-                        {% endif %}
-                        {% if q_weight.weight_load__sum %}
-                            {{ q_weight.weight_load__sum|floatformat:2 }}
-                        {% endif %}
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                </tfoot>
-                <tbody>
-                {% for q in q_resp %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ q.race_date|date:"d.m.y" }}</td>
-                        <td>{{ q.car }}</td>
-                        <td>{{ q.driver.name }}</td>
-                        {% if q_weight.weight_load__sum %}
-                            <td>{{ q.weight_load|floatformat:"2" }}</td>
-	                          <td>{{ q.product.name }}</td>
-                            <td>{{ q.unit_load.short_name|default:'т.' }}</td>
-                        {% endif %}
-                        {% if q_weight.weight_unload__sum %}
-                            <td>{{ q.weight_unload|floatformat:"2" }}</td>
-	                          <td>{{ q.product.name }}</td>
-                            <td>{{ q.unit_unload.short_name|default:'т.' }}</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <button name="excel" class="button btn-sm" onclick="$('#tab').tableExport({type: 'excel'});">
-                В Excel
-            </button>
+                        {% for field in q_cus %}
+                            <option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select name="product" multiple class="form-control icon-select">
+                        {% for field in q_prod %}
+                            <option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% buttons %}
+                    <button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
+                {% endbuttons %}
+            </form>
+        </div>
+        <div class="col-lg-4">
+            <h2>По посреднику</h2>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-group">
+			<span class="input-group-addon">
+				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;</span>
+                        <input name="daterange" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <select name="mediator" class="form-control icon-select">
+
+                        {% for field in q_med %}
+                            <option data-icon="fa-credit-card" value="{{ field.id_mediator }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select name="product" multiple class="form-control icon-select">
+                        {% for field in q_prod %}
+                            <option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% buttons %}
+                    <button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
+                {% endbuttons %}
+            </form>
         </div>
     </div>
+    {% if q_resp %}
+        <div class="container">
+            <div class="table-responsive">
+                <table id="tab" class="table table-hover table-condensed">
+                    {% if q_weight.weight_load__sum %}
+                        <h1 id="organization">{{ q_resp.first.supplier.name }} </h1>
+                    {% endif %}
+                    {% if q_weight.weight_unload__sum %}
+                        <h1 id="organization">{{ q_resp.first.customer.name }}</h1>
+                    {% endif %}
+                    <thead>
+                    <th>#</th>
+                    <th>Дата</th>
+                    <th>Номер машины</th>
+                    <th>Водитель</th>
+                    <th>Вес</th>
+                    <th>Груз</th>
+                    <th>Ед. изм.</th>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <td>Всего загружено:</td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                        </td>
+                        <td>
+                            {% if q_weight.weight_unload__sum %}
+                                {{ q_weight.weight_unload__sum|floatformat:2 }}
+                            {% endif %}
+                            {% if q_weight.weight_load__sum %}
+                                {{ q_weight.weight_load__sum|floatformat:2 }}
+                            {% endif %}
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    </tfoot>
+                    <tbody id="tab_body">
+                    {% for q in q_resp %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ q.race_date|date:"d.m.y" }}</td>
+                            <td>{{ q.car }}</td>
+                            <td>{{ q.driver.name }}</td>
+                            {% if q_weight.weight_load__sum %}
+                                <td>{{ q.weight_load|floatformat:"2" }}</td>
+                                <td>{{ q.product.name }}</td>
+                                <td>{{ q.unit_load.short_name|default:'т.' }}</td>
+                            {% endif %}
+                            {% if q_weight.weight_unload__sum %}
+                                <td>{{ q.weight_unload|floatformat:"2" }}</td>
+                                <td>{{ q.product.name }}</td>
+                                <td>{{ q.unit_unload.short_name|default:'т.' }}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <button id="excel">
+                    В Excel
+                </button>
+            </div>
+        </div>
+    {% endif %}
     {% comment %}  {% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %} {% endcomment %}
 {% endblock %}
