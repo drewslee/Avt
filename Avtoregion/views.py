@@ -491,6 +491,9 @@ class Accumulate(View):
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
+        q_resp = {}
+        q_weight = {}
+        type = ""
         if self.request.POST.get('supplier') is not None:
             type = 'supplier'
             check = self.request.POST.get('service')
@@ -557,10 +560,6 @@ class Accumulate(View):
                 q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
             q_weight = q_resp.aggregate(Sum('weight_load'))
             q_resp.select_related('car', 'driver', 'product')
-        else:
-            q_resp = {}
-            q_weight = {}
-            type = ""
 
         return render(request=self.request, template_name='Avtoregion/account.html',
                       context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med,
