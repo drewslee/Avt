@@ -706,6 +706,7 @@ def datestr_to_dateaware(date):
 def ajax_track(req):
     if req.is_ajax():
         id_car = req.GET.get('id')
+        data = {}
         if id_car is not None:
             try:
                 rce = Race.objects.filter(car_id=int(id_car)).latest(field_name='id_race')
@@ -716,12 +717,13 @@ def ajax_track(req):
                 return HttpResponse(data, content_type='application/json')
 
         else:
-            raise Http404
+            raise HttpResponse({}, content_type='application/json')
 
 
 def ajax_sup(req):
     if req.is_ajax():
         id_supplier = req.GET.get('id')
+        data = {}
         if id_supplier is not None:
             try:
                 sup = list(LoadingPlace.objects.filter(supplier=int(id_supplier)).values())
