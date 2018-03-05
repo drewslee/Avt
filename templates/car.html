@@ -49,12 +49,6 @@
                 </table>
             {% endif %}
         </div>
-        <script type="text/javascript">
-            $(document).on('click', '.delete-confirmation', function () {
-                return confirm('Вы уверены, что хотите удалить?');
-            })
-        </script>
-
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}

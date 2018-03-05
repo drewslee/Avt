@@ -733,7 +733,7 @@ def ajax_sup(req):
                 return HttpResponse(data, content_type='application/json')
 
         else:
-            raise Http404
+            raise HttpResponse({}, content_type='application/json')
 
 
 class AjaxUpdateState(View):
