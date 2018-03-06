@@ -479,7 +479,7 @@ class CustomerDelete(PermissionRequiredMixin, DeleteView):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-class Accumulate(View):
+class Accumulate(JSONRequestResponseMixin, View):
     q_sup = Supplier.objects.all()
     q_prod = Product.objects.all()
     q_cus = Customer.objects.all()
@@ -490,6 +490,7 @@ class Accumulate(View):
                       context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod})
 
     def post(self, *args, **kwargs):
+        print(self.request_json['data'])
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
         q_resp = {}
         q_weight = {}
