@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
 		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+    <link rel="stylesheet" href="{% static "js/BootstrapTable/bootstrap-table.min.css" %}">
     <!-- jQuery library-->
     <script type="text/javascript" src="{% static "js/jquery-3.2.1.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/popper-1.12.9.min.js" %}"></script>
@@ -23,10 +23,11 @@
     <script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
     <script type="text/javascript" src="{% static "js/main.js" %}"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
-		<!-- Latest compiled and minified Locales -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/locale/bootstrap-table-ru-RU.min.js"></script>
+    <script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/BootstrapTable/locale/bootstrap-table-ru-RU.min.js" %}"></script>
+    <script type="text/javascript"
+            src="{% static "js/BootstrapTable/extensions/multiple-search/bootstrap-table-multiple-search.min.js" %}">
+    </script>
 </head>
 {% if user.is_anonymous %}
     <body>

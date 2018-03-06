@@ -98,7 +98,7 @@ $(function () {
     });
     $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
         $('form[id="push_date"]').submit()
-    })
+    });
 
     $(document).on('click', '.delete-confirmation', function () {
         return confirm('Вы уверены, что хотите удалить?');
@@ -156,7 +156,8 @@ $(function () {
     $('#race_table').bootstrapTable({
         showColumns: true,
         pagination: true,
-        showPaginationSwitch: true
+        showPaginationSwitch: true,
+        multipleSearch: true
     });
     $('.dropdown-toggle').dropdown();
 

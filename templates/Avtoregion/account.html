@@ -12,10 +12,10 @@
 	<script type="text/javascript">
       $(function () {
           $('select[multiple]').chosen({
-              placeholder_text_multiple: 'Выберите фракцию',
+              placeholder_text_multiple: 'Выберите фракцию'
           });
           $('select[name="supplier"]').chosen({
-              placeholder_text_single: 'Выберите организацию',
+              placeholder_text_single: 'Выберите организацию'
 
           });
           $('select[name="customer"]').chosen({
@@ -128,12 +128,16 @@
 	<script type="text/javascript">
 		$('#post-form-supplier').on('submit', function (event) {
 		    event.preventDefault();
-		    var $form = $("#post-form-supplier") , $daterange = $form.find("input[name='daterange']").val(),
-				$supplier = $form.find("select[name='supplier']:selected").val(),
-		    $service = $form.find("input[name='service']").val(),
-		    $product = $form.find("select[name='product']:selected").val();
+            var $form = $("#post-form-supplier");
+            $daterange = $form.find("input[name='daterange']").val();
+            $supplier = $form.find("select[name='supplier'] option:selected").val();
+            $service = $form.find("input[name='service']").val();
+            $product = $form.find("#product").val();
 
-		    console.log($daterange, $supplier, $service, $product);
+            console.log($daterange);
+            console.log($supplier);
+            console.log($service);
+            console.log($product);
 
 		   {% comment %} $.post({
 						url: {% url 'Acc' %},
