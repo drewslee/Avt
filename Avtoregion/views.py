@@ -490,26 +490,27 @@ class Accumulate(JSONRequestResponseMixin, View):
                       context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod})
 
     def post(self, *args, **kwargs):
-        print(self.request_json['data'])
-        start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
+        start_date, end_date = datestr_to_dateaware(self.request_json['daterange'])
+        print(self.request_json)
         q_resp = {}
         q_weight = {}
-        type = ""
-        if self.request.POST.get('supplier') is not None:
-            type = 'supplier'
-            check = self.request.POST.get('service')
-            if check is None:
+        type_prod = ""
+        if self.request_json.get('supplier') is not None:
+            type_prod = 'supplier'
+            check = self.request_json['service']
+            print(check)
+            if check is False:
                 query = Q(type_ship__exact=Race.TYPE[0][0],
-                          supplier__id_supplier__exact=self.request.POST.get('supplier'),
+                          supplier__id_supplier__exact=self.request_json['supplier'],
                           race_date__range=[start_date, end_date],
                           )
             else:
                 query = Q(type_ship__exact=Race.TYPE[1][0],
-                          supplier__id_supplier__exact=self.request.POST.get('supplier'),
+                          supplier__id_supplier__exact=self.request_json['supplier'],
                           race_date__range=[start_date, end_date]
                           )
-            if self.request.POST.get('product') is not None:
-                prod = self.request.POST.getlist('product')
+            if len(self.request_json['product']) > 0:
+                prod = self.request_json['product']
                 if len(prod) == 1:
                     query.add(Q(product__name=prod[0]), Q.AND)
                 else:
@@ -522,13 +523,13 @@ class Accumulate(JSONRequestResponseMixin, View):
                 q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
             q_weight = q_resp.aggregate(Sum('weight_load'))
             q_resp.select_related('car', 'driver', 'product')
-        if self.request.POST.get('customer') is not None:
-            type = 'customer'
-            query = Q(customer__id_customer__exact=self.request.POST.get('customer'),
+        if self.request_json.get('customer') is not None:
+            type_prod = 'customer'
+            query = Q(customer__id_customer__exact=self.request_json['customer'],
                       race_date__range=[start_date, end_date]
                       )
-            if self.request.POST.get('product') is not None:
-                prod = self.request.POST.getlist('product')
+            if len(self.request_json['product']) > 0:
+                prod = self.request_json['product']
                 if len(prod) == 1:
                     query.add(Q(product__name=prod[0]), Q.AND)
                 else:
@@ -542,13 +543,13 @@ class Accumulate(JSONRequestResponseMixin, View):
 
             q_weight = q_resp.aggregate(Sum('weight_unload'))
             q_resp.select_related('car', 'driver', 'product')
-        if self.request.POST.get('mediator') is not None:
-            type = 'mediator'
+        if self.request_json.get('mediator') is not None:
+            type_prod = 'mediator'
             query = Q(car__mediator__id_mediator__exact=self.request.POST.get('mediator'),
                       race_date__range=[start_date, end_date]
                       )
-            if self.request.POST.get('product') is not None:
-                prod = self.request.POST.getlist('product')
+            if len(self.request_json['product']) > 0:
+                prod = self.request_json['product']
                 if len(prod) == 1:
                     query.add(Q(product__name=prod[0]), Q.AND)
                 else:
@@ -562,9 +563,9 @@ class Accumulate(JSONRequestResponseMixin, View):
             q_weight = q_resp.aggregate(Sum('weight_load'))
             q_resp.select_related('car', 'driver', 'product')
 
-        return render(request=self.request, template_name='Avtoregion/account.html',
-                      context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med,
-                               'q_prod': self.q_prod, 'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type})
+        table = render_to_string(template_name='table.html',
+                                 context={'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type_prod})
+        return self.render_json_response({"data": table})
 
 
 class CarResponce(View):

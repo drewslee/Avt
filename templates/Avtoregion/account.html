@@ -129,94 +129,93 @@
 		$('#post-form-supplier').on('submit', function (event) {
 		    event.preventDefault();
             var $form = $("#post-form-supplier");
-            $daterange = $form.find("input[name='daterange']").val();
-            $supplier = $form.find("select[name='supplier'] option:selected").val();
-            $service = $form.find("input[name='service']").val();
-            $product = $form.find("#product").val();
+            var $daterange = $form.find("input[name='daterange']").val();
+            var $service = $form.find("#service").is(":checked");
+				    var $supplier = $form.find("#supplier option:selected").val();
+						var $product = $form.find("#product").val();
 
-            console.log($daterange);
-            console.log($supplier);
-            console.log($service);
-            console.log($product);
+				var data = {
+				    daterange : $daterange,
+						service: 	$service,
+						supplier: $supplier,
+            product :  $product
+				};
 
-		   {% comment %} $.post({
+
+		   $.post({
 						url: {% url 'Acc' %},
-				    data: {},
+				    traditional: true,
+				    data: JSON.stringify(data),
+				    success: function (resp) {
+						    $('#tab_res').html(resp['data'])
+						    console.log("success!")
 
-				    }){% endcomment %}
+        }
 
 
+				    });
     });
+        $('#post-form-customer').on('submit', function (event) {
+            event.preventDefault();
+            // language=JQuery-CSS
+            var $form = $("#post-form-customer");
+            var $daterange = $form.find("input[name='daterange']").val();
+            var $customer = $form.find("#customer option:selected").val();
+            var $product = $form.find("#product").val();
+
+            var data = {
+                daterange : $daterange,
+                customer: $customer,
+                product : $product
+            };
+
+
+            $.post({
+                url: {% url 'Acc' %},
+                traditional: true,
+                data: JSON.stringify(data),
+                success: function (resp) {
+                    $('#tab_res').html(resp['data']);
+                    console.log("success!")
+
+                }
+
+
+            });
+        });
+    $('#post-form-mediator').on('submit', function (event) {
+        event.preventDefault();
+        // language=JQuery-CSS
+        var $form = $("#post-form-mediator");
+        var $daterange = $form.find("input[name='daterange']").val();
+        var $mediator = $form.find("#mediator option:selected").val();
+        var $product = $form.find("#product").val();
+
+        var data = {
+            daterange : $daterange,
+            mediator  : $mediator,
+            product   : $product
+        };
+
+
+        $.post({
+            url: {% url 'Acc' %},
+            traditional: true,
+            data: JSON.stringify(data),
+            success: function (resp) {
+                $('#tab_res').html(resp['data']);
+                console.log("success!")
+
+            }
+
+
+        });
+    });
+
+
 	</script>
-	{% if q_resp %}
-		<div class="container">
-			<div class="table-responsive">
-				<table id="tab" class="table table-hover table-condensed">
-					{% if type_name == 'supplier' %}
-						<h1 id="organization">{{ q_resp.first.supplier.name }} </h1>
-					{% endif %}
-					{% if type_name == 'customer' %}
-						<h1 id="organization">{{ q_resp.first.customer.name }}</h1>
-					{% endif %}
-					{% if type_name == 'mediator' %}
-						<h1 id="organization">{{ q_resp.first.car.mediator.name }}</h1>
-					{% endif %}
-					<thead>
-					<th>#</th>
-					<th>Дата</th>
-					<th>Номер машины</th>
-					<th>Водитель</th>
-					<th>Вес</th>
-					<th>Груз</th>
-					<th>Ед. изм.</th>
-					</thead>
-					<tfoot>
-					<tr>
-						<td>Всего загружено:</td>
-						<td></td>
-						<td></td>
-						<td>
-						</td>
-						<td>
-							{% if q_weight.weight_unload__sum %}
-								{{ q_weight.weight_unload__sum|floatformat:2 }}
-							{% endif %}
-							{% if q_weight.weight_load__sum %}
-								{{ q_weight.weight_load__sum|floatformat:2 }}
-							{% endif %}
-						</td>
-						<td>
-						</td>
-						<td>
-						</td>
-					</tr>
-					</tfoot>
-					<tbody id="tab_body">
-					{% for q in q_resp %}
-						<tr>
-							<td>{{ forloop.counter }}</td>
-							<td>{{ q.race_date|date:"d.m.y" }}</td>
-							<td>{{ q.car }}</td>
-							<td>{{ q.driver.name }}</td>
-							{% if q_weight.weight_load__sum %}
-								<td>{{ q.weight_load|floatformat:"2" }}</td>
-								<td>{{ q.product.name }}</td>
-								<td>{{ q.unit_load.short_name|default:'т.' }}</td>
-							{% endif %}
-							{% if q_weight.weight_unload__sum %}
-								<td>{{ q.weight_unload|floatformat:"2" }}</td>
-								<td>{{ q.product.name }}</td>
-								<td>{{ q.unit_unload.short_name|default:'т.' }}</td>
-							{% endif %}
-						</tr>
-					{% endfor %}
-					</tbody>
-				</table>
-				<button id="excel">
-					В Excel
-				</button>
-			</div>
-		</div>
-	{% endif %}
+	<div id="tab_res">
+{% include "table.html" %}
+	</div>
 	{% comment %}  {% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %} {% endcomment %}
 {% endblock %}
