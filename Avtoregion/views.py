@@ -228,7 +228,7 @@ class ShipmentViewList(LoginRequiredMixin, View):
         context = {}
         customer = int(self.request.POST.get('customer'))
         context['qShipment'] = self.model.objects.filter(customer=customer)
-        context['form'] = LoadForm(initial={'customer': customer})
+        context['form'] = ShipmentForm(initial={'customer': customer})
         context['customer'] = customer
         return render(self.request, self.template_name, context)
 
