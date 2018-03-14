@@ -109,10 +109,7 @@ class RaceViewList(LoginRequiredMixin, ListView):
             ctx['end_date'] = str(end_date)
         else:
             end_date = Race.objects.latest().race_date
-            print(end_date)
             start_date = end_date - timedelta(weeks=1)
-            print(start_date)
-            print(type(start_date))
             ctx['start_date'] = str(start_date.strftime('%Y-%m-%d'))
             ctx['end_date'] = str(end_date.strftime('%Y-%m-%d'))
         return ctx
@@ -491,14 +488,12 @@ class Accumulate(JSONRequestResponseMixin, View):
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request_json['daterange'])
-        print(self.request_json)
         q_resp = {}
         q_weight = {}
         type_prod = ""
         if self.request_json.get('supplier') is not None:
             type_prod = 'supplier'
             check = self.request_json['service']
-            print(check)
             if check is False:
                 query = Q(type_ship__exact=Race.TYPE[0][0],
                           supplier__id_supplier__exact=self.request_json['supplier'],
