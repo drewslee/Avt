@@ -36,6 +36,19 @@ function sameOrigin(url) {
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
+/*    $('#race_table').bootstrapTable({
+        showColumns: true,
+        pagination: true,
+        showPaginationSwitch: true,
+        filterControl: true,
+        columns: [
+            {field: 'Машина' ,
+                filterControl: 'select',
+                filterStrictSearch: false,
+                filterControlPlaceholder: ''}, {field:'Водитель', filterControl: 'select', filterStrictSearch: true}]
+
+    });*/
+
 $(function () {
 
 
