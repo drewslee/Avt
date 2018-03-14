@@ -485,8 +485,8 @@ class Accumulate(JSONRequestResponseMixin, View):
     q_med = Mediator.objects.all()
 
     def get(self, *args, **kwargs):
-        return render(request=self.request, template_name='Avtoregion/account.html',
-                      context={'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod})
+        context = {'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod}
+        return render(request=self.request, template_name='Avtoregion/account.html', context=context)
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request_json['daterange'])
@@ -525,6 +525,10 @@ class Accumulate(JSONRequestResponseMixin, View):
             query = Q(customer__id_customer__exact=self.request_json['customer'],
                       race_date__range=[start_date, end_date]
                       )
+
+            if self.request_json.get('unload_place') != "":
+                query.add(Q(shipment_id=self.request_json['unload_place']), Q.AND)
+
             if len(self.request_json['product']) > 0:
                 prod = self.request_json['product']
                 if len(prod) == 1:
@@ -542,7 +546,7 @@ class Accumulate(JSONRequestResponseMixin, View):
             q_resp.select_related('car', 'driver', 'product')
         if self.request_json.get('mediator') is not None:
             type_prod = 'mediator'
-            query = Q(car__mediator__id_mediator__exact=self.request.POST.get('mediator'),
+            query = Q(car__mediator__id_mediator=self.request_json['mediator'],
                       race_date__range=[start_date, end_date]
                       )
             if len(self.request_json['product']) > 0:
