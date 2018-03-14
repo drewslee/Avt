@@ -21,13 +21,13 @@
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
                                 </div>
-                                <div class="form-group">
+                               {% comment %} <div class="form-group">
                                     <form action="{% url 'ShipmentDelete' %}" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="pk" value="{{ q.pk }}">
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                     </form>
-                                </div>
+                               {% endcomment %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -42,6 +42,7 @@
                 {% for field in form %}
                     {% bootstrap_field field %}
                 {% endfor %}
+	              <input hidden name="customer" value="{{ customer }}">
                 <button class="btn btn-success">Добавить</button>
             </form>
         </div>

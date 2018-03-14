@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^Race/add$', views.RaceCreate.as_view(), name='RaceCreate'),
     url(r'^Race/add/ajax_track', views.ajax_track, name='RaceAjaxTrack'),
     url(r'^Race/add/ajax_sup', views.ajax_sup, name='RaceAjaxSup'),
+    url(r'^Race/add/ajax_cus', views.ajax_cus, name='RaceAjaxCus'),
     url(r'^Race/update/ajax', views.AjaxUpdateState.as_view(), name='RaceUpdateAjax'),
     url(r'^Race/packing/ajax', views.PackingView.as_view(), name='PackAjax'),
     url(r'^Race/update(?P<pk>\d+)/$', views.RaceUpdate.as_view(), name='RaceUpdate'),
@@ -73,6 +74,10 @@ urlpatterns = [
     url(r'^Customer/update(?P<pk>\d+)/$', views.CustomerUpdate.as_view(template_name='Avtoregion/update_form.html'),
         name='CustomerUpdate'),
     url(r'^Customer/delete/$', views.CustomerDelete.as_view(), name='CustomerDelete'),
+    url(r'^Customer/unload_place/$', views.ShipmentViewList.as_view(), name='ShipmentList'),
+    url(r'^Customer/unload_place/add$', views.ShipmentAdd.as_view(), name='ShipmentAdd'),
+    url(r'^Customer/unload_place/update(?P<pk>\d+)/$',
+        views.ShipmentUpdate.as_view(template_name='Avtoregion/update_form.html'), name='ShipmentUpdate'),
 
     url(r'^Trailer/$', views.TrailerViewList.as_view(), name='TrailerList'),
     url(r'^Trailer/add$', views.TrailerAdd.as_view(), name='TrailerAdd'),
@@ -86,11 +91,6 @@ urlpatterns = [
         name='MediatorUpdate'),
     url(r'^Mediator/delete/$', views.MediatorDelete.as_view(), name='MediatorDelete'),
 
-    url(r'^Shipment/$', views.ShipmentViewList.as_view(), name='ShipmentList'),
-    url(r'^Shipment/add$', views.ShipmentAdd.as_view(), name='ShipmentAdd'),
-    url(r'^Shipment/update(?P<pk>\d+)/$', views.ShipmentUpdate.as_view(template_name='Avtoregion/update_form.html'),
-        name='ShipmentUpdate'),
-    url(r'^Shipment/delete/$', views.ShipmentDelete.as_view(), name='ShipmentDelete'),
 
     url(r'^Accumulate/$', views.Accumulate.as_view(), name='Acc'),
     url(r'^Accumulate/Excel$', views.save_excel, name='AccExcel'),

@@ -67,7 +67,10 @@ class ProductForm(ModelForm):
 class ShipmentForm(ModelForm):
     class Meta:
         model = Shipment
-        fields = ['name']
+        widgets = {
+            'customer': HiddenInput
+        }
+        fields = ['name', 'customer']
         labels = {'name': 'Место разгрузки'}
 
 
@@ -107,8 +110,8 @@ class DriverForm(ModelForm):
 
     class Meta:
         model = Driver
-        fields = ['name', 'personnel_number', 'driver_card', 'date_med']
-        labels = {'name': 'Водитель:', 'personnel_number': 'Табельный номер',
+        fields = ['name', 'group', 'personnel_number', 'driver_card', 'date_med']
+        labels = {'name': 'Водитель:', 'group': 'Группа', 'personnel_number': 'Табельный номер',
                   'driver_card': 'Удостоверение'}
 
 

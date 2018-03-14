@@ -220,15 +220,17 @@ class SupplierViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class ShipmentViewList(LoginRequiredMixin, ListView):
+class ShipmentViewList(LoginRequiredMixin, View):
     model = Shipment
     template_name = 'shipment.html'
-    context_object_name = 'qShipment'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = ShipmentForm()
-        return context
+    def post(self, *args, **kwargs):
+        context = {}
+        customer = int(self.request.POST.get('customer'))
+        context['qShipment'] = self.model.objects.filter(customer=customer)
+        context['form'] = LoadForm(initial={'customer': customer})
+        context['customer'] = customer
+        return render(self.request, self.template_name, context)
 
 
 class LoadPlaceViewList(LoginRequiredMixin, View):
@@ -409,21 +411,21 @@ class TrailerDelete(PermissionRequiredMixin, DeleteView):
 
 class ShipmentAdd(PermissionRequiredMixin, CreateView):
     model = Shipment
-    success_url = reverse_lazy('ShipmentList')
+    success_url = reverse_lazy('CustomerList')
     form_class = ShipmentForm
     permission_required = ('shipments.add_shipment',)
 
 
 class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     model = Shipment
-    success_url = reverse_lazy('ShipmentList')
+    success_url = reverse_lazy('CustomerList')
     form_class = ShipmentForm
     permission_required = ('shipments.update_shipment',)
 
 
 class ShipmentDelete(PermissionRequiredMixin, DeleteView):
     model = Shipment
-    success_url = reverse_lazy('ShipmentList')
+    success_url = reverse_lazy('CustomerList')
     permission_required = ('shipments.delete_shipment',)
 
     def get_object(self, queryset=None):
@@ -733,6 +735,22 @@ def ajax_sup(req):
         else:
             raise HttpResponse({}, content_type='application/json')
 
+
+def ajax_cus(req):
+    if req.is_ajax():
+        id_customer = req.GET.get('id')
+        data = {}
+        if id_customer is not None:
+            try:
+                cus = list(Shipment.objects.filter(customer=int(id_customer)).values())
+                data = json.dumps(cus)
+            except ObjectDoesNotExist:
+                data = json.dumps({})
+            finally:
+                return HttpResponse(data, content_type='application/json')
+
+        else:
+            raise HttpResponse({}, content_type='application/json')
 
 class AjaxUpdateState(View):
     model = Race

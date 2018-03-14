@@ -92,7 +92,9 @@
             });
             var id_car = document.getElementById('id_car');
             var id_supplier = document.getElementById('id_supplier');
+            var id_customer = document.getElementById('id_customer');
             var select_load = document.getElementById('id_place_load');
+            var select_unload = document.getElementById('id_shipment');
             id_car.addEventListener("change", function () {
                 var data = id_supplier.value;
                 $.ajax(
@@ -124,6 +126,27 @@
                                 option.text = resp[i].address;
                                 option.value = resp[i].id_load_place;
                                 select_load.add(option)
+                            }
+                        }
+                    })
+            });
+            id_customer.addEventListener("change", function () {
+                var data = id_customer.value;
+                $.ajax(
+                    {
+                        type: "GET",
+                        url: "{% url 'RaceAjaxCus' %}",
+                        data: {id: data},
+                        dataType: 'json',
+                        success: function (resp) {
+                            while (select_unload.length > 1) {
+                                select_unload.remove(select_unload.length - 1)
+                            }
+                            for (i = 0; i < resp.length; i++) {
+                                var option = document.createElement('option');
+                                option.text = resp[i].name;
+                                option.value = resp[i].id_shipment;
+                                select_unload.add(option)
                             }
                         }
                     })

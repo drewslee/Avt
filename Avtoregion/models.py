@@ -87,8 +87,16 @@ class Mediator(models.Model):
         return reverse('MediatorList', kwargs={'pk': self.pk})
 
 
+class Groups(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Группы')
+
+    def __str__(self):
+        return '%s'.format(self.name)
+
+
 class Driver(models.Model):
     id_driver = models.AutoField(primary_key=True)
+    group = models.ForeignKey(Groups, blank=True, null=True)
     name = models.CharField(max_length=50, verbose_name='Водитель')
     full_name = models.CharField(max_length=100, blank=True)
     driver_card = models.CharField(max_length=50, blank=True)
