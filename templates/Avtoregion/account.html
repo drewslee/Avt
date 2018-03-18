@@ -21,17 +21,19 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="form-inline">
-                        <select name="supplier" class="icon-select" id="supplier">
-                            {% for field in q_sup %}
-                                <option data-icon="fa-building"
-                                        value="{{ field.id_supplier }}">{{ field.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="checkbox">
-                            <label><input id="service" name="service" type="checkbox"/>Только услуги</label>
-                        </div>
-                    </div>
+                    <select name="supplier" class="icon-select" id="supplier">
+                        {% for field in q_sup %}
+                            <option data-icon="fa-building"
+                                    value="{{ field.id_supplier }}">{{ field.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select id="service" name="service">
+                        {% for field in race_type %}
+                            <option value="{{ field }}">{{ field }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
                     <select name="product" multiple class="form-control" id="product">
@@ -188,7 +190,7 @@
             event.preventDefault();
             var $form = $("#post-form-supplier");
             var $daterange = $form.find("input[name='daterange']").val();
-            var $service = $form.find("#service").is(":checked");
+            var $service = $form.find("#service option:selected").val();
             var $supplier = $form.find("#supplier option:selected").val();
             var $product = $form.find("#product").val();
 

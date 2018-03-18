@@ -484,89 +484,80 @@ class Accumulate(JSONRequestResponseMixin, View):
     q_cus = Customer.objects.all()
     q_med = Mediator.objects.all()
 
+    def dispatch_method(self, value):
+        method_name = 'get_query_' + str(value)
+        return getattr(self, method_name)
+
     def get(self, *args, **kwargs):
-        context = {'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod}
+        context = {'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod,
+                   'race_type': (Race.TYPE[0][0], Race.TYPE[1][0])}
         return render(request=self.request, template_name='Avtoregion/account.html', context=context)
 
     def post(self, *args, **kwargs):
-        start_date, end_date = datestr_to_dateaware(self.request_json['daterange'])
-        q_resp = {}
-        q_weight = {}
-        type_prod = ""
-        if self.request_json.get('supplier') is not None:
-            type_prod = 'supplier'
-            check = self.request_json['service']
-            if check is False:
-                query = Q(type_ship__exact=Race.TYPE[0][0],
-                          supplier__id_supplier__exact=self.request_json['supplier'],
-                          race_date__range=[start_date, end_date],
-                          )
-            else:
-                query = Q(type_ship__exact=Race.TYPE[1][0],
-                          supplier__id_supplier__exact=self.request_json['supplier'],
-                          race_date__range=[start_date, end_date]
-                          )
-            if len(self.request_json['product']) > 0:
-                prod = self.request_json['product']
-                if len(prod) == 1:
-                    query.add(Q(product__name=prod[0]), Q.AND)
-                else:
-                    lst = []
-                    for v in prod:
-                        lst.append(Q(product__name=v))
-                    query.add(reduce(OR, lst), Q.AND)
-                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
-            else:
-                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
-            q_weight = q_resp.aggregate(Sum('weight_load'))
-            q_resp.select_related('car', 'driver', 'product')
-        if self.request_json.get('customer') is not None:
-            type_prod = 'customer'
-            query = Q(customer__id_customer__exact=self.request_json['customer'],
-                      race_date__range=[start_date, end_date]
-                      )
+        start_date, end_date = datestr_to_dateaware(self.request_json.get('daterange'))
 
-            if self.request_json.get('unload_place') != "":
-                query.add(Q(shipment_id=self.request_json['unload_place']), Q.AND)
+        q_resp, q_weight, type_prod = {}, {}, ""
 
-            if len(self.request_json['product']) > 0:
-                prod = self.request_json['product']
-                if len(prod) == 1:
-                    query.add(Q(product__name=prod[0]), Q.AND)
-                else:
-                    lst = []
-                    for v in prod:
-                        lst.append(Q(product__name=v))
-                    query.add(reduce(OR, lst), Q.AND)
-                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
-            else:
-                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
+        ctx = {'supplier': self.request_json.get('supplier'),
+               'customer': self.request_json.get('customer'),
+               'mediator': self.request_json.get('mediator')}
 
-            q_weight = q_resp.aggregate(Sum('weight_unload'))
-            q_resp.select_related('car', 'driver', 'product')
-        if self.request_json.get('mediator') is not None:
-            type_prod = 'mediator'
-            query = Q(car__mediator__id_mediator=self.request_json['mediator'],
-                      race_date__range=[start_date, end_date]
-                      )
-            if len(self.request_json['product']) > 0:
-                prod = self.request_json['product']
-                if len(prod) == 1:
-                    query.add(Q(product__name=prod[0]), Q.AND)
-                else:
-                    lst = []
-                    for v in prod:
-                        lst.append(Q(product__name=v))
-                    query.add(reduce(OR, lst), Q.AND)
-                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
-            else:
-                q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
-            q_weight = q_resp.aggregate(Sum('weight_load'))
-            q_resp.select_related('car', 'driver', 'product')
+        for key, value in ctx.items():
+            if value is not None:
+                method = self.dispatch_method(key)
+                q_resp, q_weight, type_prod = method([start_date, end_date])
 
         table = render_to_string(template_name='table.html',
                                  context={'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type_prod})
         return self.render_json_response({"data": table})
+
+    def get_query_supplier(self, date):
+        type_prod = 'supplier'
+        query = Q(type_ship__exact=self.request_json.get('service'),
+                  supplier_id=self.request_json.get('supplier'),
+                  race_date__range=date)
+        query = self.get_query_product(query)
+        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+        q_weight = q_resp.aggregate(Sum('weight_load'))
+        q_resp.select_related('car', 'driver', 'product')
+        return q_resp, q_weight, type_prod
+
+    def get_query_customer(self, date):
+        type_prod = 'customer'
+        query = Q(customer_id=self.request_json['customer'],
+                  race_date__range=date)
+
+        query = self.get_query_product(query)
+
+        if self.request_json.get('unload_place') != "":
+            query.add(Q(shipment_id=self.request_json['unload_place']), Q.AND)
+
+        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
+        q_weight = q_resp.aggregate(Sum('weight_unload'))
+        q_resp.select_related('car', 'driver', 'product')
+        return q_resp, q_weight, type_prod
+
+    def get_query_mediator(self, date):
+        type_prod = 'mediator'
+        query = Q(car__mediator__id_mediator=self.request_json['mediator'],
+                  race_date__range=date)
+
+        query = self.get_query_product(query)
+        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+        q_weight = q_resp.aggregate(Sum('weight_load'))
+        return q_resp, q_weight, type_prod
+
+    def get_query_product(self, query):
+        if len(self.request_json['product']) > 0:
+            prod = self.request_json['product']
+            if len(prod) == 1:
+                query.add(Q(product__name=prod[0]), Q.AND)
+            else:
+                lst = []
+                for v in prod:
+                    lst.append(Q(product__name=v))
+                query.add(reduce(OR, lst), Q.AND)
+        return query
 
 
 class CarResponce(View):
@@ -755,6 +746,7 @@ def ajax_cus(req):
 
         else:
             raise HttpResponse({}, content_type='application/json')
+
 
 class AjaxUpdateState(View):
     model = Race
