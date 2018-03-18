@@ -29,7 +29,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <select id="service" name="service">
+                    <select id="service" name="service" class="form-control">
                         {% for field in race_type %}
                             <option value="{{ field }}">{{ field }}</option>
                         {% endfor %}
@@ -128,6 +128,11 @@
             });
             $('select[name="customer"]').chosen({
                 placeholder_text_single: 'Выберите организацию',
+                inherit_select_classes: false
+
+            });
+            $('select[name="service"]').chosen({
+                disable_search: true,
                 inherit_select_classes: false
 
             });
