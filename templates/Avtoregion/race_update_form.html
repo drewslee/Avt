@@ -95,52 +95,6 @@
         var sl_text = select_load.options[select_load.selectedIndex].text;
         var sul_value = select_unload.options[select_unload.selectedIndex].value;
         var sul_text = select_unload.options[select_unload.selectedIndex].text;
-        {% comment %}        $.ajax(
-                    {
-                        type: "GET",
-                        url: "{% url 'RaceAjaxSup' %}",
-                        data: {id: sup},
-                        dataType: 'json',
-                        success: function (resp) {
-                            while (select_load.length > 1) {
-                                select_load.remove(select_load.length - 1)
-                            }
-                            var option = document.createElement('option');
-                            option.text = sl_text;
-                            option.value = sl_value;
-                            option.selected = true;
-                            select_load.add(option);
-                            for (i = 0; i < resp.length; i++) {
-                                var option = document.createElement('option');
-                                option.text = resp[i].address;
-                                option.value = resp[i].id_load_place;
-                                select_load.add(option)
-                            }
-                        }
-                    });
-                $.ajax(
-                    {
-                        type: "GET",
-                        url: "{% url 'RaceAjaxCus' %}",
-                        data: {id: cus},
-                        dataType: 'json',
-                        success: function (resp) {
-                            while (select_unload.length > 1) {
-                                select_unload.remove(select_unload.length - 1)
-                            }
-                            var option = document.createElement('option');
-                            option.text = sul_text;
-                            option.value = sul_value;
-                            option.selected = true;
-                            select_load.add(option);
-                            for (i = 0; i < resp.length; i++) {
-                                var option = document.createElement('option');
-                                option.text = resp[i].name;
-                                option.value = resp[i].id_shipment;
-                                select_unload.add(option)
-                            }
-                        }
-                    });{% endcomment %}
         id_supplier.addEventListener("change", function () {
             var data = id_supplier.value;
             $.ajax(
