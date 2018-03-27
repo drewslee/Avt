@@ -147,3 +147,26 @@ class RaceForm(ModelForm):
             'gas_start': 'Горючего остаток на начало рейса',
             'gas_end': 'Горючего остаток на конец рейса',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['place_load'].queryset = LoadingPlace.objects.none()
+        self.fields['shipment'].queryset = Shipment.objects.none()
+
+        if 'supplier' in self.data:
+            try:
+                supplier_id = int(self.data.get('supplier'))
+                self.fields['place_load'].queryset = LoadingPlace.objects.filter(supplier_id=supplier_id)
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['place_load'].queryset = self.instance.supplier.loadingplace_set
+
+        if 'customer' in self.data:
+            try:
+                customer_id = int(self.data.get('customer'))
+                self.fields['shipment'].queryset = Shipment.objects.filter(customer_id=customer_id)
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['shipment'].queryset = self.instance.customer.shipment_set

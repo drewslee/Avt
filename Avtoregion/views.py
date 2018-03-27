@@ -132,13 +132,6 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     success_message = "Рейс обновлён успешно"
     permission_required = ('races.update_race',)
 
-    def get_context_data(self, **kwargs):
-        """Insert the form into the context dict."""
-        if 'form' not in kwargs:
-            kwargs['form'] = self.get_form()
-            print(kwargs['form'].fields['supplier'])
-            #kwargs['form'].fields['place_load'].queryset = LoadingPlace.objects.filter(supplier=kwargs['form'].fields['supplier'])
-        return super().get_context_data(**kwargs)
 
 
 class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
