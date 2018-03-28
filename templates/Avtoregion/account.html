@@ -35,6 +35,14 @@
                         {% endfor %}
                     </select>
                 </div>
+	            <div class="form-group">
+		            <select id="state" name="state" class="form-control">
+		            <option></option>
+			            {% for field in state %}
+				            <option value="{{ field }}">{{ field }}</option>
+			            {% endfor %}
+		            </select>
+	            </div>
                 <div class="form-group">
                     <select name="product" multiple class="form-control" id="product">
                         {% for field in q_prod %}
@@ -71,6 +79,14 @@
                         <option></option>
                     </select>
                 </div>
+	            <div class="form-group">
+		            <select id="state" name="state" class="form-control">
+		              <option></option>
+			            {% for field in state %}
+				            <option value="{{ field }}">{{ field }}</option>
+			            {% endfor %}
+		            </select>
+	            </div>
                 <div class="form-group">
                     <select name="product" multiple class="form-control icon-select" id="product">
                         {% for field in q_prod %}
@@ -102,6 +118,14 @@
                         {% endfor %}
                     </select>
                 </div>
+	            <div class="form-group">
+		            <select id="state" name="state" class="form-control">
+		              <option></option>
+			            {% for field in state %}
+				            <option value="{{ field }}">{{ field }}</option>
+			            {% endfor %}
+		            </select>
+	            </div>
                 <div class="form-group">
                     <select name="product" multiple class="form-control icon-select" id="product">
                         {% for field in q_prod %}
@@ -136,6 +160,13 @@
                 inherit_select_classes: false
 
             });
+            $('select[name="state"]').chosen({
+		            placeholder_text_single: 'Выберите состояние рейса',
+                disable_search: true,
+                inherit_select_classes: false,
+		            allow_single_deselect: true
+
+            });
             $('select[name="unload_place"]').chosen({
                 placeholder_text_single: 'Выберите место разгрузки',
                 inherit_select_classes: false,
@@ -157,7 +188,7 @@
                         while (select_unload.length > 1) {
                             select_unload.remove(select_unload.length - 1)
                         }
-                        for (i = 0; i < resp.length; i++) {
+                        for (var i = 0; i < resp.length; i++) {
                             var option = document.createElement('option');
                             option.text = resp[i].name;
                             option.value = resp[i].id_shipment;
@@ -179,7 +210,7 @@
                             while (select_unload.length > 1) {
                                 select_unload.remove(select_unload.length - 1)
                             }
-                            for (i = 0; i < resp.length; i++) {
+                            for (var i = 0; i < resp.length; i++) {
                                 var option = document.createElement('option');
                                 option.text = resp[i].name;
                                 option.value = resp[i].id_shipment;
@@ -198,12 +229,14 @@
             var $service = $form.find("#service option:selected").val();
             var $supplier = $form.find("#supplier option:selected").val();
             var $product = $form.find("#product").val();
+            var $state = $form.find("#state option:selected").val();
 
             var data = {
                 daterange: $daterange,
                 service: $service,
                 supplier: $supplier,
-                product: $product
+                product: $product,
+		            state: $state
             };
 
 
@@ -213,7 +246,6 @@
                 data: JSON.stringify(data),
                 success: function (resp) {
                     $('#tab_res').html(resp['data']);
-                    console.log("success!")
 
                 }
 
@@ -228,12 +260,14 @@
             var $customer = $form.find("#customer option:selected").val();
             var $unload_place = $form.find("#unload_place option:selected").val();
             var $product = $form.find("#product").val();
+            var $state = $form.find("#state").val();
 
             var data = {
                 daterange: $daterange,
                 customer: $customer,
                 product: $product,
-                unload_place: $unload_place
+                unload_place: $unload_place,
+		            state: $state
             };
 
 
@@ -243,7 +277,6 @@
                 data: JSON.stringify(data),
                 success: function (resp) {
                     $('#tab_res').html(resp['data']);
-                    console.log("success!")
 
                 }
 
@@ -257,11 +290,13 @@
             var $daterange = $form.find("input[name='daterange']").val();
             var $mediator = $form.find("#mediator option:selected").val();
             var $product = $form.find("#product").val();
+            var $state = $form.find("#state").val();
 
             var data = {
                 daterange: $daterange,
                 mediator: $mediator,
-                product: $product
+                product: $product,
+		            state: $state
             };
 
 
@@ -271,7 +306,6 @@
                 data: JSON.stringify(data),
                 success: function (resp) {
                     $('#tab_res').html(resp['data']);
-                    console.log("success!")
 
                 }
 

@@ -491,7 +491,8 @@ class Accumulate(JSONRequestResponseMixin, View):
 
     def get(self, *args, **kwargs):
         context = {'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod,
-                   'race_type': (Race.TYPE[0][0], Race.TYPE[1][0])}
+                   'race_type': (Race.TYPE[0][0], Race.TYPE[1][0]),
+                   'state': (Race.CREATE, Race.LOAD, Race.UNLOAD, Race.FINISH, Race.END, Race.ACCIDENT)}
         return render(request=self.request, template_name='Avtoregion/account.html', context=context)
 
     def post(self, *args, **kwargs):
@@ -530,7 +531,7 @@ class Accumulate(JSONRequestResponseMixin, View):
 
         query = self.get_query_product(query)
 
-        if self.request_json.get('unload_place') != "":
+        if self.request_json.get('unload_place').strip():
             query.add(Q(shipment_id=self.request_json['unload_place']), Q.AND)
 
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
@@ -549,7 +550,8 @@ class Accumulate(JSONRequestResponseMixin, View):
         return q_resp, q_weight, type_prod
 
     def get_query_product(self, query):
-        if len(self.request_json['product']) > 0:
+        if self.request_json['product']:
+            print(self.request_json['product'])
             prod = self.request_json['product']
             if len(prod) == 1:
                 query.add(Q(product__name=prod[0]), Q.AND)
@@ -558,6 +560,11 @@ class Accumulate(JSONRequestResponseMixin, View):
                 for v in prod:
                     lst.append(Q(product__name=v))
                 query.add(reduce(OR, lst), Q.AND)
+        return query
+
+    def get_query_state(self, query):
+        if self.request_json.get('state'):
+            query.add(race__state=self.request_json.get('state'))
         return query
 
 
@@ -739,6 +746,7 @@ def ajax_cus(req):
         if id_customer is not None:
             try:
                 cus = list(Shipment.objects.filter(customer=int(id_customer)).values())
+                print(cus)
                 data = json.dumps(cus)
             except ObjectDoesNotExist:
                 data = json.dumps({})
