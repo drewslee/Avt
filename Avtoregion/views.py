@@ -133,7 +133,6 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     permission_required = ('races.update_race',)
 
 
-
 class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
     model = Race
     success_url = '/Race'
