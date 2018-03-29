@@ -556,7 +556,6 @@ class Accumulate(JSONRequestResponseMixin, View):
 
     def get_query_product(self, query):
         if self.request_json['product']:
-            print(self.request_json['product'])
             prod = self.request_json['product']
             if len(prod) == 1:
                 query.add(Q(product__name=prod[0]), Q.AND)
