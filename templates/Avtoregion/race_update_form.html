@@ -89,12 +89,6 @@
         var id_customer = document.getElementById('id_customer');
         var select_load = document.getElementById('id_place_load');
         var select_unload = document.getElementById('id_shipment');
-        var sup = id_supplier.value;
-        var cus  = id_customer.value;
-        var sl_value = select_load.options[select_load.selectedIndex].value;
-        var sl_text = select_load.options[select_load.selectedIndex].text;
-        var sul_value = select_unload.options[select_unload.selectedIndex].value;
-        var sul_text = select_unload.options[select_unload.selectedIndex].text;
         id_supplier.addEventListener("change", function () {
             var data = id_supplier.value;
             $.ajax(

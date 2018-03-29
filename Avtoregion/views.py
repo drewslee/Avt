@@ -519,6 +519,8 @@ class Accumulate(JSONRequestResponseMixin, View):
                   supplier_id=self.request_json.get('supplier'),
                   race_date__range=date)
         query = self.get_query_product(query)
+        query = self.get_query_state(query)
+
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
         q_resp.select_related('car', 'driver', 'product')
@@ -530,6 +532,7 @@ class Accumulate(JSONRequestResponseMixin, View):
                   race_date__range=date)
 
         query = self.get_query_product(query)
+        query = self.get_query_state(query)
 
         if self.request_json.get('unload_place').strip():
             query.add(Q(shipment_id=self.request_json['unload_place']), Q.AND)
@@ -545,6 +548,8 @@ class Accumulate(JSONRequestResponseMixin, View):
                   race_date__range=date)
 
         query = self.get_query_product(query)
+        query = self.get_query_state(query)
+
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
         return q_resp, q_weight, type_prod
@@ -564,7 +569,7 @@ class Accumulate(JSONRequestResponseMixin, View):
 
     def get_query_state(self, query):
         if self.request_json.get('state'):
-            query.add(race__state=self.request_json.get('state'))
+            query.add(Q(state=self.request_json.get('state')), Q.AND)
         return query
 
 
@@ -707,54 +712,29 @@ def datestr_to_dateaware(date):
 
 def ajax_track(req):
     if req.is_ajax():
-        id_car = req.GET.get('id')
-        data = {}
-        if id_car is not None:
-            try:
-                rce = Race.objects.filter(car_id=int(id_car)).latest(field_name='id_race')
+        data = json.dumps({'gas_start': 0, 's_milage': 0})
+        if req.GET.get('id').strip():
+                rce = Race.objects.filter(car_id=int(req.GET.get('id'))).latest(field_name='id_race')
                 data = json.dumps({'gas_start': float(rce.gas_end), 's_milage': float(rce.e_milage)})
-            except ObjectDoesNotExist:
-                data = json.dumps({'gas_start': 0, 's_milage': 0})
-            finally:
-                return HttpResponse(data, content_type='application/json')
-
-        else:
-            raise HttpResponse({}, content_type='application/json')
+        return HttpResponse(data, content_type='application/json')
 
 
 def ajax_sup(req):
     if req.is_ajax():
-        id_supplier = req.GET.get('id')
         data = {}
-        if id_supplier is not None:
-            try:
-                sup = list(LoadingPlace.objects.filter(supplier=int(id_supplier)).values())
+        if req.GET.get('id').strip():
+                sup = list(LoadingPlace.objects.filter(supplier=int(req.GET.get('id'))).values())
                 data = json.dumps(sup)
-            except ObjectDoesNotExist:
-                data = json.dumps({})
-            finally:
-                return HttpResponse(data, content_type='application/json')
-
-        else:
-            raise HttpResponse({}, content_type='application/json')
+        return HttpResponse(data, content_type='application/json')
 
 
-def ajax_cus(req):
+def get_unload_place(req):
     if req.is_ajax():
-        id_customer = req.GET.get('id')
         data = {}
-        if id_customer is not None:
-            try:
-                cus = list(Shipment.objects.filter(customer=int(id_customer)).values())
-                print(cus)
+        if req.GET.get('id').strip():
+                cus = list(Shipment.objects.filter(customer=int(req.GET.get('id'))).values())
                 data = json.dumps(cus)
-            except ObjectDoesNotExist:
-                data = json.dumps({})
-            finally:
-                return HttpResponse(data, content_type='application/json')
-
-        else:
-            raise HttpResponse({}, content_type='application/json')
+        return HttpResponse(data, content_type='application/json')
 
 
 class AjaxUpdateState(View):
@@ -772,7 +752,7 @@ class AjaxUpdateState(View):
                         messages.add_message(self.request, messages.SUCCESS, 'Состояние обновленo.')
                         data = json.dumps({'success': True})
                         return HttpResponse(content=data, content_type='application/json')
-                    except ObjectDoesNotExist:
+                    except self.model.DoesNotExist:
                         messages.add_message(self.request, messages.WARNING, 'Не найдены объекты рейсов в базе данных')
                         data = json.dumps({'success': False})
                         return HttpResponse(content=data, content_type='application/json')
@@ -790,12 +770,9 @@ class PackingView(JSONRequestResponseMixin, View):
 
     def post(self, request, *args, **kwargs):
         urls = []
-        try:
-            ids = self.request_json["id_list"]
-            if len(ids) > 0:
-                for id in ids:
-                    urls.append(ooxml_render(id, 'packing', 'sharedStrings2.xml', 'packing'))
-        except KeyError:
-            print('Key not found!')
+        ids = self.request_json["id_list"]
+        if ids:
+            for id in ids:
+                urls.append(ooxml_render(id, 'packing', 'sharedStrings2.xml', 'packing'))
         templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls})
         return self.render_json_response({'data': templated})
