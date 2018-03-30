@@ -3,7 +3,9 @@
 {% block content %}
     <div class="container table-responsive">
 
-        <form action="" method="post">
+        <form id="id_race_form" action="" method="post"
+	        data-form-customer-url="{% url 'RaceAjaxCus' %}"
+	        data-form-supplier-url="{% url 'RaceAjaxSup' %}">
             {% csrf_token %}
             {% for field in form %}
                 {% bootstrap_field field %}
@@ -84,52 +86,6 @@
                 ]
 
             }
-        });
-        var id_supplier = document.getElementById('id_supplier');
-        var id_customer = document.getElementById('id_customer');
-        var select_load = document.getElementById('id_place_load');
-        var select_unload = document.getElementById('id_shipment');
-        id_supplier.addEventListener("change", function () {
-            var data = id_supplier.value;
-            $.ajax(
-                {
-                    type: "GET",
-                    url: "{% url 'RaceAjaxSup' %}",
-                    data: {id: data},
-                    dataType: 'json',
-                    success: function (resp) {
-                        while (select_load.length > 1) {
-                            select_load.remove(select_load.length - 1)
-                        }
-                        for (i = 0; i < resp.length; i++) {
-                            var option = document.createElement('option');
-                            option.text = resp[i].address;
-                            option.value = resp[i].id_load_place;
-                            select_load.add(option)
-                        }
-                    }
-                })
-        });
-        id_customer.addEventListener("change", function () {
-            var cus = id_customer.value;
-            $.ajax(
-                {
-                    type: "GET",
-                    url: "{% url 'RaceAjaxCus' %}",
-                    data: {id: cus},
-                    dataType: 'json',
-                    success: function (resp) {
-                        while (select_unload.length > 1) {
-                            select_unload.remove(select_unload.length - 1)
-                        }
-                        for (i = 0; i < resp.length; i++) {
-                            var option = document.createElement('option');
-                            option.text = resp[i].name;
-                            option.value = resp[i].id_shipment;
-                            select_unload.add(option)
-                        }
-                    }
-                })
         });
 		    });
     </script>

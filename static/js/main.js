@@ -14,6 +14,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 /*
 The functions below will create a header with csrftoken
 */
@@ -53,7 +54,6 @@ $(function () {
 
 
     var csrftoken = getCookie('csrftoken');
-
 
 
     $.ajaxSetup({
@@ -172,8 +172,56 @@ $(function () {
                 }
             })
     });
+    $('#id_supplier').change(function ()
+    {
+        var url = $('#id_race_form').attr('data-form-supplier-url');
+        var supplierId = $(this).val();
+        var place_load = $('#id_place_load');
 
+        $.ajax(
+        {
+            type: "GET",
+            url: url,
+            data: {
+                'id': supplierId
+            },
+            dataType: 'json',
+            success: function (resp)
+            {
+                place_load.empty();
+                for (i = 0; i < resp.length; i++) {
+                    var option = '<option value="' + resp[i].id_load_place + '">' + resp[i].address + '</option>';
+                    place_load.append(option);
+                }
+            }
+
+
+        });
+    });
+
+    $("#id_customer").change(function () {
+        var url = $('#id_race_form').attr('data-form-customer-url');
+        var customerId = $(this).val();
+        var place_unload = $('#id_shipment');
+        $.ajax(
+            {
+                type: "GET",
+                url: url,
+                data: {
+                    'id': customerId
+                },
+                dataType: 'json',
+                success: function (resp) {
+                    place_unload.empty();
+                    for (i = 0; i < resp.length; i++) {
+                        var option = '<option value="' + resp[i].id_shipment + '">' + resp[i].name + '</option>';
+                        place_unload.append(option)
+                    }
+                }
+            })
+    });
 });
+
 
 /*"responsive":    {
     breakpoints: [
