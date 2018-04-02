@@ -499,9 +499,11 @@ class Accumulate(JSONRequestResponseMixin, View):
 
         q_resp, q_weight, type_prod = {}, {}, ""
 
-        ctx = {'supplier': self.request_json.get('supplier'),
+        ctx = {
+               'supplier': self.request_json.get('supplier'),
                'customer': self.request_json.get('customer'),
-               'mediator': self.request_json.get('mediator')}
+               'mediator': self.request_json.get('mediator'),
+               }
 
         for key, value in ctx.items():
             if value is not None:
@@ -509,7 +511,8 @@ class Accumulate(JSONRequestResponseMixin, View):
                 q_resp, q_weight, type_prod = method([start_date, end_date])
 
         table = render_to_string(template_name='table.html',
-                                 context={'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type_prod})
+                                 context={'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type_prod,
+                                          'start_date': start_date, 'end_date': end_date - timedelta(days=1)})
         return self.render_json_response({"data": table})
 
     def get_query_supplier(self, date):
@@ -601,6 +604,7 @@ def save_excel(request):
     filename = 'name'
     json_data = json.loads(request.body.decode('utf-8'))
     json_data = ast.literal_eval(json_data)
+    org = json_data.pop('org')
     response = HttpResponse(content_type='vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename={}.xlsx'.format(filename)
 
@@ -623,7 +627,7 @@ def save_excel(request):
     # Sheet header, first row
     ws.merge_range('A1:G2',
                    'РЕЕСТР ПЕРЕВОЗОК {} для {} \n за период с {:%d.%m.%y} по {:%d.%m.%y}'.format('ООО \"Авторегион\"',
-                                                                                                 'Поставщика/Клиента',
+                                                                                                 org[0],
                                                                                                  timezone.now(),
                                                                                                  timezone.now()),
                    format)
