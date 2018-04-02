@@ -605,6 +605,8 @@ def save_excel(request):
     json_data = json.loads(request.body.decode('utf-8'))
     json_data = ast.literal_eval(json_data)
     org = json_data.pop('org')
+    start_date = json_data.pop('start_date')
+    end_date = json_data.pop('end_date')
     response = HttpResponse(content_type='vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename={}.xlsx'.format(filename)
 
@@ -626,10 +628,10 @@ def save_excel(request):
 
     # Sheet header, first row
     ws.merge_range('A1:G2',
-                   'РЕЕСТР ПЕРЕВОЗОК {} для {} \n за период с {:%d.%m.%y} по {:%d.%m.%y}'.format('ООО \"Авторегион\"',
-                                                                                                 org[0],
-                                                                                                 timezone.now(),
-                                                                                                 timezone.now()),
+                   'РЕЕСТР ПЕРЕВОЗОК {} - {} \n за период с {} по {}'.format('ООО \"Авторегион\"',
+                                                                                                 org,
+                                                                                                 start_date,
+                                                                                                 end_date),
                    format)
     col = 0
     for title in ['№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.']:
@@ -650,6 +652,8 @@ def save_excel(request):
     else:
         ws.merge_range('A{}:D{}'.format(row + 1, row + 1), 'ИТОГО:', format)
         ws.write_formula(row, 4, '=SUM(E5:E{})'.format(row), format)
+        ws.write_string(row + 2, 0, 'Исполнительный директор ООО "Авторегион"     ___________/Денисов А.Н./')
+
 
     # row_num = 2
     #

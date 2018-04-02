@@ -4,14 +4,25 @@
 		<div class="table-responsive">
 			<table id="tab" class="table table-hover table-condensed">
 				{% if type_name == 'supplier' %}
-					<div class="row"><h1 id="organization">{{ q_resp.first.supplier.name }}</h1>
-					<h1 id="start_date">{{ start_date }}</h1> - <h1 id="end_date">{{ end_date }}</h1></div>
+					<h1 class="h1">
+						<span id="organization" class="text-left">{{ q_resp.first.supplier.name }}</span>
+						c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
+						по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
+					</h1>
 				{% endif %}
 				{% if type_name == 'customer' %}
-					<h1 id="organization">{{ q_resp.first.customer.name }}</h1>
+					<h1 class="h1">
+					<span id="organization">{{ q_resp.first.customer.name }}</span>
+					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
+					по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
+					</h1>
 				{% endif %}
 				{% if type_name == 'mediator' %}
-					<h1 id="organization">{{ q_resp.first.car.mediator.name }}</h1>
+					<h1 class="h1">
+					<span id="organization">{{ q_resp.first.car.mediator.name }}</span>
+					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
+					по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
+					</h1>
 				{% endif %}
 				<thead>
 				<th>#</th>
@@ -89,7 +100,9 @@
                   });
                   otArr.push('"' + i + '": [' + itArr.join(',') + ']');
               });
-              otArr.push('"org": ["' + $('#organization').text() + '"]');
+              otArr.push('"org": "' + $('#organization').text() + '"');
+              otArr.push('"start_date": "' + $('#start_date').text() + '"');
+              otArr.push('"end_date": "' + $('#end_date').text() + '"');
               json += otArr.join(",") + '}';
 
               return json;
