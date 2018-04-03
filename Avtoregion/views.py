@@ -655,21 +655,6 @@ def save_excel(request):
         ws.write_string(row + 2, 0, 'Исполнительный директор ООО "Авторегион"     ___________/Денисов А.Н./')
 
 
-    # row_num = 2
-    #
-    # for col_num in range(len(col)):
-    #     ws.write(row_num, col_num, col[col_num] )
-    # row_num += 1
-    # # Sheet body, remaining rows
-    # font_style = xlwt.XFStyle()
-    # font_style.font.name = 'Times New Roman'
-    # for row in values_list:
-    #     row_num += 1
-    #     for col_num in range(len(row)):
-    #         ws.write(row_num, col_num, str(row[col_num]), font_style)
-    #
-    # path_for_save = os.path.join(djangoSettings.BASE_DIR, 'static', 'temp', filename)
-    # wb.save(filename_or_stream=path_for_save)
     return response
 
 
