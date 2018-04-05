@@ -100,7 +100,7 @@
                   });
                   otArr.push('"' + i + '": [' + itArr.join(',') + ']');
               });
-              otArr.push('"org": "' + $('#organization').text() + '"');
+              otArr.push('"org": "' + $('#organization').text().replace(/"/g, "\\\"") + '"');
               otArr.push('"start_date": "' + $('#start_date').text() + '"');
               otArr.push('"end_date": "' + $('#end_date').text() + '"');
               json += otArr.join(",") + '}';

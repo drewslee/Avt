@@ -616,7 +616,7 @@
     <si>
         <t>{{ race.customer.name }} {{ race.customer.address }}</t>
     </si>
-    <sia
+    <si>
         <t>{{ race.supplier.name }} {{ race.supplier.address }}</t>
     </si>
     <si>
