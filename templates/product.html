@@ -21,14 +21,18 @@
                             </td>
                             <div class="form-group">
                                 <td>
+                                    {% if perms.Avtoregion.change_product %}
                                     <form action="update{{ q.pk }}" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
+                                    {% endif %}
+                                    {% if perms.Avtoregion.delete_product %}
                                     <form action="{% url 'ProductDelete' %}" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="pk" value="{{ q.pk }}">
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                     </form>
+                                    {% endif %}
                                 </td>
                             </div>
                         </tr>
@@ -38,6 +42,7 @@
             </div>
         {% endif %}
 
+        {% if perms.Avtoregion.add_product %}
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -45,5 +50,6 @@
             {% endfor %}
             <button class="btn btn-success">Добавить</button>
         </form>
+        {% endif %}
     </div>
 {% endblock %}

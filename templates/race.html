@@ -92,11 +92,14 @@
 								{{ q.state }}
 							</td>
 							<td>
+                                {% if perms.Avtoregion.change_race %}
 								<div class="form-row">
 									<form action="{% url 'RaceUpdate' q.pk %}">
-										<button class="btn btn-info btn-sm form-control">Изменить</button>
+                                        <button class="btn btn-info btn-sm form-control">Изменить</button>
 									</form>
 								</div>
+                                {% endif %}
+                                {% if perms.Avtoregion.delete_race %}
 								<div class="form-row">
 									<form action="{% url 'RaceDelete' %}" method="post">
 										{% csrf_token %}
@@ -105,6 +108,7 @@
 										<input type="hidden" name="pk" value="{{ q.pk }}">
 									</form>
 								</div>
+                                {% endif %}
 							</td>
 						</tr>
 					{% endfor %}

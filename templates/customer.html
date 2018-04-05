@@ -30,14 +30,18 @@
 		                                <input type="hidden" name="customer" value="{{ q.pk }}">
 		                                <button class="btn btn-info btn-sm form-control">Адреса разгрузки</button>
 	                                </form>
+                                {% if perms.Avtoregion.change_customer %}
                                     <form action="update{{ q.pk }}" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
+                                {% endif %}
+                                {% if perms.Avtoregion.delete_customer %}
                                     <form action="{% url 'CustomerDelete' %}" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="pk" value="{{ q.pk }}">
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                     </form>
+                                {% endif %}
                             </td>
 	                        </div>
                         </tr>
@@ -46,6 +50,7 @@
                 </table>
             </div>
         {% endif %}
+        {% if perms.Avtoregion.add_customer %}
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -53,5 +58,6 @@
             {% endfor %}
             <button class="btn btn-success">Добавить</button>
         </form>
+        {% endif %}
     </div>
 {% endblock %}

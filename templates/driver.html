@@ -24,11 +24,14 @@
                                 {{ q.driver_card|default_if_none:'Не назначен' }}
                             </td>
                             <td>
+                                {% if perms.Avtoregion.change_driver %}
                                 <div class="form-group">
                                     <form action="update{{ q.pk }}" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
                                 </div>
+                                {% endif %}
+                                {% if perms.Avtoregion.delete_driver %}
                                 <div class="form-group">
                                     <form action="{% url 'DriverDelete' %}" method="post">
                                         {% csrf_token %}
@@ -36,6 +39,7 @@
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                     </form>
                                 </div>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -43,7 +47,7 @@
                 </table>
             </div>
         {% endif %}
-
+        {% if perms.Avtoregion.add_driver %}
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -51,5 +55,6 @@
             {% endfor %}
             <button class="btn btn-success">Добавить</button>
         </form>
+        {% endif %}
     </div>
 {% endblock %}

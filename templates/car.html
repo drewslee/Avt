@@ -30,11 +30,14 @@
                                 {{ q.mediator|default_if_none:'Нету' }}
                             </td>
                             <td>
+                                {% if perms.Avtoregion.change_car %}
                                 <div class="form-group">
                                     <form action="update{{ q.pk }}" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
                                 </div>
+                                {% endif %}
+                                {% if perms.Avtoregion.delete_car %}
                                 <div class="form-group">
                                     <form action="{% url 'CarDelete' %}" method="post">
                                         {% csrf_token %}
@@ -42,6 +45,7 @@
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                     </form>
                                 </div>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -49,6 +53,7 @@
                 </table>
             {% endif %}
         </div>
+        {% if perms.Avtoregion.add_car %}
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -56,5 +61,6 @@
             {% endfor %}
             <button class="btn btn-success">Добавить</button>
         </form>
+        {% endif %}
     </div>
 {% endblock %}
