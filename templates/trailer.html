@@ -23,21 +23,25 @@
                             {{ q.garage_number_trailer }}
                         </td>
                         <td>
+	                        {% if perms.Avtoregion.change_trailer %}
                             <form action="update{{ q.pk }}" method="get">
                                 <button class="btn btn-info btn-sm form-control">Изменить</button>
                             </form>
+                          {% endif %}
+	                        {% if perms.Avtoregion.delete_trailer %}
                             <form action="{% url 'TrailerDelete' %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="pk" value="{{ q.pk }}">
                                 <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                             </form>
+	                        {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         {% endif %}
-
+			{% if perms.Avtoregion.add_trailer %}
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -45,5 +49,6 @@
             {% endfor %}
             <button class="btn btn-success">Добавить</button>
         </form>
+    {% endif %}
     </div>
 {% endblock %}

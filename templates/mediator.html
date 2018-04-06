@@ -24,14 +24,18 @@
                                 {{ q.inn|default_if_none:"Не назначен" }}
                             </td>
                             <td>
+	                            {% if perms.Avtoregion.change_mediator %}
                                 <form action="update{{ q.pk }}" method="get">
                                     <button class="btn btn-info btn-sm form-control">Изменить</button>
                                 </form>
+                              {% endif %}
+	                            {% if perms.Avtoregion.delete_mediator %}
                                 <form action="{% url 'MediatorDelete' %}" method="post">
                                     {% csrf_token %}
                                     <input type="hidden" name="pk" value="{{ q.pk }}">
                                     <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                 </form>
+	                            {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -39,6 +43,7 @@
                 </table>
             </div>
         {% endif %}
+    {% if perms.Avtoregion.add_mediator %}
         <form action="add" method="post">
             {% csrf_token %}
             {% for field in form %}
@@ -46,5 +51,6 @@
             {% endfor %}
             <button class="btn btn-success">Добавить</button>
         </form>
+    {% endif %}
     </div>
 {% endblock %}
