@@ -128,9 +128,14 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
     form_class = RaceForm
     template_name = 'Avtoregion/race_update_form.html'
-    success_url = reverse_lazy('Race')
     success_message = "Рейс обновлён успешно"
     permission_required = ('Avtoregion.change_race',)
+
+    def get_success_url(self):
+        if self.request.POST.get('priveous'):
+            return self.request.POST.get('priveous')
+        else:
+            return super(UpdateView, self).get_success_url()
 
 
 class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
@@ -659,7 +664,7 @@ def save_excel(request):
 
 
 def ooxml_render(race_id, prefname, template_name, tmp_name):
-    static_root = os.path.join(djangoSettings.BASE_DIR, 'static')
+    static_root = djangoSettings.STATIC_ROOT
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
     buf = render_to_string(template_name, {'race': race, 'const': const})
