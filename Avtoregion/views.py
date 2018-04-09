@@ -482,8 +482,8 @@ class CustomerDelete(PermissionRequiredMixin, DeleteView):
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
-class Accumulate(JSONRequestResponseMixin, View):
 
+class Accumulate(JSONRequestResponseMixin, View):
     def dispatch_method(self, value):
         method_name = 'get_query_' + str(value)
         return getattr(self, method_name)
