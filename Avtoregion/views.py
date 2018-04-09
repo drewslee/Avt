@@ -664,7 +664,7 @@ def save_excel(request):
 
 
 def ooxml_render(race_id, prefname, template_name, tmp_name):
-    static_root = djangoSettings.STATIC_ROOT
+    static_root = os.path.join(djangoSettings.BASE_DIR, 'static')
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
     buf = render_to_string(template_name, {'race': race, 'const': const})
@@ -678,24 +678,6 @@ def ooxml_render(race_id, prefname, template_name, tmp_name):
     os.rename(os.path.join(static_root, 'temp', filename + '.zip'),
               os.path.join(static_root, 'temp', filename + '.xlsx'))
     return '/'.join(['temp', filename + '.xlsx'])
-
-
-class Waybill(View):
-    queryset = Car.objects.all()
-
-    def get(self, request, *args, **kwargs):
-        return render(request=request, template_name='Avtoregion/waybill.html', context={'qset': self.queryset})
-
-    def post(self, request, *args, **kwargs):
-        start_date, end_date = datestr_to_dateaware(request.POST['daterange'])
-        q_resp = Race.objects.filter(car__number__exact=request.POST.get('car'),
-                                     race_date__range=[start_date, end_date])
-        urls = []
-        idlist = q_resp.values_list('id_race')
-        for i in idlist:
-            urls.append(ooxml_render(i[0], 'waybill', 'sharedStrings.xml', 'way'))
-        return render(request=request, template_name='Avtoregion/waybill.html',
-                      context={'qset': self.queryset, 'urls': urls})
 
 
 def datestr_to_dateaware(date):
@@ -766,9 +748,22 @@ class PackingView(JSONRequestResponseMixin, View):
 
     def post(self, request, *args, **kwargs):
         urls = []
-        ids = self.request_json["id_list"]
+        ids = self.request_json.get("id_list")
         if ids:
-            for id in ids:
-                urls.append(ooxml_render(id, 'packing', 'sharedStrings2.xml', 'packing'))
-        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls})
+            for i in ids:
+                urls.append(ooxml_render(i, 'packing', 'sharedStrings2.xml', 'packing'))
+        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls, 'name': 'Товарная накладная'})
+        return self.render_json_response({'data': templated})
+
+
+class WayView(JSONRequestResponseMixin, View):
+    require_json = True
+
+    def post(self, request, *args, **kwargs):
+        urls = []
+        ids = self.request_json.get("id_list")
+        if ids:
+            for i in ids:
+                urls.append(ooxml_render(i, 'way', 'sharedStrings.xml', 'way'))
+        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls, 'name': 'Путевой лист'})
         return self.render_json_response({'data': templated})

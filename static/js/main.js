@@ -154,6 +154,7 @@ $(function () {
     });
     $(document).on("click", '#packing_list', function (event) {
         event.preventDefault();
+        var url = $('#ModalPackingList').attr('data-url');
         var rows = document.getElementsByClassName('selected'),
             list = [];
         for (var i = 0; i < rows.length; ++i) {
@@ -161,14 +162,35 @@ $(function () {
         }
         $.ajax(
             {
-                url: 'Race/packing/ajax',
+                url: url,
                 method: 'POST',
                 traditional: true,
                 data: JSON.stringify({"id_list": list}),
                 dataType: 'json',
                 success: function (data) {
-                    $('#result').html(data['data']);
+                    $('#result_pack').html(data['data']);
                     $('#ModalPackingList').modal('show');
+                }
+            })
+    });
+    $(document).on("click", '#way_list', function (event) {
+        event.preventDefault();
+        var url = $('#ModalWayList').attr('data-url');
+        var rows = document.getElementsByClassName('selected'),
+            list = [];
+        for (var i = 0; i < rows.length; ++i) {
+            list.push(rows[i].id);
+        }
+        $.ajax(
+            {
+                url: url,
+                method: 'POST',
+                traditional: true,
+                data: JSON.stringify({"id_list": list}),
+                dataType: 'json',
+                success: function (data) {
+                    $('#result_way').html(data['data']);
+                    $('#ModalWayList').modal('show');
                 }
             })
     });

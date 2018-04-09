@@ -22,6 +22,7 @@
 				<div id="toolbar">
 					<button id="state" class="btn btn-info btn-sm">Обновить статус</button>
 					<button id="packing_list" type="submit" class="btn btn-info btn-sm">Товарная накладная</button>
+					<button id="way_list" type="submit" class="btn btn-info btn-sm">Путевой лист</button>
 				</div>
                 <table id="race_table" data-toolbar="#toolbar" data-id-field="id"
                        data-toggle="table" data-search="true" data-filter-control="true"
@@ -43,7 +44,7 @@
                         <th data-field="e_milage" data-visible="false">Конец трека</th>
                         <th data-field="loaded">Загружено</th>
                         <th data-field="unloaded">Выгружено</th>
-						<th data-field="state">Состояние</th>
+												<th data-field="state">Состояние</th>
                         <th data-field="actions">Действия</th>
 					</tr>
 					</thead>
@@ -145,7 +146,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="ModalPackingList" class="modal fade">
+		<div id="ModalPackingList" class="modal fade" data-url="{% url 'PackAjax' %} ">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -154,9 +155,30 @@
 					</div>
 					<div class="modal-body">
 							<div class="list-group">
-                                <div id="result">
+                                <div id="result_pack">
                                 </div>
 							</div>
+					</div>
+					<div class="modal-footer">
+						<input type="hidden" name="next" value="{{ request.path }}">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="ModalWayList" class="modal fade" data-url="{% url 'WayAjax' %}">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Подтверждение</h4>
+					</div>
+					<div class="modal-body">
+						<div class="list-group">
+							<div id="result_way">
+							</div>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<input type="hidden" name="next" value="{{ request.path }}">

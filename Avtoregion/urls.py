@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^Race/add/get_unload_place', views.get_unload_place, name='RaceAjaxCus'),
     url(r'^Race/update/ajax', views.AjaxUpdateState.as_view(), name='RaceUpdateAjax'),
     url(r'^Race/packing/ajax', views.PackingView.as_view(), name='PackAjax'),
+    url(r'^Race/way/ajax', views.WayView.as_view(), name='WayAjax'),
     url(r'^Race/update(?P<pk>\d+)/$', views.RaceUpdate.as_view(), name='RaceUpdate'),
     url(r'^Race/delete/$', views.RaceDelete.as_view(), name='RaceDelete'),
 
