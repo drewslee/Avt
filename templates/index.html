@@ -26,8 +26,11 @@
     <script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/BootstrapTable/locale/bootstrap-table-ru-RU.min.js" %}"></script>
     <script type="text/javascript"
-            src="{% static "js/BootstrapTable/extensions/multiple-search/bootstrap-table-multiple-search.min.js" %}">
+            src="{% static "js/BootstrapTable/extensions/cookie/bootstrap-table-cookie.min.js" %}">
     </script>
+		<script type="text/javascript"
+						src="{% static "js/BootstrapTable/extensions/filter-control/bootstrap-table-filter-control.min.js" %}">
+		</script>
 </head>
 {% if user.is_anonymous %}
     <body>
