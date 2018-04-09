@@ -97,6 +97,5 @@ urlpatterns = [
     url(r'^Accumulate/Excel$', views.save_excel, name='AccExcel'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
-    url(r'^waybill/$', views.Waybill.as_view(), name='WayBill'),
 
 ]

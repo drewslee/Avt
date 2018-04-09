@@ -664,7 +664,7 @@ def save_excel(request):
 
 
 def ooxml_render(race_id, prefname, template_name, tmp_name):
-    static_root = os.path.join(djangoSettings.BASE_DIR, 'static')
+    static_root = djangoSettings.STATIC_ROOT
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
     buf = render_to_string(template_name, {'race': race, 'const': const})
@@ -723,7 +723,7 @@ class AjaxUpdateState(View):
             json_data = json.loads(self.request.body.decode('utf-8'))
             try:
                 data = json_data['data'][0]
-                if len(data['id_list']) != 0:
+                if data['id_list']:
                     try:
                         for id in data['id_list']:
                             self.model.objects.filter(id_race=int(id)).update(state=data['state'])
