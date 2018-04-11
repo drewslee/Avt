@@ -121,7 +121,12 @@ $(function () {
         showColumns: true,
         pagination: true,
         showPaginationSwitch: true,
-        multipleSearch: true
+        cookie: true,
+        cookieIdTable: 'cookId',
+        onColumnSearch: function ()
+        {
+           $('#race_table').bootstrapTable("resetSearch");
+        }
     });
     $('.dropdown-toggle').dropdown();
 
