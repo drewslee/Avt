@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import hashlib
 from envconf import Env
 
 env = Env(DEBUG=(bool, False))
@@ -123,8 +124,19 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+def md5sum(filename):
+    md5 = hashlib.md5()
+    with open(filename, 'rb') as f:
+        for chunk in iter(lambda: f.read(128*md5.block_size), b''):
+            md5.update(chunk)
+    return md5.hexdigest()
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'Avtoregion', 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+try:
+    JS_FILE_PATH = os.path.join(STATIC_ROOT, 'js', 'main.js')
+    JS_MD5 = md5sum(JS_FILE_PATH)
+except:
+    JS_MD5 = ""
