@@ -22,7 +22,7 @@
     <script type="text/javascript" src="{% static "js/transition.js" %}"></script>
     <script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/main.js" %}"></script>
+    <script type="text/javascript" src="{% static 'js/main.'|add:JS_MD5|add:'.js' %}"></script>
     <script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/BootstrapTable/locale/bootstrap-table-ru-RU.min.js" %}"></script>
     <script type="text/javascript"
@@ -72,7 +72,6 @@
                         <li><a href="{% url 'Acc' %}">Реестр</a></li>
                         <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
                         <li><a href="{% url 'CarAcc' %}">Реестр по автомобилю</a></li>
-                        <!--<li><a href="banned">Реестр по посреднику</a></li>-->
                     </ul>
                 </li>
                 <li class="navbar-text">{{ user }}</li>

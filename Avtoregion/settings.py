@@ -75,10 +75,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'Avtoregion.template_context_processors.settings_context_processor',
+
             ],
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'Avtoregion.wsgi.application'
 
@@ -122,8 +125,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
+
 def md5sum(filename):
     md5 = hashlib.md5()
     with open(filename, 'rb') as f:
@@ -136,7 +138,7 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'Avtoregion', 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 try:
-    JS_FILE_PATH = os.path.join(STATIC_ROOT, 'js', 'main.js')
+    JS_FILE_PATH = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'main.js')
     JS_MD5 = md5sum(JS_FILE_PATH)
 except:
     JS_MD5 = ""
