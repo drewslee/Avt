@@ -242,6 +242,19 @@ $(function () {
                 }
             })
     });
+    $(document).on('keypress','input,select',function (e)
+    {
+        if(e.which == 13) {
+            e.preventDefault();
+            var $canfocus = $('input');
+            var index = $canfocus.index(this) + 1;
+            if (index >= $canfocus.length) index=0;
+            $canfocus.eq(index).focus();
+            console.log($canfocus);
+            console.log(index);
+        }
+
+    })
 });
 
 
