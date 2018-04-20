@@ -242,16 +242,17 @@ $(function () {
                 }
             })
     });
+
+    $('form:first *:input[type!=hidden]:first').focus();
+
     $(document).on('keypress','input,select',function (e)
     {
-        if(e.which == 13) {
+        if(e.which === 13) {
             e.preventDefault();
-            var $canfocus = $('input');
+            var $canfocus = $('form *:input[type!=hidden]');
             var index = $canfocus.index(this) + 1;
             if (index >= $canfocus.length) index=0;
             $canfocus.eq(index).focus();
-            console.log($canfocus);
-            console.log(index);
         }
 
     })
