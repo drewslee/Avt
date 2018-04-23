@@ -245,17 +245,47 @@ $(function () {
 
     $('form:first *:input[type!=hidden]:first').focus();
 
-    $(document).on('keypress','input,select',function (e)
-    {
-        if(e.which === 13) {
-            e.preventDefault();
-            var $canfocus = $('form *:input[type!=hidden]');
-            var index = $canfocus.index(this) + 1;
-            if (index >= $canfocus.length) index=0;
-            $canfocus.eq(index).focus();
-        }
+    $(document).keydown(function(e) {
 
-    })
+  // Set self as the current item in focus
+  var self = $(':focus'),
+      // Set the form by the current item in focus
+      form = self.parents('form:eq(0)'),
+      focusable;
+
+  // Array of Indexable/Tab-able items
+  focusable = form.find('input,select,button,a,textarea,div[contenteditable=true]').filter(':visible');
+
+  function enterKey(){
+    if (e.which === 13 && !self.is('div[contenteditable=true]')) { // [Enter] key
+
+      // If not a regular hyperlink/button
+      if ($.inArray(self, focusable) && (!self.is('a,button'))){
+        // Then prevent the default [Enter] key behaviour from submitting the form
+        e.preventDefault();
+      } // Otherwise follow the link/button as by design
+
+      // Focus on the next item (either previous or next depending on shift)
+      focusable.eq(focusable.index(self) + (e.shiftKey ? -1 : 1)).focus();
+
+      return false;
+    }
+  }
+  // We need to capture the [Shift] key and check the [Enter] key either way.
+  if (e.shiftKey) { enterKey() } else { enterKey() }
+});
+
+    // $(document).on('keypress','input, select, textarea',function (e)
+    // {
+    //     if(e.which === 13) {
+    //         e.preventDefault();
+    //         var $canfocus = $('form *:input[type!=hidden]');
+    //         var index = $canfocus.index(this) + 1;
+    //         if (index >= $canfocus.length) index=0;
+    //         $canfocus.eq(index).focus();
+    //     }
+    //
+    // })
 });
 
 
