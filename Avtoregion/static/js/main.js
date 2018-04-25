@@ -332,17 +332,6 @@ $(function () {
   if (e.shiftKey) { enterKey() } else { enterKey() }
 });
 
-    // $(document).on('keypress','input, select, textarea',function (e)
-    // {
-    //     if(e.which === 13) {
-    //         e.preventDefault();
-    //         var $canfocus = $('form *:input[type!=hidden]');
-    //         var index = $canfocus.index(this) + 1;
-    //         if (index >= $canfocus.length) index=0;
-    //         $canfocus.eq(index).focus();
-    //     }
-    //
-    // })
 });
 
 
