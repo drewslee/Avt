@@ -37,18 +37,64 @@ function sameOrigin(url) {
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
-/*    $('#race_table').bootstrapTable({
-        showColumns: true,
-        pagination: true,
-        showPaginationSwitch: true,
-        filterControl: true,
-        columns: [
-            {field: 'Машина' ,
-                filterControl: 'select',
-                filterStrictSearch: false,
-                filterControlPlaceholder: ''}, {field:'Водитель', filterControl: 'select', filterStrictSearch: true}]
+function getfile()
+{
+    var csrftoken = getCookie('csrftoken');
+    var url = $('#excel').attr('data-url');
 
-    });*/
+    // Data to post
+    function html2json()
+    {
+        var json = '{';
+        var otArr = [];
+        var tbl2 = $('#tab_body tr').each(function (i)
+        {
+            x = $(this).children();
+            var itArr = [];
+            x.each(function ()
+            {
+                itArr.push('"' + $(this).text() + '"');
+            });
+            otArr.push('"' + i + '": [' + itArr.join(',') + ']');
+        });
+        otArr.push('"org": "' + $('#organization').text().replace(/"/g, "\\\"") + '"');
+        otArr.push('"start_date": "' + $('#start_date').text() + '"');
+        otArr.push('"end_date": "' + $('#end_date').text() + '"');
+        json += otArr.join(",") + '}';
+
+        return json;
+    }
+
+    var $data = html2json();
+
+    // Use XMLHttpRequest instead of Jquery $ajax
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function ()
+    {
+        var a;
+        if (xhttp.readyState === 4 && xhttp.status === 200)
+        {
+            // Trick for making downloadable link
+            a = document.createElement('a');
+            a.href = window.URL.createObjectURL(xhttp.response);
+            // Give filename you wish to download
+            a.download = "file.xlsx";
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+        }
+    };
+    // Post data to URL which handles post request
+    xhttp.open("POST", url);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    if (!csrfSafeMethod("POST") && sameOrigin(url))
+    {
+        xhttp.setRequestHeader("X-CSRFToken", csrftoken);
+    }
+    // You should set responseType as blob for binary responses
+    xhttp.responseType = 'blob';
+    xhttp.send(JSON.stringify($data));
+}
 
 $(function () {
 
@@ -115,13 +161,26 @@ $(function () {
     $(document).on('click', '.delete-confirmation', function () {
         return confirm('Вы уверены, что хотите удалить?');
     });
+    $('#id_race_date').on('apply.daterangepicker', function (ev, picker)
+    {
+        $('#id_arrival_time').focus().select();
+    });
+    $('#id_arrival_time').on('apply.daterangepicker', function (ev, picker)
+    {
+        $('#id_car').focus().select();
+    });
 
 
     $('#race_table').bootstrapTable({
         showColumns: true,
         pagination: true,
         showPaginationSwitch: true,
-        multipleSearch: true
+        cookie: true,
+        cookieIdTable: 'cookId',
+        onColumnSearch: function ()
+        {
+           $('#race_table').bootstrapTable("resetSearch");
+        }
     });
     $('.dropdown-toggle').dropdown();
 
@@ -242,19 +301,37 @@ $(function () {
                 }
             })
     });
-    $(document).on('keypress','input,select',function (e)
-    {
-        if(e.which == 13) {
-            e.preventDefault();
-            var $canfocus = $('input');
-            var index = $canfocus.index(this) + 1;
-            if (index >= $canfocus.length) index=0;
-            $canfocus.eq(index).focus();
-            console.log($canfocus);
-            console.log(index);
-        }
 
-    })
+    $(document).keydown(function(e) {
+
+  // Set self as the current item in focus
+  var self = $(':focus'),
+      // Set the form by the current item in focus
+      form = self.parents('form:eq(0)'),
+      focusable;
+
+  // Array of Indexable/Tab-able items
+  focusable = form.find('input,select,button,a,textarea,div[contenteditable=true]').filter(':visible');
+
+  function enterKey(){
+    if (e.which === 13 && !self.is('div[contenteditable=true]')) { // [Enter] key
+
+      // If not a regular hyperlink/button
+      if ($.inArray(self, focusable) && (!self.is('a,button'))){
+        // Then prevent the default [Enter] key behaviour from submitting the form
+        e.preventDefault();
+      } // Otherwise follow the link/button as by design
+
+      // Focus on the next item (either previous or next depending on shift)
+      focusable.eq(focusable.index(self) + (e.shiftKey ? -1 : 1)).focus().select();
+
+      return false;
+    }
+  }
+  // We need to capture the [Shift] key and check the [Enter] key either way.
+  if (e.shiftKey) { enterKey() } else { enterKey() }
+});
+
 });
 
 

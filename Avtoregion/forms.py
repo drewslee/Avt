@@ -2,9 +2,10 @@
 
 from django.forms import ModelForm, CharField, TextInput, PasswordInput
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
-from django.forms.widgets import SelectDateWidget
+from django.forms.widgets import SelectDateWidget, DateTimeInput
 from django.forms import DateField, DateTimeField, HiddenInput, ModelChoiceField, ChoiceField
 from django.utils import timezone
+
 from .models import *
 
 MONTHS = {
@@ -117,10 +118,18 @@ class DriverForm(ModelForm):
 
 class RaceForm(ModelForm):
     race_date = DateTimeField(initial=timezone.now,
-                              label='Дата выезда:')
-    arrival_time = DateTimeField(initial=timezone.now, label='Дата приезда:')
-    unit_load = ModelChoiceField(queryset=Units.objects.all(), initial='т.', label='Ед. изм. загружено')
-    unit_unload = ModelChoiceField(queryset=Units.objects.all(), initial='т.', label='Ед. изм. выгружено')
+                              label='Дата выезда:',
+                              widget=DateTimeInput(attrs={'autofocus': ''})
+                              )
+    arrival_time = DateTimeField(initial=timezone.now,
+                                 label='Дата приезда:'
+                                 )
+    unit_load = ModelChoiceField(queryset=Units.objects.all(),
+                                 initial='т.',
+                                 label='Ед. изм. загружено')
+    unit_unload = ModelChoiceField(queryset=Units.objects.all(),
+                                   initial='т.',
+                                   label='Ед. изм. выгружено')
 
     class Meta:
         model = Race
