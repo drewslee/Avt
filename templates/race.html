@@ -25,7 +25,6 @@
 					<button id="way_list" type="submit" class="btn btn-info btn-sm">Путевой лист</button>
 				</div>
                 <table id="race_table" data-toolbar="#toolbar" data-id-field="id" data-filter-show-clear="true"
-                       data-page-list="[20, 50, 100]"
                        data-toggle="table" data-search="true" data-filter-control="true"
                        data-click-to-select="true" data-side-pagination="client"
                        data-classes="table table-hover table-small-font table-condensed table-no-bordered">
@@ -43,9 +42,12 @@
                         <th data-field="product" data-filter-control="select">Груз</th>
                         <th data-field="s_milage" data-visible="false">Начало трека</th>
                         <th data-field="e_milage" data-visible="false">Конец трека</th>
+                        <th data-field="gas_start" data-visible="false">Горючего на начало</th>
+                        <th data-field="gas_end" data-visible="false">Горючего на конец</th>
+                        <th data-field="gas_given" data-visible="false">Горючего выдано</th>
                         <th data-field="loaded">Загружено</th>
                         <th data-field="unloaded">Выгружено</th>
-												<th data-field="state">Состояние</th>
+						<th data-field="state">Состояние</th>
                         <th data-field="actions">Действия</th>
 					</tr>
 					</thead>
@@ -84,6 +86,15 @@
 							<td>
 								{{ q.e_milage }}
 							</td>
+                            <td>
+                                {{ q.gas_start}}
+                            </td>
+                            <td>
+                                {{ q.gas_end}}
+                            </td>
+                            <td>
+                                {{ q.gas_given }}
+                            </td>
 							<td>
 								{{ q.weight_load }}{{ q.unit_load.short_name }}
 							</td>

@@ -175,6 +175,7 @@ $(function () {
         showColumns: true,
         pagination: true,
         showPaginationSwitch: true,
+        pageList:[10, 20, 50, 100],
         cookie: true,
         cookieIdTable: 'cookId',
         onColumnSearch: function ()
