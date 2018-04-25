@@ -95,9 +95,8 @@
 
             });
             var id_car = document.getElementById('id_car');
-            var id_supplier = document.getElementById('id_supplier');
             id_car.addEventListener("change", function () {
-                var data = id_supplier.value;
+                var data = id_car.value;
                 $.ajax(
                     {
                         type: "GET",
