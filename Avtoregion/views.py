@@ -484,17 +484,16 @@ class CustomerDelete(PermissionRequiredMixin, DeleteView):
 
 
 class Accumulate(JSONRequestResponseMixin, View):
-    q_sup = Supplier.objects.all()
-    q_prod = Product.objects.all()
-    q_cus = Customer.objects.all()
-    q_med = Mediator.objects.all()
-
     def dispatch_method(self, value):
         method_name = 'get_query_' + str(value)
         return getattr(self, method_name)
 
     def get(self, *args, **kwargs):
-        context = {'q_sup': self.q_sup, 'q_cus': self.q_cus, 'q_med': self.q_med, 'q_prod': self.q_prod,
+        q_sup = Supplier.objects.all()
+        q_prod = Product.objects.all()
+        q_cus = Customer.objects.all()
+        q_med = Mediator.objects.all()
+        context = {'q_sup': q_sup, 'q_cus': q_cus, 'q_med': q_med, 'q_prod': q_prod,
                    'race_type': (Race.TYPE[0][0], Race.TYPE[1][0]),
                    'state': (Race.CREATE, Race.LOAD, Race.UNLOAD, Race.FINISH, Race.END, Race.ACCIDENT)}
         return render(request=self.request, template_name='Avtoregion/account.html', context=context)

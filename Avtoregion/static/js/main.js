@@ -37,18 +37,64 @@ function sameOrigin(url) {
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
-/*    $('#race_table').bootstrapTable({
-        showColumns: true,
-        pagination: true,
-        showPaginationSwitch: true,
-        filterControl: true,
-        columns: [
-            {field: 'Машина' ,
-                filterControl: 'select',
-                filterStrictSearch: false,
-                filterControlPlaceholder: ''}, {field:'Водитель', filterControl: 'select', filterStrictSearch: true}]
+function getfile()
+{
+    var csrftoken = getCookie('csrftoken');
+    var url = $('#excel').attr('data-url');
 
-    });*/
+    // Data to post
+    function html2json()
+    {
+        var json = '{';
+        var otArr = [];
+        var tbl2 = $('#tab_body tr').each(function (i)
+        {
+            x = $(this).children();
+            var itArr = [];
+            x.each(function ()
+            {
+                itArr.push('"' + $(this).text() + '"');
+            });
+            otArr.push('"' + i + '": [' + itArr.join(',') + ']');
+        });
+        otArr.push('"org": "' + $('#organization').text().replace(/"/g, "\\\"") + '"');
+        otArr.push('"start_date": "' + $('#start_date').text() + '"');
+        otArr.push('"end_date": "' + $('#end_date').text() + '"');
+        json += otArr.join(",") + '}';
+
+        return json;
+    }
+
+    var $data = html2json();
+
+    // Use XMLHttpRequest instead of Jquery $ajax
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function ()
+    {
+        var a;
+        if (xhttp.readyState === 4 && xhttp.status === 200)
+        {
+            // Trick for making downloadable link
+            a = document.createElement('a');
+            a.href = window.URL.createObjectURL(xhttp.response);
+            // Give filename you wish to download
+            a.download = "file.xlsx";
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+        }
+    };
+    // Post data to URL which handles post request
+    xhttp.open("POST", url);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    if (!csrfSafeMethod("POST") && sameOrigin(url))
+    {
+        xhttp.setRequestHeader("X-CSRFToken", csrftoken);
+    }
+    // You should set responseType as blob for binary responses
+    xhttp.responseType = 'blob';
+    xhttp.send(JSON.stringify($data));
+}
 
 $(function () {
 
@@ -129,7 +175,12 @@ $(function () {
         showColumns: true,
         pagination: true,
         showPaginationSwitch: true,
-        multipleSearch: true
+        cookie: true,
+        cookieIdTable: 'cookId',
+        onColumnSearch: function ()
+        {
+           $('#race_table').bootstrapTable("resetSearch");
+        }
     });
     $('.dropdown-toggle').dropdown();
 

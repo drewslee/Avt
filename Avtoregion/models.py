@@ -226,19 +226,33 @@ class Race(models.Model):
         return track
 
     @property
+    def get_load_place(self):
+        if not self.place_load:
+            return self.supplier.address
+        else:
+            return self.place_load.address
+
+    @property
+    def get_unload_place(self):
+        if not self.shipment:
+            return self.customer.address
+        else:
+            return self.shipment.name
+
+    @property
     def get_shipper(self):
         const = Constants.objects.get(pk=1)
         # реализация без посредника
         if self.car.mediator is None and (self.type_ship == self.TYPE[0][0]):
             return const.organization_unit_full + " " + const.address
-        #реализация с посредником
+        # реализация с посредником
         if self.car.mediator is not None and (self.type_ship == self.TYPE[0][0]):
             return const.organization_unit_full + " " + const.address
-        #услуги без посредника, заказчик поставщик
+        # услуги без посредника, заказчик поставщик
         if self.car.mediator is None and (self.type_ship == self.TYPE[1][0]) and (
-                self.order_type_race == self.ORDER[0][0]):
+                    self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
-        #услуги с посредником, заказчик поставщик
+        # услуги с посредником, заказчик поставщик
         if self.car.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
                 (self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
@@ -253,7 +267,7 @@ class Race(models.Model):
 
     @property
     def get_consignee(self):
-            return self.customer.name + ", " + self.customer.address
+        return self.customer.name + ", " + self.customer.address
 
     @property
     def get_car(self):
