@@ -115,6 +115,14 @@ $(function () {
     $(document).on('click', '.delete-confirmation', function () {
         return confirm('Вы уверены, что хотите удалить?');
     });
+    $('#id_race_date').on('apply.daterangepicker', function (ev, picker)
+    {
+        $('#id_arrival_time').focus().select();
+    });
+    $('#id_arrival_time').on('apply.daterangepicker', function (ev, picker)
+    {
+        $('#id_car').focus().select();
+    });
 
 
     $('#race_table').bootstrapTable({
@@ -243,8 +251,6 @@ $(function () {
             })
     });
 
-    $('form:first *:input[type!=hidden]:first').focus();
-
     $(document).keydown(function(e) {
 
   // Set self as the current item in focus
@@ -266,7 +272,7 @@ $(function () {
       } // Otherwise follow the link/button as by design
 
       // Focus on the next item (either previous or next depending on shift)
-      focusable.eq(focusable.index(self) + (e.shiftKey ? -1 : 1)).focus();
+      focusable.eq(focusable.index(self) + (e.shiftKey ? -1 : 1)).focus().select();
 
       return false;
     }
