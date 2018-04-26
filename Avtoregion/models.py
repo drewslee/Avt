@@ -17,6 +17,7 @@ class Supplier(models.Model):
     name = models.CharField(max_length=256, verbose_name='Поставщик')
     address = models.CharField(max_length=256, blank=True)
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.name
@@ -32,6 +33,7 @@ class Supplier(models.Model):
 class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
     name = models.CharField(max_length=20, verbose_name='Название')
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.name
@@ -44,6 +46,7 @@ class LoadingPlace(models.Model):
     id_load_place = models.AutoField(primary_key=True)
     supplier = models.ForeignKey('Supplier')
     address = models.CharField(max_length=255, verbose_name='Место загрузки')
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.address
@@ -53,6 +56,7 @@ class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
     customer = models.ForeignKey('Customer')
     name = models.CharField(max_length=100, verbose_name='Место разгрузки')
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.name
@@ -66,6 +70,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=256, verbose_name='Клиент')
     address = models.CharField(max_length=256, blank=True)
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.name
@@ -79,6 +84,7 @@ class Mediator(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название', blank=True)
     address = models.CharField(max_length=256, verbose_name='Посредник')
     inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.name
@@ -102,6 +108,7 @@ class Driver(models.Model):
     driver_card = models.CharField(max_length=50, blank=True)
     personnel_number = models.DecimalField(decimal_places=0, max_digits=10, blank=True, default=0)
     date_med = models.DateField(blank=True)
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.name
@@ -115,6 +122,7 @@ class Trailer(models.Model):
     number = models.CharField(max_length=10)
     brand_trailer = models.CharField(max_length=10, default='85300F')
     garage_number_trailer = models.DecimalField(max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.number
@@ -131,6 +139,7 @@ class Car(models.Model):
     garage_number = models.DecimalField(max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
     mediator = models.ForeignKey(Mediator, blank=True, null=True)
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.number
@@ -142,6 +151,7 @@ class Car(models.Model):
 class Units(models.Model):
     name = models.CharField(max_length=10)
     short_name = models.CharField(max_length=3, blank=True)
+    has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return '%s' % self.short_name
