@@ -18,8 +18,8 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin, View
-from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin, View, BaseDeleteView
+from django.views.generic.list import ListView, MultipleObjectMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from django.contrib import messages
@@ -57,6 +57,25 @@ from .models import LoadingPlace
 
 class LoginViewMix(LoginView):
     form_class = CustomAuthForm
+
+
+class DeleteViewMixin(BaseDeleteView):
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.has_deleted = True
+        print(self.object.has_deleted)
+        return HttpResponseRedirect(success_url)
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.request.POST.get('pk'))
+
+
+class AliveListViewMixin(MultipleObjectMixin):
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(has_deleted=False)
+        print(queryset)
+        return queryset
 
 
 class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
@@ -138,17 +157,14 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
             return super(UpdateView, self).get_success_url()
 
 
-class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
+class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Race
     success_url = '/Race'
     success_message = "Рейс удалён"
     permission_required = ('Avtoregion.delete_race',)
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
-
-class CarViewList(LoginRequiredMixin, ListView):
+class CarViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Car
     template_name = 'car.html'
     context_object_name = 'qCar'
@@ -159,7 +175,7 @@ class CarViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class TrailerViewList(LoginRequiredMixin, ListView):
+class TrailerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Trailer
     template_name = 'trailer.html'
     context_object_name = 'qTrailer'
@@ -170,7 +186,7 @@ class TrailerViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class UnitsViewList(LoginRequiredMixin, ListView):
+class UnitsViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Units
     template_name = 'units.html'
     context_object_name = 'qUnits'
@@ -181,7 +197,7 @@ class UnitsViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class DriverViewList(LoginRequiredMixin, ListView):
+class DriverViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Driver
     template_name = 'driver.html'
     context_object_name = 'qDriver'
@@ -192,7 +208,7 @@ class DriverViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class ProductViewList(LoginRequiredMixin, ListView):
+class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Product
     template_name = 'product.html'
     context_object_name = 'qProduct'
@@ -203,7 +219,7 @@ class ProductViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class CustomerViewList(LoginRequiredMixin, ListView):
+class CustomerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Customer
     template_name = 'customer.html'
     context_object_name = 'qCustomer'
@@ -214,7 +230,7 @@ class CustomerViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class SupplierViewList(LoginRequiredMixin, ListView):
+class SupplierViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Supplier
     template_name = 'supplier.html'
     context_object_name = 'qSupplier'
@@ -225,7 +241,7 @@ class SupplierViewList(LoginRequiredMixin, ListView):
         return context
 
 
-class ShipmentViewList(LoginRequiredMixin, View):
+class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
     model = Shipment
     template_name = 'shipment.html'
 
@@ -238,7 +254,7 @@ class ShipmentViewList(LoginRequiredMixin, View):
         return render(self.request, self.template_name, context)
 
 
-class LoadPlaceViewList(LoginRequiredMixin, View):
+class LoadPlaceViewList(LoginRequiredMixin, AliveListViewMixin, View):
     model = LoadingPlace
     template_name = 'loadplace.html'
 
@@ -251,7 +267,7 @@ class LoadPlaceViewList(LoginRequiredMixin, View):
         return render(self.request, self.template_name, context)
 
 
-class MediatorViewList(LoginRequiredMixin, ListView):
+class MediatorViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Mediator
     template_name = 'mediator.html'
     context_object_name = 'qMediator'
@@ -290,13 +306,10 @@ class DriverUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_driver',)
 
 
-class DriverDelete(PermissionRequiredMixin, DeleteView):
+class DriverDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Driver
     success_url = reverse_lazy('DriverList')
     permission_required = ('Avtoregion.delete_driver',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class SupplierAdd(PermissionRequiredMixin, CreateView):
@@ -313,13 +326,10 @@ class SupplierUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_supplier',)
 
 
-class SupplierDelete(PermissionRequiredMixin, DeleteView):
+class SupplierDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Supplier
     success_url = reverse_lazy('SupplierList')
     permission_required = ('Avtoregion.delete_supplier',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class UnitAdd(PermissionRequiredMixin, CreateView):
@@ -336,13 +346,10 @@ class UnitUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_unit',)
 
 
-class UnitDelete(PermissionRequiredMixin, DeleteView):
+class UnitDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Units
     success_url = reverse_lazy('UnitList')
     permission_required = ('Avtoregion.delete_unit',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CarAdd(PermissionRequiredMixin, CreateView):
@@ -359,13 +366,10 @@ class CarUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_car',)
 
 
-class CarDelete(PermissionRequiredMixin, DeleteView):
+class CarDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Car
     success_url = reverse_lazy('CarList')
     permission_required = ('Avtoregion.delete_car',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class ProductAdd(PermissionRequiredMixin, CreateView):
@@ -382,13 +386,10 @@ class ProductUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_product',)
 
 
-class ProductDelete(PermissionRequiredMixin, DeleteView):
+class ProductDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('ProductList')
     permission_required = ('Avtoregion.delete_product',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class TrailerAdd(PermissionRequiredMixin, CreateView):
@@ -405,13 +406,10 @@ class TrailerUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_trailer',)
 
 
-class TrailerDelete(PermissionRequiredMixin, DeleteView):
+class TrailerDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Trailer
     success_url = reverse_lazy('TrailerList')
     permission_required = ('Avtoregion.delete_trailer',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class ShipmentAdd(PermissionRequiredMixin, CreateView):
@@ -428,13 +426,10 @@ class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_shipment',)
 
 
-class ShipmentDelete(PermissionRequiredMixin, DeleteView):
+class ShipmentDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Shipment
     success_url = reverse_lazy('CustomerList')
     permission_required = ('Avtoregion.delete_shipment',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class MediatorAdd(PermissionRequiredMixin, CreateView):
@@ -451,13 +446,10 @@ class MediatorUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_mediator',)
 
 
-class MediatorDelete(PermissionRequiredMixin, DeleteView):
+class MediatorDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Mediator
     success_url = reverse_lazy('MediatorList')
     permission_required = ('Avtoregion.delete_mediator',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class CustomerAdd(PermissionRequiredMixin, CreateView):
@@ -474,13 +466,10 @@ class CustomerUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_customer',)
 
 
-class CustomerDelete(PermissionRequiredMixin, DeleteView):
+class CustomerDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Customer
     success_url = reverse_lazy('CustomerList')
     permission_required = ('Avtoregion.delete_customer',)
-
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
 class Accumulate(JSONRequestResponseMixin, View):
