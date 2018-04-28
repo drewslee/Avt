@@ -59,23 +59,21 @@ class LoginViewMix(LoginView):
     form_class = CustomAuthForm
 
 
-class DeleteViewMixin(BaseDeleteView):
+class DeleteViewMixin:
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         success_url = self.get_success_url()
         self.object.has_deleted = True
-        print(self.object.has_deleted)
+        self.object.save()
         return HttpResponseRedirect(success_url)
 
     def get_object(self, queryset=None):
         return self.model.objects.get(pk=self.request.POST.get('pk'))
 
 
-class AliveListViewMixin(MultipleObjectMixin):
+class AliveListViewMixin:
     def get_queryset(self):
-        queryset = super().get_queryset().filter(has_deleted=False)
-        print(queryset)
-        return queryset
+        return super().get_queryset().exclude(has_deleted=True)
 
 
 class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
