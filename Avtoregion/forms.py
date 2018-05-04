@@ -124,29 +124,30 @@ class RaceForm(ModelForm):
     arrival_time = DateTimeField(initial=timezone.now,
                                  label='Дата приезда:'
                                  )
-    unit_load = ModelChoiceField(queryset=Units.objects.all(),
+    unit_load = ModelChoiceField(queryset=Units.objects.filter(has_deleted=False),
                                  initial='т.',
                                  label='Ед. изм. загружено')
-    unit_unload = ModelChoiceField(queryset=Units.objects.all(),
+    unit_unload = ModelChoiceField(queryset=Units.objects.filter(has_deleted=False),
                                    initial='т.',
                                    label='Ед. изм. выгружено')
+    supplier = ModelChoiceField(queryset=Supplier.objects.filter(has_deleted=False), label='Поставщик')
+    customer = ModelChoiceField(queryset=Customer.objects.filter(has_deleted=False), label='Клиент')
+    mediator = ModelChoiceField(queryset=Mediator.objects.filter(has_deleted=False), label='Посредник')
+    product = ModelChoiceField(queryset=Product.objects.filter(has_deleted=False), label='Груз')
+    driver = ModelChoiceField(queryset=Driver.objects.filter(has_deleted=False), label='Водитель')
+    car = ModelChoiceField(queryset=Car.objects.filter(has_deleted=False), label='Машина')
 
     class Meta:
         model = Race
         fields = '__all__'
         labels = {
-            'car': 'Машина',
-            'driver': 'Водитель',
             'type_ship': 'Реализация',
             'order_type_race': 'Заказчик',
-            'supplier': 'Поставщик',
             'place_load': 'Место погрузки',
-            'customer': 'Клиент',
             'shipment': 'Место разгрузки',
             'product': 'Груз',
             's_milage': 'Начало трeка',
             'e_milage': 'Конец трeка',
-            'mediator': 'Посредник',
             'weight_unload': 'Разгружено',
             'weight_load': 'Загружено',
             'shoulder': 'Плечо',

@@ -18,14 +18,14 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin, View, BaseDeleteView
-from django.views.generic.list import ListView, MultipleObjectMixin
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin, View
+from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from django.views.decorators.cache import never_cache
-from braces.views import CsrfExemptMixin, JSONRequestResponseMixin
+from braces.views import JSONRequestResponseMixin
 from Avtoregion.templatetags import hyphen_string
 
 from .forms import CarForm
