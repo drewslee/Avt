@@ -132,7 +132,6 @@ class RaceForm(ModelForm):
                                    label='Ед. изм. выгружено')
     supplier = ModelChoiceField(queryset=Supplier.objects.filter(has_deleted=False), label='Поставщик')
     customer = ModelChoiceField(queryset=Customer.objects.filter(has_deleted=False), label='Клиент')
-    mediator = ModelChoiceField(queryset=Mediator.objects.filter(has_deleted=False), label='Посредник')
     product = ModelChoiceField(queryset=Product.objects.filter(has_deleted=False), label='Груз')
     driver = ModelChoiceField(queryset=Driver.objects.filter(has_deleted=False), label='Водитель')
     car = ModelChoiceField(queryset=Car.objects.filter(has_deleted=False), label='Машина')
