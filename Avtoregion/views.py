@@ -75,6 +75,11 @@ class AliveListViewMixin:
     def get_queryset(self):
         return super().get_queryset().exclude(has_deleted=True)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = exec(self.model.__name__ + 'Form()')
+        return context
+
 
 class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
     model = Constants
@@ -170,21 +175,11 @@ class CarViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     template_name = 'car.html'
     context_object_name = 'qCar'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = CarForm()
-        return context
-
 
 class TrailerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Trailer
     template_name = 'trailer.html'
     context_object_name = 'qTrailer'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = TrailerForm()
-        return context
 
 
 class UnitsViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
@@ -192,21 +187,11 @@ class UnitsViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     template_name = 'units.html'
     context_object_name = 'qUnits'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = UnitsForm()
-        return context
-
 
 class DriverViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Driver
     template_name = 'driver.html'
     context_object_name = 'qDriver'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = DriverForm()
-        return context
 
 
 class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
@@ -214,32 +199,17 @@ class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     template_name = 'product.html'
     context_object_name = 'qProduct'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = ProductForm()
-        return context
-
 
 class CustomerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Customer
     template_name = 'customer.html'
     context_object_name = 'qCustomer'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = CustomerForm()
-        return context
-
 
 class SupplierViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Supplier
     template_name = 'supplier.html'
     context_object_name = 'qSupplier'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = SupplierForm()
-        return context
 
 
 class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
@@ -272,11 +242,6 @@ class MediatorViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Mediator
     template_name = 'mediator.html'
     context_object_name = 'qMediator'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = MediatorForm()
-        return context
 
 
 class LoadAdd(PermissionRequiredMixin, CreateView):
