@@ -8,3 +8,8 @@ register = template.Library()
 @stringfilter
 def hyphen(value):
     return value.replace(' ', '-')
+
+
+@register.filter(name='zip')
+def zip_lists(a, b):
+    return zip(a, b)

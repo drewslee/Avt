@@ -1,4 +1,6 @@
 {% load staticfiles %}
-{% for url in urls %}
-	<a href="{% static url %}" class="list-group-item">{{ name }} {{ forloop.counter }}</a>
+{% load custom_filters %}
+<a href="{% static zipfilename %}" class="btn btn-success">Скачать всё</a>
+{% for url, filename in urls|zip:filenames %}
+	<a href="{% static url %}" class="list-group-item">{{ name }} {{ forloop.counter }} {{ filename }}</a>
 {% endfor %}

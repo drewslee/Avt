@@ -5,6 +5,8 @@ import xlsxwriter
 import json
 import shutil
 import tempfile
+import uuid
+from zipfile import ZipFile
 from operator import __or__ as OR
 from functools import reduce
 from datetime import timedelta
@@ -18,6 +20,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.shortcuts import render
 from django.utils import timezone
+from django.contrib.staticfiles import finders
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormMixin, View
 from django.views.generic.list import ListView
 from django.core.exceptions import ObjectDoesNotExist
@@ -26,7 +29,7 @@ from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from django.views.decorators.cache import never_cache
 from braces.views import JSONRequestResponseMixin
-from Avtoregion.templatetags import hyphen_string
+from Avtoregion.templatetags import custom_filters
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -631,7 +634,7 @@ def ooxml_render(race_id, prefname, template_name, tmp_name):
         shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', tmpf_name, '.')
     os.rename(os.path.join(static_root, 'temp', filename + '.zip'),
               os.path.join(static_root, 'temp', filename + '.xlsx'))
-    return '/'.join(['temp', filename + '.xlsx'])
+    return '/'.join(['temp', filename + '.xlsx']), filename + '.xlsx'
 
 
 def datestr_to_dateaware(date):
@@ -701,12 +704,23 @@ class PackingView(JSONRequestResponseMixin, View):
     require_json = True
 
     def post(self, request, *args, **kwargs):
-        urls = []
+        files = {'urls': [], 'filenames': [], 'paths': []}
         ids = self.request_json.get("id_list")
         if ids:
             for i in ids:
-                urls.append(ooxml_render(i, 'packing', 'sharedStrings2.xml', 'packing'))
-        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls, 'name': 'Товарная накладная'})
+                url, filename = ooxml_render(i, 'packing', 'sharedStrings2.xml', 'packing')
+                files['urls'].append(url)
+                files['filenames'].append(filename)
+                files['paths'].append(finders.find(url))
+        uuidname = str(uuid.uuid4()) + '.zip'
+        urlzipfile = '/'.join(['temp', uuidname])
+        zipfilename = os.path.join(djangoSettings.STATIC_ROOT, 'temp', uuidname)
+
+        with ZipFile(zipfilename, 'w') as myzip:
+            for path in files['paths']:
+                myzip.write(path, os.path.basename(path))
+        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': files['urls'],
+                             'filenames': files['filenames'], 'zipfilename': urlzipfile, 'name': 'Товарная накладная'})
         return self.render_json_response({'data': templated})
 
 
@@ -714,10 +728,21 @@ class WayView(JSONRequestResponseMixin, View):
     require_json = True
 
     def post(self, request, *args, **kwargs):
-        urls = []
+        files = {'urls': [], 'filenames': [], 'paths': []}
         ids = self.request_json.get("id_list")
         if ids:
             for i in ids:
-                urls.append(ooxml_render(i, 'way', 'sharedStrings.xml', 'way'))
-        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': urls, 'name': 'Путевой лист'})
+                url, filename = ooxml_render(i, 'way', 'sharedStrings.xml', 'way')
+                files['urls'].append(url)
+                files['filenames'].append(filename)
+                files['paths'].append(finders.find(url))
+        uuidname = str(uuid.uuid4()) + '.zip'
+        urlzipfile = '/'.join(['temp', uuidname])
+        zipfilename = os.path.join(djangoSettings.STATIC_ROOT, 'temp', uuidname)
+        with ZipFile(zipfilename, 'w') as myzip:
+            for path in files['paths']:
+                myzip.write(path, os.path.basename(path))
+        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': files['urls'],
+                            'filenames': files['filenames'], 'zipfilename': urlzipfile, "name": 'Путевой лист'})
         return self.render_json_response({'data': templated})
+
