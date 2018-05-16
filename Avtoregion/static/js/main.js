@@ -173,6 +173,7 @@ $(function () {
 
     $('#race_table').bootstrapTable({
         showColumns: true,
+        locale: 'ru-RU',
         pagination: true,
         showPaginationSwitch: true,
         pageList:[10, 20, 50, 100],
@@ -181,6 +182,10 @@ $(function () {
         onColumnSearch: function ()
         {
            $('#race_table').bootstrapTable("resetSearch");
+        },
+        formatLoadingMessage: function ()
+        {
+            return '<span class="glyphicon glyphicon glyphicon-repeat glyphicon-animate"></span>'
         }
     });
     $('.dropdown-toggle').dropdown();
