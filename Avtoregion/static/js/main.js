@@ -210,6 +210,38 @@ $(function () {
         $('#ModalUpdate').modal('show');
     });
 
+    $(document).on("click", '#delete_race', function (event) {
+        event.preventDefault();
+        var rows = document.getElementsByClassName('selected'),
+            list = [],
+            url = $('#delete_race').attr('data-url');
+        for (var i = 0; i < rows.length; ++i) {
+            list.push(rows[i].id);
+        }
+        $.ajax(
+            {
+                url: url,
+                method: 'POST',
+                traditional: true,
+                data: JSON.stringify({"id_list": list}),
+                dataType: 'json',
+                success: function (resp) {
+                    if (resp['data'] === 'success')
+                    {
+                        $('#id_modal_message').html('<p>Успешно удалено!</p>')
+                        $('#ModalMessage').modal('show');
+                    }
+                    else
+                    {
+                        $('#id_modal_message').html('<p>У вас нет прав!</p>')
+                    }
+                },
+                complete: function (resp) {
+                    location.reload();
+                }
+            })
+    });
+
     $(document).on("submit", '#update_state', function (event) {
         event.preventDefault();
         var rows = document.getElementsByClassName('selected'),
