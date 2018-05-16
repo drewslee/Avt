@@ -163,14 +163,20 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
             return super(UpdateView, self).get_success_url()
 
 
-class RaceDelete(SuccessMessageMixin, PermissionRequiredMixin, DeleteView):
+class RaceDelete(PermissionRequiredMixin, JSONRequestResponseMixin, View):
     model = Race
-    success_url = '/Race'
-    success_message = "Рейс удалён"
     permission_required = ('Avtoregion.delete_race',)
 
-    def get_object(self, queryset=None):
-        return self.model.objects.get(pk=self.request.POST.get('pk'))
+    def post(self, request, *args, **kwargs):
+        ids = self.request_json.get('id_list')
+        if ids:
+            for id in ids:
+                queryset = self.model.objects.filter(pk=id)
+                queryset.get().delete()
+        return self.render_json_response({'data': 'success'})
+
+    def handle_no_permission(self):
+        return self.render_json_response({'data': 'denied'})
 
 
 class CarViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
