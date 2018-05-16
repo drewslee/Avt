@@ -96,6 +96,23 @@ function getfile()
     xhttp.send(JSON.stringify($data));
 }
 
+function CellStyle(value, row, field, index)
+{
+   if (value.trim() === "Выгружен")
+   {
+      return {
+          css: {"color": "blue"}
+      }
+   }
+   if (value.trim() === "Создан") {
+       return {
+           css: {"color": "green"}
+       }
+   }
+   return value
+
+}
+
 $(function () {
 
 
@@ -169,7 +186,6 @@ $(function () {
     {
         $('#id_car').focus().select();
     });
-
 
     $('#race_table').bootstrapTable({
         showColumns: true,
