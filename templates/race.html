@@ -20,13 +20,16 @@
 		{% if qRace %}
 			<div class="table-responsive">
 				<div id="toolbar">
-					<button id="state" class="btn btn-info btn-sm">Обновить статус</button>
-					<button id="packing_list" type="submit" class="btn btn-info btn-sm">Товарная накладная</button>
-					<button id="way_list" type="submit" class="btn btn-info btn-sm">Путевой лист</button>
+					<div class="btn-group">
+						<button id="state" class="btn btn-default btn-group" title="Обновить статус"><i class="glyphicon glyphicon-bookmark"></i></button>
+						<button id="packing_list" type="submit" class="btn btn-default btn-group" title="Товарная накладная"><i class="glyphicon glyphicon-list-alt"></i></button>
+						<button id="way_list" type="submit" class="btn btn-default btn-group" title="Путевой лист"><i class="glyphicon glyphicon-road"></i></button>
+					</div>
 				</div>
                 <table id="race_table" data-toolbar="#toolbar" data-id-field="id" data-filter-show-clear="true"
-                       data-toggle="table" data-search="true" data-filter-control="true"
-                       data-click-to-select="true" data-side-pagination="client"
+                       data-toggle="table" data-search="true" data-filter-control="true" data-buttons-align="right"
+                       data-click-to-select="true" data-side-pagination="client" data-search-align="right"
+                       data-show-toggle="true"
                        data-classes="table table-hover table-small-font table-condensed table-no-bordered">
 					<thead class="small">
 					<tr>
