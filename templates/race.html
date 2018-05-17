@@ -23,8 +23,8 @@
 					<div class="btn-group">
 						<a id="add_race" type="button" href="{% url 'RaceCreate' %}" class="btn btn-default btn-group"
 						   title="Добавить рейс"><i class="glyphicon glyphicon-plus-sign"></i></a>
-						<button id="change_race" type="submit" class="btn btn-default btn-group" title="Изменить рейс"><i
-								class="glyphicon glyphicon-edit"></i></button>
+						<a id="change_race" type="button" class="btn btn-default btn-group" title="Изменить рейс"><i
+								class="glyphicon glyphicon-edit"></i></a>
 						<button id="delete_race" data-url="{% url 'RaceDelete' %}" type="button" class="btn btn-default btn-group"
 						        title="Удалить рейс"><i class="glyphicon glyphicon-floppy-remove"></i></button>
 						<button id="update_state" data-url="{% url 'RaceUpdateAjax' %}" class="btn btn-default btn-group"
