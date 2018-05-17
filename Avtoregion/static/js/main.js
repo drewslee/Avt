@@ -224,7 +224,7 @@ $(function () {
     {
        location.reload();
     });
-
+    
     $(document).on("click", '#delete_race_ok', function (event) {
         $('#delete_race_ok')[0].disabled = true;
         event.preventDefault();
