@@ -78,10 +78,11 @@ class AliveListViewMixin:
     def get_queryset(self):
         return super().get_queryset().exclude(has_deleted=True)
 
-   #def get_context_data(self, object_list=None, **kwargs):
-   #    kwargs = super().get_context_data(**kwargs)
-   #    kwargs['form'] = exec(str(self.model.__name__) + 'Form()')
-   #    return kwargs
+
+# def get_context_data(self, object_list=None, **kwargs):
+#    kwargs = super().get_context_data(**kwargs)
+#    kwargs['form'] = exec(str(self.model.__name__) + 'Form()')
+#    return kwargs
 
 
 class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
@@ -508,10 +509,10 @@ class Accumulate(JSONRequestResponseMixin, View):
         q_resp, q_weight, type_prod = {}, {}, ""
 
         ctx = {
-               'supplier': self.request_json.get('supplier'),
-               'customer': self.request_json.get('customer'),
-               'mediator': self.request_json.get('mediator'),
-               }
+            'supplier': self.request_json.get('supplier'),
+            'customer': self.request_json.get('customer'),
+            'mediator': self.request_json.get('mediator'),
+        }
 
         for key, value in ctx.items():
             if value is not None:
@@ -637,9 +638,9 @@ def save_excel(request):
     # Sheet header, first row
     ws.merge_range('A1:G2',
                    'РЕЕСТР ПЕРЕВОЗОК {} - {} \n за период с {} по {}'.format('ООО \"Авторегион\"',
-                                                                                                 org,
-                                                                                                 start_date,
-                                                                                                 end_date),
+                                                                             org,
+                                                                             start_date,
+                                                                             end_date),
                    format)
     col = 0
     for title in ['№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.']:
@@ -661,7 +662,6 @@ def save_excel(request):
         ws.merge_range('A{}:D{}'.format(row + 1, row + 1), 'ИТОГО:', format)
         ws.write_formula(row, 4, '=SUM(E5:E{})'.format(row), format)
         ws.write_string(row + 2, 0, 'Исполнительный директор ООО "Авторегион"     ___________/Денисов А.Н./')
-
 
     return response
 
@@ -695,8 +695,8 @@ def ajax_track(req):
     if req.is_ajax():
         data = json.dumps({'gas_start': 0, 's_milage': 0})
         if req.GET.get('id').strip():
-                rce = Race.objects.filter(car_id=int(req.GET.get('id'))).latest(field_name='id_race')
-                data = json.dumps({'gas_start': float(rce.gas_end), 's_milage': float(rce.e_milage)})
+            rce = Race.objects.filter(car_id=int(req.GET.get('id'))).latest(field_name='id_race')
+            data = json.dumps({'gas_start': float(rce.gas_end), 's_milage': float(rce.e_milage)})
         return HttpResponse(data, content_type='application/json')
 
 
@@ -704,8 +704,8 @@ def ajax_sup(req):
     if req.is_ajax():
         data = {}
         if req.GET.get('id').strip():
-                sup = list(LoadingPlace.objects.filter(supplier=int(req.GET.get('id'))).values())
-                data = json.dumps(sup)
+            sup = list(LoadingPlace.objects.filter(supplier=int(req.GET.get('id'))).values())
+            data = json.dumps(sup)
         return HttpResponse(data, content_type='application/json')
 
 
@@ -713,37 +713,25 @@ def get_unload_place(req):
     if req.is_ajax():
         data = {}
         if req.GET.get('id').strip():
-                cus = list(Shipment.objects.filter(customer=int(req.GET.get('id'))).values())
-                data = json.dumps(cus)
+            cus = list(Shipment.objects.filter(customer=int(req.GET.get('id'))).values())
+            data = json.dumps(cus)
         return HttpResponse(data, content_type='application/json')
 
 
-class AjaxUpdateState(View):
+class AjaxUpdateState(JSONRequestResponseMixin, View):
+    require_json = True
     model = Race
 
-    def post(self, *args, **kwargs):
-        if self.request.is_ajax():
-            json_data = json.loads(self.request.body.decode('utf-8'))
-            try:
-                data = json_data['data'][0]
-                if data['id_list']:
-                    try:
-                        for id in data['id_list']:
-                            self.model.objects.filter(id_race=int(id)).update(state=data['state'])
-                        messages.add_message(self.request, messages.SUCCESS, 'Состояние обновленo.')
-                        data = json.dumps({'success': True})
-                        return HttpResponse(content=data, content_type='application/json')
-                    except self.model.DoesNotExist:
-                        messages.add_message(self.request, messages.WARNING, 'Не найдены объекты рейсов в базе данных')
-                        data = json.dumps({'success': False})
-                        return HttpResponse(content=data, content_type='application/json')
-                else:
-                    messages.add_message(self.request, messages.WARNING, 'Не выбраны рейсы для обновления статуса.')
-                    data = json.dumps({'success': False})
-                    return HttpResponse(content=data, content_type='application/json')
-            except KeyError:
-                messages.add_message(self.request, messages.ERROR, 'Проблемы сервера, обратитесь к администратору')
-                HttpResponseServerError('Malformed data!')
+    def post(self, request, *args, **kwargs):
+        ids = self.request_json.get('id_list')
+        print(ids)
+        state = self.request_json.get('state')
+        print(state)
+        if ids:
+            for id in ids:
+                self.model.objects.filter(id_race=int(id)).update(state=state)
+            messages.add_message(self.request, messages.SUCCESS, 'Состояние обновленo.')
+        return self.render_json_response({'data': 'success'})
 
 
 class PackingView(JSONRequestResponseMixin, View):
@@ -766,7 +754,10 @@ class PackingView(JSONRequestResponseMixin, View):
             for path in files['paths']:
                 myzip.write(path, os.path.basename(path))
         templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': files['urls'],
-                             'filenames': files['filenames'], 'zipfilename': urlzipfile, 'name': 'Товарная накладная'})
+                                                                                           'filenames': files[
+                                                                                               'filenames'],
+                                                                                           'zipfilename': urlzipfile,
+                                                                                           'name': 'Товарная накладная'})
         return self.render_json_response({'data': templated})
 
 
@@ -789,6 +780,8 @@ class WayView(JSONRequestResponseMixin, View):
             for path in files['paths']:
                 myzip.write(path, os.path.basename(path))
         templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': files['urls'],
-                            'filenames': files['filenames'], 'zipfilename': urlzipfile, "name": 'Путевой лист'})
+                                                                                           'filenames': files[
+                                                                                               'filenames'],
+                                                                                           'zipfilename': urlzipfile,
+                                                                                           "name": 'Путевой лист'})
         return self.render_json_response({'data': templated})
-

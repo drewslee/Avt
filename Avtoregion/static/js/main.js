@@ -113,6 +113,7 @@ function CellStyle(value, row, field, index)
 
 }
 
+
 $(function () {
 
 
@@ -187,7 +188,9 @@ $(function () {
         $('#id_car').focus().select();
     });
 
-    $('#race_table').bootstrapTable({
+    var $race_table = $('#race_table');
+
+    $race_table.bootstrapTable({
         showColumns: true,
         locale: 'ru-RU',
         pagination: true,
@@ -210,8 +213,22 @@ $(function () {
         $('#ModalUpdate').modal('show');
     });
 
-    $(document).on("click", '#delete_race', function (event) {
+    $(document).on('click', '#delete_race', function ()
+    {
+        $('#id_modal_message').html('<p>Вы уверены?</p>');
+        $('#delete_race_ok')[0].disabled = false;
+        $('#ModalMessage').modal({backdrop:true})
+    });
+
+    $(document).on('hide.bs.modal', '#ModalMessage', function ()
+    {
+       location.reload();
+    });
+
+    $(document).on("click", '#delete_race_ok', function (event) {
+        $('#delete_race_ok')[0].disabled = true;
         event.preventDefault();
+
         var rows = document.getElementsByClassName('selected'),
             list = [],
             url = $('#delete_race').attr('data-url');
@@ -228,23 +245,31 @@ $(function () {
                 success: function (resp) {
                     if (resp['data'] === 'success')
                     {
-                        $('#id_modal_message').html('<p>Успешно удалено!</p>')
-                        $('#ModalMessage').modal('show');
+                        $('#id_modal_message').html('<p>Успешно удалено!</p>');
                     }
                     else
                     {
                         $('#id_modal_message').html('<p>У вас нет прав!</p>')
                     }
-                },
-                complete: function (resp) {
-                    location.reload();
                 }
             })
     });
 
-    $(document).on("submit", '#update_state', function (event) {
+    $(document).on("click", '#update_state', function (event)
+    {
+      $('#update_state_ok')[0].disabled = false;
+      $('#ModalUpdate').modal('show');
+    });
+
+    $(document).on('hide.bs.modal', '#ModalUpdate', function(){
+        location.reload();
+    });
+
+    $(document).on("click", '#update_state_ok', function (event) {
+        $('#update_state_ok')[0].disabled = true;
         event.preventDefault();
-        var rows = document.getElementsByClassName('selected'),
+        var url = $('#update_state').attr('data-url'),
+            rows = document.getElementsByClassName('selected'),
             list = [];
         for (var i = 0; i < rows.length; ++i) {
             list.push(rows[i].id);
@@ -252,16 +277,13 @@ $(function () {
         var state = $('#status_select option:selected').text();
         $.ajax(
             {
-                url: 'Race/update/ajax',
+                url: url,
                 method: 'POST',
                 traditional: true,
-                data: JSON.stringify({data: [{"id_list": list, "state": state}]}),
+                data: JSON.stringify({"id_list": list, "state": state}),
                 dataType: 'json',
-                success: function (resp) {
-                    $('#ModalUpdate').modal('hide');
-                },
-                complete: function (resp) {
-                    location.reload();
+                success: function () {
+                    $('#modal-body-state').html('<p>Всё обновлено!</p>');
                 }
             })
     });
