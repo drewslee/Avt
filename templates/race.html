@@ -23,7 +23,7 @@
 					<div class="btn-group">
 						<a id="add_race" type="button" href="{% url 'RaceCreate' %}" class="btn btn-default btn-group"
 						   title="Добавить рейс"><i class="glyphicon glyphicon-plus-sign"></i></a>
-						<a id="change_race" type="button" class="btn btn-default btn-group" title="Изменить рейс"><i
+						<a id="change_race" type="button" href="" class="btn btn-default btn-group" title="Изменить рейс"><i
 								class="glyphicon glyphicon-edit"></i></a>
 						<button id="delete_race" data-url="{% url 'RaceDelete' %}" type="button" class="btn btn-default btn-group"
 						        title="Удалить рейс"><i class="glyphicon glyphicon-floppy-remove"></i></button>
@@ -211,6 +211,26 @@
 					<div class="modal-footer">
 						<button id="delete_race_ok" type="button" class="btn btn-success">Да</button>
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Нет</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div id="ModalUpdateRace" class="modal fade">
+			<div class="modal-dialog">
+
+				<div class="modal-content">
+
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">Предупреждение</h4>
+					</div>
+
+					<div id="id_modal_update" class="modal-body">
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger" data-dismiss="modal">Ok</button>
 					</div>
 				</div>
 
