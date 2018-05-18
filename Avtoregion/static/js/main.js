@@ -265,6 +265,21 @@ $(function () {
         location.reload();
     });
 
+    $(document).on('click', '#change_race', function (event)
+    {
+        event.preventDefault();
+        var rows = document.getElementsByClassName('selected');
+        if (rows.length > 1) {
+            $('#id_modal_update').html('Выбрано слишком много рейсов, выбирать для редактирования можно только один!');
+            $race_table.bootstrapTable('uncheckAll');
+            $('#ModalUpdateRace').modal('show');
+        }
+        else
+            if (rows.length === 1) {
+            window.location.href = '/Race/update/' + rows[0].id + '/';
+            }
+    });
+
     $(document).on("click", '#update_state_ok', function (event) {
         $('#update_state_ok')[0].disabled = true;
         event.preventDefault();
