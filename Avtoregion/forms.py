@@ -33,7 +33,8 @@ class ConstantForm(ModelForm):
         fields = '__all__'
         labels = {'organization_unit_full': 'Название организации полностью',
                   'organization_unit_small': 'Короткое название организации',
-                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер', 'ogrn': 'ОГРН', 'address': 'Адрес организации'}
+                  'mechanic': 'Механик', 'dispatcher': 'Дистпечер', 'ogrn': 'ОГРН',
+                  'address': 'Адрес организации', 'medic': 'Мед. работник'}
 
 
 class TrailerForm(ModelForm):
@@ -140,6 +141,7 @@ class RaceForm(ModelForm):
         model = Race
         fields = '__all__'
         labels = {
+            'ttn_number': 'Номер ТТН',
             'type_ship': 'Реализация',
             'order_type_race': 'Заказчик',
             'place_load': 'Место погрузки',

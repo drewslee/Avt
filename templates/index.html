@@ -31,10 +31,15 @@
     </script>
 		<script type="text/javascript"
 						src="{% static "js/BootstrapTable/extensions/filter-control/bootstrap-table-filter-control.min.js" %}">
-		</script>
+		</script>"
     <script type="text/javascript"
             src="{% static "js/BootstrapTable/extensions/bootstrap-table-contextmenu/dist/bootstrap-table-contextmenu.min.js" %}">
     </script>
+
+    <script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
+
 </head>
 {% if user.is_anonymous %}
     <body>
