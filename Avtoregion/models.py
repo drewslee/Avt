@@ -8,6 +8,7 @@ class Constants(models.Model):
     organization_unit_small = models.CharField(max_length=50, blank=True)
     address = models.CharField(max_length=256, blank=True)
     mechanic = models.CharField(max_length=50, blank=True)
+    medic = models.CharField(max_length=50, blank=True)
     dispatcher = models.CharField(max_length=50, blank=True)
     ogrn = models.CharField(max_length=13, blank=True)
 
@@ -188,6 +189,7 @@ class Race(models.Model):
     id_race = models.AutoField(primary_key=True)
     race_date = models.DateTimeField(default=timezone.now)
     arrival_time = models.DateTimeField(default=timezone.now)
+    ttn_number = models.CharField(max_length=50, blank=True)
     car = models.ForeignKey(Car)
     driver = models.ForeignKey(Driver)
     type_ship = models.CharField(default=TYPE[0], choices=TYPE, max_length=10)

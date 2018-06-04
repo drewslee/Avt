@@ -2,9 +2,6 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block content %}
-	<script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
     <div class="container-fluid">
         <div class="table-responsive">
             <table id="tab" class="table table-hover table-condensed">
@@ -22,14 +19,18 @@
                 <th>Конец трека</th>
                 <th>Загружено</th>
                 <th>Выгружено</th>
+                <th>Топливо на начало</th>
+                <th>На конец</th>
+                <th>Выдано</th>
+                <th>Потрачено</th>
                 <th>Состояние</th>
                 </thead>
                 <tbody>
                 {% for q in q_resp %}
                     <tr>
-	                      <td>
-		                      {{ forloop.counter }}
-	                      </td>
+	                    <td>
+		                    {{ forloop.counter }}
+	                    </td>
                         <td>
                             {{ q.race_date }}
                         </td>
@@ -49,7 +50,7 @@
                             {{ q.customer }}
                         </td>
                         <td>
-                            {{ q.shipment }}
+                            {{ q.shipment|default_if_none:'Не назначено' }}
                         </td>
                         <td>
                             {{ q.product }}
@@ -65,6 +66,18 @@
                         </td>
                         <td>
                             {{ q.weight_unload }}
+                        </td>
+                        <td>
+                            {{ q.gas_start }}
+                        </td>
+                        <td>
+                            {{ q.gas_end }}
+                        </td>
+                        <td>
+                            {{ q.gas_given }}
+                        </td>
+                        <td>
+                            {{ q.gas_spent }}
                         </td>
                         <td>
                             {{ q.state }}

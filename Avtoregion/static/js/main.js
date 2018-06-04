@@ -98,17 +98,32 @@ function getfile()
 
 function CellStyle(value, row, field, index)
 {
+    if (value.trim() === "Создан") {
+        return {
+            css: {"color": "PaleVioletRed "}
+        }
+    }
+    if (value.trim() === "Загружен") {
+        return {
+            css: {"color": "Teal"}
+        }
+    }
    if (value.trim() === "Выгружен")
    {
       return {
           css: {"color": "blue"}
       }
    }
-   if (value.trim() === "Создан") {
-       return {
-           css: {"color": "green"}
-       }
-   }
+    if (value.trim() === "Закончен") {
+        return {
+            css: {"color": "SpringGreen"}
+        }
+    }
+    if (value.trim() === "Проведён") {
+        return {
+            css: {"color": "SeaGreen"}
+        }
+    }
    return value
 
 }
@@ -134,6 +149,7 @@ $(function () {
 
     $('input[name="daterange"]').daterangepicker({
         "autoApply": true,
+        "parentEl" : 'toolbar',
         "alwaysShowCalendars": true,
         ranges: {
             'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
@@ -195,7 +211,6 @@ $(function () {
         locale: 'ru-RU',
         pagination: true,
         showPaginationSwitch: true,
-        pageList:[10, 20, 50, 100],
         cookie: true,
         cookieIdTable: 'cookId',
         onColumnSearch: function ()
