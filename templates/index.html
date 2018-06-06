@@ -87,8 +87,6 @@
                 <li class="navbar-text">{{ user }}</li>
                 <li><a class="navbar-link" href="{% url 'logout' %}">Выход</a></li>
             </ul>
-            {% block datetime %}
-            {% endblock %}
         </div>
     </nav>
     {% include 'messages.html' %}
