@@ -146,7 +146,6 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     form_class = RaceForm
     template_name = 'Avtoregion/race_form.html'
     success_url = reverse_lazy('RaceCreate')
-    success_message = "Рейс создан успешно"
     permission_required = ('Avtoregion.add_race',)
 
 
