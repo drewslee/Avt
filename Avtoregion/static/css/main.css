@@ -20,6 +20,10 @@
     border-top-left-radius: 10px;
 }
 
+#driver_table th:first-child {
+    border-top-left-radius: 10px;
+}
+
 .table th:last-child {
     border-top-right-radius: 10px;
 }

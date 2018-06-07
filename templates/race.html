@@ -51,8 +51,9 @@
                    data-classes="table table-hover table-small-font table-condensed table-no-bordered">
                 <thead class="small">
                 <tr>
+	                  <th data-field="id" data-visible="false" >ID</th>
                     <th data-field="checkbox" data-checkbox="true"></th>
-                    <th  data-field="number">#</th>
+                    <th data-field="number">#</th>
                     <th data-field="date" data-filter-control="input">Дата</th>
                     <th data-tableexport-value="Машина" data-field="car" data-sortable="true" data-filter-control="select">Машина</th>
                     <th data-tableexport-value="Водитель" data-field="driver" data-sortable="true" data-filter-control="select">Водитель</th>
@@ -73,7 +74,8 @@
                 </thead>
                 <tbody>
                 {% for q in qRace %}
-                    <tr id="{{ q.pk }}">
+                    <tr>
+                        <td>{{ q.pk }}</td>
                         <td></td>
                         <td>{{ forloop.counter }}</td>
                         <td>
