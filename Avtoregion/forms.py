@@ -157,6 +157,7 @@ class RaceForm(ModelForm):
             'gas_given': 'Горючего выдано на рейс',
             'gas_start': 'Горючего остаток на начало рейса',
             'gas_end': 'Горючего остаток на конец рейса',
+            'count': 'Количество рейсов',
         }
 
     def __init__(self, *args, **kwargs):

@@ -211,6 +211,7 @@ class Race(models.Model):
     gas_end = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     gas_given = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     shoulder = models.FloatField(default=0)
+    count = models.DecimalField(default=1, max_digits=5, decimal_places=0)
     create_time = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -232,7 +233,7 @@ class Race(models.Model):
     @property
     def track(self):
         if self.e_milage > self.s_milage:
-            track = self.e_milage - self.s_milage
+            track = (self.e_milage - self.s_milage) * self.count
         else:
             track = 0
         return track
