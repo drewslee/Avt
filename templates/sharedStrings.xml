@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sst xmlns="http://purl.oclc.org/ooxml/spreadsheetml/main" count="255" uniqueCount="194">
+<sst xmlns="http://purl.oclc.org/ooxml/spreadsheetml/main" count="256" uniqueCount="195">
     <si>
         <t>ПУТЕВОЙ ЛИСТ</t>
     </si>
@@ -602,9 +602,6 @@
         <t>18.00</t>
     </si>
     <si>
-        <t>{{ const.medic }}</t>
-    </si>
-    <si>
         <t>{{ race.get_consignee }}</t>
     </si>
     <si>
@@ -618,5 +615,11 @@
     </si>
     <si>
         <t>Мед. работник</t>
+    </si>
+    <si>
+        <t>{{ race.count }}</t>
+    </si>
+    <si>
+        <t>{{ const.medic }}</t>
     </si>
 </sst>
