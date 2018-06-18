@@ -233,7 +233,7 @@ class Race(models.Model):
     @property
     def track(self):
         if self.e_milage > self.s_milage:
-            track = (self.e_milage - self.s_milage) * self.count
+            track = self.e_milage - self.s_milage
         else:
             track = 0
         return track
