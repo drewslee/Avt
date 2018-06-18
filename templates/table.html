@@ -32,6 +32,7 @@
 				<th>Вес</th>
 				<th>Груз</th>
 				<th>Ед. изм.</th>
+				<th>Кол-во рейсов</th>
 				<th>Состояние</th>
 				</thead>
 				<tfoot>
@@ -72,6 +73,7 @@
 							<td>{{ q.product.name }}</td>
 							<td>{{ q.unit_unload.short_name|default:'т.' }}</td>
 						{% endif %}
+							<td>{{ q.count }}</td>
 						  <td>{{ q.state }}</td>
 					</tr>
 				{% endfor %}
