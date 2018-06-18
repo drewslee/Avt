@@ -222,18 +222,6 @@ $(function () {
             return '<span class="glyphicon glyphicon glyphicon-repeat glyphicon-animate"></span>'
         }
     });
-
-    var $driver_table = $('#driver_table');
-
-    $driver_table.bootstrapTable({
-        showColumns: true,
-        locale: 'ru-RU',
-        pagination: true,
-        showPaginationSwitch: true,
-        cookie: true,
-        cookieIdTable: 'DriverCookId',
-        onColumnSearch: function () { $('#driver_table').bootstrapTable("resetSearch")}
-        });
     $('.dropdown-toggle').dropdown();
 
     $(document).on("click", '#state', function () {
@@ -292,38 +280,19 @@ $(function () {
         location.reload();
     });
 
-    $(document).on('editable-shown.bs.table', function (field, row, $el)
-    {
-       var url = $('#driver_table').attr('url')
-    });
-
     $(document).on('click', '#change_race', function (event)
     {
         event.preventDefault();
         var rows = document.getElementsByClassName('selected');
         if (rows.length > 1) {
             $('#id_modal_update').html('Выбрано слишком много рейсов, выбирать для редактирования можно только один!');
-            $('#ModalUpdateRace').modal('show');
             $race_table.bootstrapTable('uncheckAll');
+            $('#ModalUpdateRace').modal('show');
         }
         else
             if (rows.length === 1) {
             window.location.href = '/Race/update/' + rows[0].id + '/';
             }
-    });
-
-    $(document).on('click', '#change_driver', function (event)
-    {
-        event.preventDefault();
-        var rows = document.getElementsByClassName('selected');
-        if (rows.length > 1) {
-            alert('Выберите один объект');
-            $race_table.bootstrapTable('uncheckAll');
-        }
-        else
-        if (rows.length === 1) {
-            window.location.href = '/Driver/update/' + rows[0].id + '/';
-        }
     });
 
     $(document).on("click", '#update_state_ok', function (event) {
