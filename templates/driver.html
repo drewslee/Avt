@@ -1,67 +1,60 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-	<div class="container">
-	{% if qDriver %}
-		<div class="table-responsive">
-			<div id="toolbar">
-					<div class="btn-group">
-						<a id="add_driver" type="button" href="{% url 'DriverAdd' %}"
-							 class="btn btn-default btn-group"
-							 title="Добавить"><i class="glyphicon glyphicon-plus-sign"></i></a>
-						<a id="change_driver" type="button" href="" class="btn btn-default btn-group"
-							 title="Изменить"><i class="glyphicon glyphicon-edit"></i></a>
-						<button id="delete_driver" data-url="{% url 'DriverDelete' %}" type="button"
-										class="btn btn-default btn-group"
-										title="Удалить"><i class="glyphicon glyphicon-floppy-remove"></i></button>
-						</button>
-						<button class="btn btn-default btn-group" title="Экспорт в эксель"
-										onclick="$('#driver_table').tableExport({
-																			type: 'excel',
-																			fileName: 'Таблица',
-																			ignoreColumn: ['checkbox', 'id']});">
-							<i class="glyphicon glyphicon-export"></i>
-						</button>
-					</div>
-			</div>
-		</div>
-			<table id="driver_table" data-toolbar="#toolbar" data-id-field="id" data-filter-show-clear="true"
-			       data-toggle="table" data-search="true" data-editable="true" data-buttons-align="right"
-			       data-click-to-select="true" data-side-pagination="client" data-search-align="right"
-			       data-show-toggle="true"
-			       data-classes="table table-hover table-small-font table-condensed table-no-bordered"
-						 data-editable-emptytext=""
-						 data-editable-url="/Driver/update">
-				<thead>
-				<tr>
-					<th data-field="id" data-visible="false">ID</th>
-					<th data-field="checkbox" data-checkbox="true"></th>
-					<th data-field="name" data-editable="true" data-sortable="true" >ФИО Водителя</th>
-					<th data-field="personnel_number" data-editable="true">Табельный номер</th>
-					<th data-field="driver_card" data-editable="true">Удостоверение</th>
-				</tr>
-				</thead>
-				<tbody>
-				{% for q in qDriver %}
-					<tr>
-						<td>
-							{{ q.pk }}
-						</td>
-						<td>
-						</td>
-						<td>
-							{{ q.name }}
-						</td>
-						<td>
-							{{ q.personnel_number|default_if_none:'Не назначен' }}
-						</td>
-						<td>
-							{{ q.driver_card|default_if_none:'Не назначен' }}
-						</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-	{% endif %}
-</div>
+    <div class="container">
+        {% if qDriver %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <th>ФИО Водителя</th>
+                    <th>Табельный номер</th>
+                    <th>Удостоверение</th>
+                    <th>Действия</th>
+                    </thead>
+                    <tbody>
+                    {% for q in qDriver %}
+                        <tr>
+                            <td>
+                                {{ q.name }}
+                            </td>
+                            <td>
+                                {{ q.personnel_number|default_if_none:'Не назначен' }}
+                            </td>
+                            <td>
+                                {{ q.driver_card|default_if_none:'Не назначен' }}
+                            </td>
+                            <td>
+                                {% if perms.Avtoregion.change_driver %}
+                                <div class="form-group">
+                                    <form action="update{{ q.pk }}" method="get">
+                                        <button class="btn btn-info btn-sm form-control">Изменить</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                                {% if perms.Avtoregion.delete_driver %}
+                                <div class="form-group">
+                                    <form action="{% url 'DriverDelete' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="pk" value="{{ q.pk }}">
+                                        <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if perms.Avtoregion.add_driver %}
+        <form action="add" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% bootstrap_field field %}
+            {% endfor %}
+            <button class="btn btn-success">Добавить</button>
+        </form>
+        {% endif %}
+    </div>
 {% endblock %}
