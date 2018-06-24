@@ -241,7 +241,7 @@ class CustomerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
     def get_context_data(self, object_list=None, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        kwargs['form'] = ProductForm()
+        kwargs['form'] = CustomerForm()
         return kwargs
 
 

@@ -4,16 +4,44 @@
     <div class="container">
         {% if qDriver %}
             <div class="table-responsive">
-                <table class="table table-hover">
+                <div class="clearfix"></div>
+                <div id="toolbar_driver">
+                    <div class="btn-group">
+                        <button id="add_driver" data-toggle="modal" type="button" class="btn btn-default btn-group"
+                                title="Добавить" data-target="#add_driver_modal">
+                            <i class="glyphicon glyphicon-plus-sign"></i>
+                        </button>
+                        <a id="change_driver" href="" class="btn btn-default btn-group"
+                           title="Изменить">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a id="delete_driver" type="button" href=""
+                           class="btn btn-default btn-group"
+                           title="Удалить">
+                            <i class="glyphicon glyphicon-floppy-remove"></i>
+                        </a>
+                        <button class="btn btn-default btn-group" title="Экспорт в эксель"
+                                onclick="$('#driver_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+                            <i class="glyphicon glyphicon-export"></i>
+                        </button>
+                    </div>
+                </div>
+                <table id="driver_table" data-toolbar="#toolbar_driver" data-search="true" data-click-to-select="true"
+                       data-id-field="id" data-single-select="true"
+                       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
                     <thead>
-                    <th>ФИО Водителя</th>
-                    <th>Табельный номер</th>
-                    <th>Удостоверение</th>
-                    <th>Действия</th>
+                        <th data-field="checkbox" data-checkbox="true"></th>
+                        <th data-field="id" data-visible="false">id</th>
+                        <th data-field="name">ФИО Водителя</th>
+                        <th data-field="personnel_number">Табельный номер</th>
+                        <th data-field="driver_card">Удостоверение</th>
                     </thead>
                     <tbody>
                     {% for q in qDriver %}
                         <tr>
+                            <td></td>
+                            <td>{{ q.pk }}</td>
                             <td>
                                 {{ q.name }}
                             </td>
@@ -23,38 +51,31 @@
                             <td>
                                 {{ q.driver_card|default_if_none:'Не назначен' }}
                             </td>
-                            <td>
-                                {% if perms.Avtoregion.change_driver %}
-                                <div class="form-group">
-                                    <form action="update{{ q.pk }}" method="get">
-                                        <button class="btn btn-info btn-sm form-control">Изменить</button>
-                                    </form>
-                                </div>
-                                {% endif %}
-                                {% if perms.Avtoregion.delete_driver %}
-                                <div class="form-group">
-                                    <form action="{% url 'DriverDelete' %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="pk" value="{{ q.pk }}">
-                                        <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
-                                    </form>
-                                </div>
-                                {% endif %}
-                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
         {% endif %}
-        {% if perms.Avtoregion.add_driver %}
-        <form action="add" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                {% bootstrap_field field %}
-            {% endfor %}
-            <button class="btn btn-success">Добавить</button>
-        </form>
-        {% endif %}
     </div>
+<div class="container">
+    <div id="add_driver_modal" class="modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <b><p class="text-center">Добавить водителя</p></b>
+                </div>
+                <div class="modal-body">
+                    <form action="add" method="post" class="modal-form" role="form">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {% bootstrap_field field %}
+                        {% endfor %}
+                        <button class="btn btn-success">Добавить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

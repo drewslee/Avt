@@ -3,20 +3,48 @@
 {% block content %}
     <div class="container">
         <div class="table-responsive">
+            <div class="clearfix"></div>
+            <div id="toolbar_car">
+                <div class="btn-group">
+                    <button id="add_car" data-toggle="modal" type="button" class="btn btn-default btn-group"
+                            title="Добавить" data-target="#add_car_modal">
+                        <i class="glyphicon glyphicon-plus-sign"></i>
+                    </button>
+                    <a id="change_car" href="" class="btn btn-default btn-group"
+                            title="Изменить">
+                        <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                    <a id="delete_car" type="button" href=""
+                            class="btn btn-default btn-group"
+                            title="Удалить">
+                        <i class="glyphicon glyphicon-floppy-remove"></i>
+                    </a>
+                    <button class="btn btn-default btn-group" title="Экспорт в эксель"
+                            onclick="$('#car_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+                        <i class="glyphicon glyphicon-export"></i>
+                    </button>
+                </div>
+            </div>
             {% if qCar %}
-                <table class="table table-hover table-condensed">
+                <table id="car_table" data-toolbar="#toolbar_car" data-search="true" data-click-to-select="true"
+                       data-id-field="id" data-single-select="true"
+                       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
                     <thead>
                     <tr>
-                    <th>Номер</th>
-                    <th>ПТС</th>
-                    <th>Номер прицепа</th>
-                    <th>Посредник</th>
-                    <th>Действия</th>
+                        <th data-field="checkbox" data-checkbox="true"></th>
+                        <th data-field="id" data-visible="false">id</th>
+                        <th data-field="number">Номер</th>
+                        <th data-field="pts">ПТС</th>
+                        <th data-field="trailer">Номер прицепа</th>
+                        <th data-field="mediator">Посредник</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for q in qCar %}
                         <tr>
+                            <td></td>
+                            <td>{{ q.pk }}</td>
                             <td>
                                 {{ q.number }}
                             </td>
@@ -29,38 +57,32 @@
                             <td>
                                 {{ q.mediator|default_if_none:'Нету' }}
                             </td>
-                            <td>
-                                {% if perms.Avtoregion.change_car %}
-                                <div class="form-group">
-                                    <form action="update{{ q.pk }}" method="get">
-                                        <button class="btn btn-info btn-sm form-control">Изменить</button>
-                                    </form>
-                                </div>
-                                {% endif %}
-                                {% if perms.Avtoregion.delete_car %}
-                                <div class="form-group">
-                                    <form action="{% url 'CarDelete' %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="pk" value="{{ q.pk }}">
-                                        <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
-                                    </form>
-                                </div>
-                                {% endif %}
-                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             {% endif %}
         </div>
-        {% if perms.Avtoregion.add_car %}
-        <form action="add" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                {% bootstrap_field field %}
-            {% endfor %}
-            <button class="btn btn-success">Добавить</button>
-        </form>
-        {% endif %}
     </div>
+
+<div class="container">
+    <div id="add_car_modal" class="modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <b><p class="text-center">Добавить машину</p></b>
+                    </div>
+                    <div class="modal-body">
+                        <form action="add" method="post" class="modal-form" role="form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                {% bootstrap_field field %}
+                            {% endfor %}
+                            <button class="btn btn-success">Добавить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
 {% endblock %}

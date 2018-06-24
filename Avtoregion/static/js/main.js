@@ -129,6 +129,7 @@ function CellStyle(value, row, field, index)
 }
 
 
+
 $(function () {
 
 
@@ -205,6 +206,63 @@ $(function () {
     });
 
     var $race_table = $('#race_table');
+    var $car_table = $('#car_table');
+    var $driver_table = $('#driver_table');
+    var $customer_table = $('#customer_table');
+
+    $car_table.bootstrapTable({
+       showColumns: true,
+       locale: 'ru-RU',
+       pagination: true,
+       showPaginationSwitch: true,
+       cookie: true,
+       cookieIdTable: 'CarCookId',
+       onColumnSearch: function ()
+        {
+            $car_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $car_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_car')[0].setAttribute('href', 'update' + row.id);
+        $('#delete_car')[0].setAttribute('href', 'delete' + row.id);
+    });
+
+    $driver_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'DriverCookId',
+        onColumnSearch: function ()
+        {
+            $driver_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $driver_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_driver')[0].setAttribute('href', 'update' + row.id);
+        $('#delete_driver')[0].setAttribute('href', 'delete' + row.id);
+    });
+
+    $customer_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'CustomerCookId',
+        onColumnSearch: function ()
+        {
+            $customer_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $customer_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_customer')[0].setAttribute('href', 'update' + row.id);
+        $('#delete_customer')[0].setAttribute('href', 'delete' + row.id);
+    });
 
     $race_table.bootstrapTable({
         showColumns: true,
@@ -212,7 +270,7 @@ $(function () {
         pagination: true,
         showPaginationSwitch: true,
         cookie: true,
-        cookieIdTable: 'cookId',
+        cookieIdTable: 'RaceCookId',
         onColumnSearch: function ()
         {
            $('#race_table').bootstrapTable("resetSearch");
@@ -222,6 +280,7 @@ $(function () {
             return '<span class="glyphicon glyphicon glyphicon-repeat glyphicon-animate"></span>'
         }
     });
+
     $('.dropdown-toggle').dropdown();
 
     $(document).on("click", '#state', function () {
