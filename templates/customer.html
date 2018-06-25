@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <div class="container">
+    <div class="container-fluid">
             <div class="table-responsive">
                 <div class="clearfix"></div>
                 <div id="toolbar_customer">
@@ -78,4 +78,26 @@
             </div>
         </div>
     </div>
+
+	<div class="container">
+		<div id="add_shipment_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить клиента</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 {% endblock %}

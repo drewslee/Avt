@@ -264,6 +264,10 @@ $(function () {
         $('#delete_customer')[0].setAttribute('href', 'delete' + row.id);
     });
 
+    $customer_table.on('dbl-click-row.bs.table', function(event, row, $element) {
+
+    });
+
     $race_table.bootstrapTable({
         showColumns: true,
         locale: 'ru-RU',

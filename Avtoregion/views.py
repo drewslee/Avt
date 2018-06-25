@@ -256,13 +256,13 @@ class SupplierViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
         return kwargs
 
 
-class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
+class ShipmentViewList(LoginRequiredMixin, JSONRequestResponseMixin, AliveListViewMixin, View):
     model = Shipment
     template_name = 'shipment.html'
 
     def post(self, *args, **kwargs):
         context = {}
-        customer = int(self.request.POST.get('customer'))
+        customer = int(self.request_json.get('customer'))
         context['qShipment'] = self.model.objects.filter(customer=customer)
         context['form'] = ShipmentForm(initial={'customer': customer})
         context['customer'] = customer
