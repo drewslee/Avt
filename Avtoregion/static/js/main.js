@@ -265,6 +265,10 @@ $(function () {
         $('#change_customer_shipment')[0].setAttribute('href', row.id + '/unload_place/');
     });
 
+    $customer_table.on('dbl-click-row.bs.table', function(event, row, $element) {
+
+    });
+
     $race_table.bootstrapTable({
         showColumns: true,
         locale: 'ru-RU',
