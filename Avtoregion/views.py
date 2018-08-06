@@ -260,9 +260,9 @@ class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
     model = Shipment
     template_name = 'shipment.html'
 
-    def post(self, *args, **kwargs):
+    def get(self, *args, **kwargs):
         context = {}
-        customer = int(self.request.POST.get('customer'))
+        customer = int(self.kwargs.get('customer'))
         context['qShipment'] = self.model.objects.filter(customer=customer)
         context['form'] = ShipmentForm(initial={'customer': customer})
         context['customer'] = customer
@@ -429,22 +429,34 @@ class TrailerDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
 
 class ShipmentAdd(PermissionRequiredMixin, CreateView):
     model = Shipment
-    success_url = reverse_lazy('CustomerList')
     form_class = ShipmentForm
     permission_required = ('Avtoregion.add_shipment',)
+
+    def get_success_url(self):
+        if self.request.POST.get('priveous'):
+            return self.request.POST.get('priveous')
+        else:
+            return super(CreateView, self).get_success_url()
 
 
 class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     model = Shipment
-    success_url = reverse_lazy('CustomerList')
     form_class = ShipmentForm
     permission_required = ('Avtoregion.change_shipment',)
+
+    def get_success_url(self):
+        if self.request.POST.get('priveous'):
+            return self.request.POST.get('priveous')
+        else:
+            return super(UpdateView, self).get_success_url()
 
 
 class ShipmentDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     model = Shipment
-    success_url = reverse_lazy('CustomerList')
     permission_required = ('Avtoregion.delete_shipment',)
+
+    def get_success_url(self):
+        return reverse_lazy('ShipmentList', kwargs={'customer': self.kwargs['customer']})
 
 
 class MediatorAdd(PermissionRequiredMixin, CreateView):

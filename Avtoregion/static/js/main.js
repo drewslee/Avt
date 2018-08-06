@@ -260,8 +260,9 @@ $(function () {
     });
 
     $customer_table.on('check.bs.table', function (event, row, $element) {
-        $('#change_customer')[0].setAttribute('href', 'update' + row.id);
-        $('#delete_customer')[0].setAttribute('href', 'delete' + row.id);
+        $('#change_customer')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_customer')[0].setAttribute('href', row.id + '/delete/');
+        $('#change_customer_shipment')[0].setAttribute('href', row.id + '/unload_place/');
     });
 
     $race_table.bootstrapTable({

@@ -18,18 +18,19 @@
                             <td>
 	                            {% if perms.Avtoregion.change_shipment %}
                                 <div class="form-group">
-                                    <form action="update{{ q.pk }}" method="get">
+                                    <form action="update/{{ q.pk }}" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
                                 </div>
 	                            {% endif %}
-                               {% comment %} <div class="form-group">
-                                    <form action="{% url 'ShipmentDelete' %}" method="post">
+                                <div class="form-group">
+                                    <form action="delete/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="pk" value="{{ q.pk }}">
+                                        <input type="hidden" name="customer" value="{{ customer }}">
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
                                     </form>
-                               {% endcomment %}
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -46,6 +47,7 @@
                     {% bootstrap_field field %}
                 {% endfor %}
 	              <input hidden name="customer" value="{{ customer }}">
+                  <input type="hidden" name="priveous" value="{{ request.path_info }}">
                 <button class="btn btn-success">Добавить</button>
             </form>
         </div>
