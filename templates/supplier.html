@@ -1,72 +1,87 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <div class="container">
-        {% if qSupplier %}
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <th>
-                        Поставщик
-                    </th>
-                    <th>
-                        ИНН
-                    </th>
-                    <th>
-                        Адрес
-                    </th>
-                    <th>
-                        Действия
-                    </th>
-                    </thead>
-                    <tbody>
-                    {% for q in qSupplier %}
-                        <tr>
-                            <td>
-                                {{ q.name }}
-                            </td>
-                            <td>
-                                {{ q.inn|default_if_none:'Не назначен' }}
-                            </td>
-                            <td>
-                                {{ q.address }}
-                            </td>
-                            <div class="form-group">
-                                <td>
-                                    <form action="load_place/" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="supplier" value="{{ q.pk }}">
-		                                <button class="btn btn-info btn-sm form-control">Адреса погрузки</button>
-	                                </form>
-	                                {% if perms.Avtoregion.change_supplier %}
-                                    <form action="update{{ q.pk }}" method="get">
-                                        <button class="btn btn-info btn-sm form-control">Изменить</button>
-                                    </form>
-	                                {% endif %}
-                                  {% if perms.Avtoregion.delete_supplier %}
-                                    <form action="{% url 'SupplierDelete' %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="pk" value="{{ q.pk }}">
-                                        <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
-                                    </form>
-                                  {% endif %}
-                                </td>
-                            </div>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% endif %}
+	<div class="container-fluid">
+		<div class="table-responsive">
+			<div class="clearfix"></div>
+			<div id="toolbar_supplier">
+				<div class="btn-group">
+					<button id="add_supplier" data-toggle="modal" type="button" class="btn btn-default btn-group"
+					        title="Добавить" data-target="#add_supplier_modal">
+						<i class="glyphicon glyphicon-plus-sign"></i>
+					</button>
+					<a id="change_supplier" href="" class="btn btn-default btn-group"
+					   title="Изменить">
+						<i class="glyphicon glyphicon-edit"></i>
+					</a>
+					<a id="delete_supplier" type="button" href=""
+					   class="btn btn-default btn-group"
+					   title="Удалить">
+						<i class="glyphicon glyphicon-floppy-remove"></i>
+					</a>
+					<a id="change_supplier_load" type="button" href=""
+					   class="btn btn-default btn-group"
+					   title="Место погрузки">
+						<i class="glyphicon glyphicon-list-alt"></i>
+					</a>
+					<button class="btn btn-default btn-group" title="Экспорт в эксель"
+					        onclick="$('#supplier_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+						<i class="glyphicon glyphicon-export"></i>
+					</button>
+				</div>
+			</div>
+			<table id="supplier_table" data-toolbar="#toolbar_supplier" data-search="true" data-click-to-select="true"
+			       data-id-field="id" data-single-select="true"
+			       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+				<thead>
+					<th data-field="checkbox" data-checkbox="true"></th>
+					<th data-field="id" data-visible="false">id</th>
+					<th data-field="name">Клиент</th>
+					<th data-field="inn">ИНН</th>
+					<th data-field="address">Адрес</th>
+				</thead>
+					<tbody>
+					{% if qSupplier %}
+					{% for q in qSupplier %}
+						<tr>
+							<td></td>
+							<td>{{ q.pk }}</td>
+							<td>
+								{{ q.name }}
+							</td>
+							<td>
+								{{ q.inn|default_if_none:'Не назначен' }}
+							</td>
+							<td>
+								{{ q.address }}
+							</td>
+						</tr>
+					{% endfor %}
+					{% endif %}
+					</tbody>
+				</table>
+		</div>
+	</div>
 
-    {% if perms.Avtoregion.add_supplier %}
-        <form action="add" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                {% bootstrap_field field %}
-            {% endfor %}
-            <button class="btn btn-success">Добавить</button>
-        </form>
-    {% endif %}
-    </div>
+	<div class="container">
+		<div id="add_supplier_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить поставщика</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

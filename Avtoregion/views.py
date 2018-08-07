@@ -263,7 +263,7 @@ class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
     def get(self, *args, **kwargs):
         context = {}
         customer = int(self.kwargs.get('customer'))
-        context['qShipment'] = self.model.objects.filter(customer=customer)
+        context['qShipment'] = self.model.objects.filter(customer=customer, has_deleted=False)
         context['form'] = ShipmentForm(initial={'customer': customer})
         context['customer'] = customer
         return render(self.request, self.template_name, context)
@@ -273,10 +273,10 @@ class LoadPlaceViewList(LoginRequiredMixin, AliveListViewMixin, View):
     model = LoadingPlace
     template_name = 'loadplace.html'
 
-    def post(self, *args, **kwargs):
+    def get(self, *args, **kwargs):
         context = {}
-        supplier = int(self.request.POST.get('supplier'))
-        context['qLoadplace'] = self.model.objects.filter(supplier=supplier)
+        supplier = int(self.kwargs.get('supplier'))
+        context['qLoadplace'] = self.model.objects.filter(supplier=supplier, has_deleted=False)
         context['form'] = LoadForm(initial={'supplier': supplier})
         context['supplier'] = supplier
         return render(self.request, self.template_name, context)
@@ -295,16 +295,34 @@ class MediatorViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class LoadAdd(PermissionRequiredMixin, CreateView):
     model = LoadingPlace
-    success_url = reverse_lazy('SupplierList')
     form_class = LoadForm
     permission_required = ('Avtoregion.add_loadingplace',)
+
+    def get_success_url(self):
+        if self.request.POST.get('priveous'):
+            return self.request.POST.get('priveous')
+        else:
+            return super(CreateView, self).get_success_url()
 
 
 class LoadUpdate(PermissionRequiredMixin, UpdateView):
     model = LoadingPlace
-    success_url = reverse_lazy('SupplierList')
     form_class = LoadForm
     permission_required = ('Avtoregion.change_loadingplace',)
+
+    def get_success_url(self):
+        if self.request.POST.get('priveous'):
+            return self.request.POST.get('priveous')
+        else:
+            return super(UpdateView, self).get_success_url()
+
+
+class LoadDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
+    model = LoadingPlace
+    permission_required = ('Avtoregion.delete_loadingplace',)
+
+    def get_success_url(self):
+        return reverse_lazy('LoadPlaceList', kwargs={'supplier': self.kwargs['supplier']})
 
 
 class DriverAdd(PermissionRequiredMixin, CreateView):

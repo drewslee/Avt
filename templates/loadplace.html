@@ -18,17 +18,18 @@
                             <td>
 	                            {% if perms.Avtoregion.change_loadingplace %}
                                 <div class="form-group">
-                                    <form action="update{{ q.pk }}" method="get">
+                                    <form action="update/{{ q.pk }}/" method="get">
                                         <button class="btn btn-info btn-sm form-control">Изменить</button>
                                     </form>
                                 </div>
 	                            {% endif %}
                                 <div class="form-group">
-                                    {% comment %}                                    <form action="{% url 'ShipmentDelete' %}" method="post">
+                                    <form action="delete/" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="pk" value="{{ q.pk }}">
+	                                      <input type="hidden" name="supplier" value="{{ supplier }}">
                                         <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить</button>
-                                    </form>{% endcomment %}
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -40,11 +41,12 @@
 
     {% if perms.Avtoregion.add_loadingplace %}
         <div class="form-group">
-            <form action="add" method="post">
+            <form action="add/" method="post">
                 {% csrf_token %}
                 {% for field in form %}
                     {% bootstrap_field field %}
                 {% endfor %}
+	              <input type="hidden" name="priveous" value="{{ request.path_info }}">
                 <input hidden name="supplier" value="{{ supplier }}">
                 <button class="btn btn-success">Добавить</button>
             </form>

@@ -209,6 +209,7 @@ $(function () {
     var $car_table = $('#car_table');
     var $driver_table = $('#driver_table');
     var $customer_table = $('#customer_table');
+    var $supplier_table = $('#supplier_table')
 
     $car_table.bootstrapTable({
        showColumns: true,
@@ -266,7 +267,31 @@ $(function () {
     });
 
     $customer_table.on('dbl-click-row.bs.table', function(event, row, $element) {
+        $('#change_customer')[0].setAttribute('href', row.id + '/update/');
+    });
 
+    $supplier_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'SupplierCookId',
+        onColumnSearch: function ()
+        {
+            $supplier_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $supplier_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_supplier')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_supplier')[0].setAttribute('href', row.id + '/delete/');
+        $('#change_supplier_load')[0].setAttribute('href', row.id + '/load_place/');
+    });
+
+    $supplier_table.on('dbl-click-row.bs.table', function (event, row, $element)
+    {
+        $('#change_supplier')[0].setAttribute('href', row.id + '/update/');
     });
 
     $race_table.bootstrapTable({
