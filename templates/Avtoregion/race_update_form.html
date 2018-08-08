@@ -7,7 +7,7 @@
 	        data-form-customer-url="{% url 'RaceAjaxCus' %}"
 	        data-form-supplier-url="{% url 'RaceAjaxSup' %}">
             {% csrf_token %}
-            <input type="hidden" name="priveous" value="{{ request.META.HTTP_REFERER }}">
+            <input type="hidden" name="previous" value="{{ request.META.HTTP_REFERER }}">
             {% for field in form %}
                 {% bootstrap_field field %}
             {% endfor %}

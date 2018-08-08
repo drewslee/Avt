@@ -157,8 +157,8 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_race',)
 
     def get_success_url(self):
-        if self.request.POST.get('priveous'):
-            return self.request.POST.get('priveous')
+        if self.request.POST.get('previous'):
+            return self.request.POST.get('previous')
         else:
             return super(UpdateView, self).get_success_url()
 
@@ -197,7 +197,7 @@ class TrailerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
     def get_context_data(self, object_list=None, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        kwargs['form'] = CarForm()
+        kwargs['form'] = TrailerForm()
         return kwargs
 
 
@@ -289,7 +289,7 @@ class MediatorViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
     def get_context_data(self, object_list=None, **kwargs):
         kwargs = super().get_context_data(**kwargs)
-        kwargs['form'] = SupplierForm()
+        kwargs['form'] = MediatorForm()
         return kwargs
 
 
@@ -299,8 +299,8 @@ class LoadAdd(PermissionRequiredMixin, CreateView):
     permission_required = ('Avtoregion.add_loadingplace',)
 
     def get_success_url(self):
-        if self.request.POST.get('priveous'):
-            return self.request.POST.get('priveous')
+        if self.request.POST.get('previous'):
+            return self.request.POST.get('previous')
         else:
             return super(CreateView, self).get_success_url()
 
@@ -311,8 +311,8 @@ class LoadUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_loadingplace',)
 
     def get_success_url(self):
-        if self.request.POST.get('priveous'):
-            return self.request.POST.get('priveous')
+        if self.request.POST.get('previous'):
+            return self.request.POST.get('previous')
         else:
             return super(UpdateView, self).get_success_url()
 
@@ -451,8 +451,8 @@ class ShipmentAdd(PermissionRequiredMixin, CreateView):
     permission_required = ('Avtoregion.add_shipment',)
 
     def get_success_url(self):
-        if self.request.POST.get('priveous'):
-            return self.request.POST.get('priveous')
+        if self.request.POST.get('previous'):
+            return self.request.POST.get('previous')
         else:
             return super(CreateView, self).get_success_url()
 
@@ -463,8 +463,8 @@ class ShipmentUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = ('Avtoregion.change_shipment',)
 
     def get_success_url(self):
-        if self.request.POST.get('priveous'):
-            return self.request.POST.get('priveous')
+        if self.request.POST.get('previous'):
+            return self.request.POST.get('previous')
         else:
             return super(UpdateView, self).get_success_url()
 

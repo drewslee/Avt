@@ -1,53 +1,84 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <div class="container">
-        {% if qUnits %}
-            <div class="table-responsive">
-                <table class="table table-hover table-condensed">
-                    <thead>
-                    <th>Название</th>
-                    <th>Короткое название</th>
-                    <th>Действия</th>
-                    </thead>
+	<div class="container-fluid">
+		<div class="table-responsive">
+			<div class="clearfix"></div>
+			<div id="toolbar_units">
+				<div class="btn-group">
+
+					<button id="add_unit" data-toggle="modal" type="button" class="btn btn-default btn-group"
+					        title="Добавить" data-target="#add_unit_modal">
+						<i class="glyphicon glyphicon-plus-sign"></i>
+					</button>
+
+					<a id="change_unit" href="" class="btn btn-default btn-group"
+					   title="Изменить">
+						<i class="glyphicon glyphicon-edit"></i>
+					</a>
+
+					<form id="delete_unit" action="delete/" method="post" class="">
+						{% csrf_token %}
+						<input type="hidden" name="pk" value="">
+						<button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
+							<i class="glyphicon glyphicon-floppy-remove"></i>
+						</button>
+					</form>
+
+					<button class="btn btn-default btn-group" title="Экспорт в эксель"
+					        onclick="$('#units_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+						<i class="glyphicon glyphicon-export"></i>
+					</button>
+
+				</div>
+			</div>
+			<table id="units_table" data-toolbar="#toolbar_units" data-search="true" data-click-to-select="true"
+			       data-id-field="id" data-single-select="true"
+			       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+				<thead>
+					<th data-field="checkbox" data-checkbox="true"></th>
+					<th data-field="id" data-visible="false">id</th>
+					<th data-field="name" data-visible="true">Название</th>
+					<th data-field="short_name" data-visible="true">Аббревиатура</th>
+         </thead>
                     <tbody>
+                    {% if qUnits %}
                     {% for q in qUnits %}
                         <tr>
+                            <td></td>
+	                          <td>{{ q.pk }}</td>
                             <td>
                                 {{ q.name }}
                             </td>
                             <td>
                                 {{ q.short_name|default_if_none:"Не назначен" }}
                             </td>
-                            <td>
-	                            {% if perms.Avtoregion.change_units %}
-                                <form action="update{{ q.pk }}" method="get">
-                                    <button class="btn btn-info btn-sm form-control">Изменить</button>
-                                </form>
-	                            {% endif %}
-                              {% if perms.Avtoregion.delete_units %}
-                                <form action="{% url 'UnitDelete' %}" method="post">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="pk" value="{{ q.pk }}">
-                                    <button class="btn btn-danger btn-sm form-control delete-confirmation">Удалить
-                                    </button>
-                                </form>
-                              {% endif %}
-                            </td>
                         </tr>
                     {% endfor %}
+                    {% endif %}
                     </tbody>
                 </table>
             </div>
-        {% endif %}
-    {% if perms.Avtoregion.add_units %}
-        <form action="add" method="post">
-            {% csrf_token %}
-            {% for field in form %}
-                {% bootstrap_field field %}
-            {% endfor %}
-            <button class="btn btn-success">Добавить</button>
-        </form>
-    {% endif %}
     </div>
+	<div class="container">
+		<div id="add_unit_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить единицу измерения</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add/" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

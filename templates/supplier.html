@@ -14,11 +14,13 @@
 					   title="Изменить">
 						<i class="glyphicon glyphicon-edit"></i>
 					</a>
-					<a id="delete_supplier" type="button" href=""
-					   class="btn btn-default btn-group"
-					   title="Удалить">
-						<i class="glyphicon glyphicon-floppy-remove"></i>
-					</a>
+					<form id="delete_supplier" action="delete/" method="post" class="">
+						{% csrf_token %}
+						<input type="hidden" name="pk" value="">
+						<button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
+							<i class="glyphicon glyphicon-floppy-remove"></i>
+						</button>
+					</form>
 					<a id="change_supplier_load" type="button" href=""
 					   class="btn btn-default btn-group"
 					   title="Место погрузки">

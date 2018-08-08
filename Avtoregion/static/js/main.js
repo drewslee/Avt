@@ -209,7 +209,11 @@ $(function () {
     var $car_table = $('#car_table');
     var $driver_table = $('#driver_table');
     var $customer_table = $('#customer_table');
-    var $supplier_table = $('#supplier_table')
+    var $supplier_table = $('#supplier_table');
+    var $product_table = $('#product_table');
+    var $trailer_table = $('#trailer_table');
+    var $mediator_table= $('#mediator_table');
+    var $units_table = $('#units_table');
 
     $car_table.bootstrapTable({
        showColumns: true,
@@ -225,8 +229,8 @@ $(function () {
     });
 
     $car_table.on('check.bs.table', function (event, row, $element) {
-        $('#change_car')[0].setAttribute('href', 'update' + row.id);
-        $('#delete_car')[0].setAttribute('href', 'delete' + row.id);
+        $('#change_car')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_car input[name= "pk"]')[0].setAttribute('value',  row.id);
     });
 
     $driver_table.bootstrapTable({
@@ -243,8 +247,8 @@ $(function () {
     });
 
     $driver_table.on('check.bs.table', function (event, row, $element) {
-        $('#change_driver')[0].setAttribute('href', 'update' + row.id);
-        $('#delete_driver')[0].setAttribute('href', 'delete' + row.id);
+        $('#change_driver')[0].setAttribute('href',  row.id + '/update/');
+        $('#delete_driver input[name= "pk"]')[0].setAttribute('value',  row.id);
     });
 
     $customer_table.bootstrapTable({
@@ -262,7 +266,7 @@ $(function () {
 
     $customer_table.on('check.bs.table', function (event, row, $element) {
         $('#change_customer')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_customer')[0].setAttribute('href', row.id + '/delete/');
+        $('#delete_customer input[name= "pk"]')[0].setAttribute('value',  row.id);
         $('#change_customer_shipment')[0].setAttribute('href', row.id + '/unload_place/');
     });
 
@@ -285,13 +289,85 @@ $(function () {
 
     $supplier_table.on('check.bs.table', function (event, row, $element) {
         $('#change_supplier')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_supplier')[0].setAttribute('href', row.id + '/delete/');
+        $('#delete_supplier input[name= "pk"]')[0].setAttribute('value',  row.id);
         $('#change_supplier_load')[0].setAttribute('href', row.id + '/load_place/');
     });
 
     $supplier_table.on('dbl-click-row.bs.table', function (event, row, $element)
     {
         $('#change_supplier')[0].setAttribute('href', row.id + '/update/');
+    });
+
+    $product_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'ProductCookId',
+        onColumnSearch: function ()
+        {
+            $product_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $product_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_product')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_product input[name= "pk"]')[0].setAttribute('value',  row.id);
+    });
+
+    $trailer_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'TrailerCookId',
+        onColumnSearch: function ()
+        {
+            $trailer_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $trailer_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_trailer')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_trailer input[name= "pk"]')[0].setAttribute('value',  row.id);
+    });
+
+    $mediator_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'MediatorCookId',
+        onColumnSearch: function ()
+        {
+            $mediator_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $mediator_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_mediator')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_mediator input[name= "pk"]')[0].setAttribute('value',  row.id);
+    });
+
+    $units_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'UnitCookId',
+        onColumnSearch: function ()
+        {
+            $units_table.bootstrapTable("resetSearch");
+        }
+    });
+
+    $units_table.on('check.bs.table', function (event, row, $element) {
+        $('#change_unit')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_unit input[name= "pk"]')[0].setAttribute('value',  row.id);
     });
 
     $race_table.bootstrapTable({

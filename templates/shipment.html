@@ -47,7 +47,7 @@
                     {% bootstrap_field field %}
                 {% endfor %}
 	              <input hidden name="customer" value="{{ customer }}">
-                  <input type="hidden" name="priveous" value="{{ request.path_info }}">
+                  <input type="hidden" name="previous" value="{{ request.path_info }}">
                 <button class="btn btn-success">Добавить</button>
             </form>
         </div>
