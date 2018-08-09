@@ -17,7 +17,13 @@ class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, verbose_name='Поставщик')
     address = models.CharField(max_length=256, blank=True)
-    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
+    inn = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name='ИНН')
     has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -70,7 +76,13 @@ class Customer(models.Model):
     id_customer = models.AutoField(primary_key=True)
     name = models.CharField(max_length=256, verbose_name='Клиент')
     address = models.CharField(max_length=256, blank=True)
-    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
+    inn = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name='ИНН')
     has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -82,9 +94,18 @@ class Customer(models.Model):
 
 class Mediator(models.Model):
     id_mediator = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, verbose_name='Название', blank=True)
+    name = models.CharField(
+        max_length=100,
+        verbose_name='Название',
+        blank=True)
     address = models.CharField(max_length=256, verbose_name='Посредник')
-    inn = models.DecimalField(max_digits=12, decimal_places=0, unique=True, null=True, blank=True, verbose_name='ИНН')
+    inn = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        unique=True,
+        null=True,
+        blank=True,
+        verbose_name='ИНН')
     has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -107,7 +128,8 @@ class Driver(models.Model):
     name = models.CharField(max_length=50, verbose_name='Водитель')
     full_name = models.CharField(max_length=100, blank=True)
     driver_card = models.CharField(max_length=50, blank=True)
-    personnel_number = models.DecimalField(decimal_places=0, max_digits=10, blank=True, default=0)
+    personnel_number = models.DecimalField(
+        decimal_places=0, max_digits=10, blank=True, default=0)
     date_med = models.DateField(blank=True)
     has_deleted = models.BooleanField(default=False)
 
@@ -122,7 +144,8 @@ class Trailer(models.Model):
     id_trailer = models.AutoField(primary_key=True)
     number = models.CharField(max_length=10)
     brand_trailer = models.CharField(max_length=10, default='85300F')
-    garage_number_trailer = models.DecimalField(max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
+    garage_number_trailer = models.DecimalField(
+        max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
     has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
@@ -134,10 +157,22 @@ class Trailer(models.Model):
 
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
-    number = models.CharField(max_length=11, unique=True, verbose_name='Номер машины')
-    pts = models.CharField(max_length=10, null=True, blank=True, verbose_name='ПТС')
+    number = models.CharField(
+        max_length=11,
+        unique=True,
+        verbose_name='Номер машины')
+    pts = models.CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+        verbose_name='ПТС')
     brand = models.CharField(max_length=20, default='Scania')
-    garage_number = models.DecimalField(max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
+    garage_number = models.DecimalField(
+        max_digits=10,
+        decimal_places=0,
+        max_length=5,
+        blank=True,
+        default=0)
     trailer = models.ForeignKey(Trailer, blank=True, null=True)
     mediator = models.ForeignKey(Mediator, blank=True, null=True)
     has_deleted = models.BooleanField(default=False)
@@ -196,15 +231,24 @@ class Race(models.Model):
     supplier = models.ForeignKey(Supplier)
     place_load = models.ForeignKey(LoadingPlace, null=True, blank=True)
     customer = models.ForeignKey(Customer)
-    order_type_race = models.CharField(default=ORDER[0], choices=ORDER, max_length=256)
+    order_type_race = models.CharField(
+        default=ORDER[0], choices=ORDER, max_length=256)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)
     s_milage = models.FloatField(default=0)
     e_milage = models.FloatField(default=0)
     weight_load = models.FloatField(default=0)
-    unit_load = models.ForeignKey(Units, null=True, blank=True, related_name='unit_load')
+    unit_load = models.ForeignKey(
+        Units,
+        null=True,
+        blank=True,
+        related_name='unit_load')
     weight_unload = models.FloatField(default=0)
-    unit_unload = models.ForeignKey(Units, null=True, blank=True, related_name='unit_unload')
+    unit_unload = models.ForeignKey(
+        Units,
+        null=True,
+        blank=True,
+        related_name='unit_unload')
     comm = models.TextField(null=True, blank=True)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=9)
     gas_start = models.DecimalField(max_digits=5, decimal_places=0, default=0)
@@ -224,7 +268,8 @@ class Race(models.Model):
         return reverse('RaceUpdate', kwargs={'pk': self.pk})
 
     def get_foreign_fields(self):
-        return [getattr(self, f.name) for f in self._meta.fields if type(f) == models.fields.related.ForeignKey]
+        return [getattr(self, f.name) for f in self._meta.fields if isinstance(
+            f, models.fields.related.ForeignKey)]
 
     @property
     def gas_spent(self):
@@ -259,23 +304,28 @@ class Race(models.Model):
         if self.car.mediator is None and (self.type_ship == self.TYPE[0][0]):
             return const.organization_unit_full + " " + const.address
         # реализация с посредником
-        if self.car.mediator is not None and (self.type_ship == self.TYPE[0][0]):
+        if self.car.mediator is not None and (
+                self.type_ship == self.TYPE[0][0]):
             return const.organization_unit_full + " " + const.address
         # услуги без посредника, заказчик поставщик
-        if self.car.mediator is None and (self.type_ship == self.TYPE[1][0]) and (
-                    self.order_type_race == self.ORDER[0][0]):
+        if self.car.mediator is None and(
+                self.type_ship == self.TYPE[1][0]) and(
+                self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
         # услуги с посредником, заказчик поставщик
-        if self.car.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
-                (self.order_type_race == self.ORDER[0][0]):
+        if self.car.mediator is not None and(
+                self.type_ship == self.TYPE[1][0]) and(
+                self.order_type_race == self.ORDER[0][0]):
             return self.supplier.name + " " + self.supplier.address
         # услуги без посредника, заказчик покупатель
-        if self.car.mediator is None and (self.type_ship == self.TYPE[1][0]) and \
-                (self.order_type_race == self.ORDER[1][1]):
+        if self.car.mediator is None and(
+                self.type_ship == self.TYPE[1][0]) and(
+                self.order_type_race == self.ORDER[1][1]):
             return self.customer.name + " " + self.customer.address
         # услуги с посредником, заказчик покупатель
-        if self.car.mediator is not None and (self.type_ship == self.TYPE[1][0]) and \
-                (self.order_type_race == self.ORDER[1][1]):
+        if self.car.mediator is not None and(
+                self.type_ship == self.TYPE[1][0]) and(
+                self.order_type_race == self.ORDER[1][1]):
             return self.customer.name + " " + self.customer.address
 
     @property
@@ -290,7 +340,8 @@ class Race(models.Model):
     @property
     def get_carrier(self):
         const = Constants.objects.get(pk=1)
-        if self.car.mediator is not None and (self.type_ship != self.TYPE[1][0]):
+        if self.car.mediator is not None and (
+                self.type_ship != self.TYPE[1][0]):
             return self.car.mediator.name + " " + self.car.mediator.address
         else:
             return const.organization_unit_full + " " + const.address
