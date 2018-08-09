@@ -1,89 +1,91 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <div class="container-fluid">
-            <div class="table-responsive">
-                <div class="clearfix"></div>
-                <div id="toolbar_customer">
-                    <div class="btn-group">
-                        <button id="add_customer" data-toggle="modal" type="button" class="btn btn-default btn-group"
-                                title="Добавить" data-target="#add_customer_modal">
-                            <i class="glyphicon glyphicon-plus-sign"></i>
-                        </button>
-                        <a id="change_customer" href="" class="btn btn-default btn-group"
-                           title="Изменить">
-                            <i class="glyphicon glyphicon-edit"></i>
-                        </a>
-	                    <form id="delete_customer" action="delete/" method="post" class="">
-		                    {% csrf_token %}
-		                    <input type="hidden" name="pk" value="">
-		                    <button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
-			                    <i class="glyphicon glyphicon-floppy-remove"></i>
-		                    </button>
-	                    </form>
-                        <a id="change_customer_shipment" type="button" href=""
-                           class="btn btn-default btn-group"
-                           title="Место разгрузки">
-                            <i class="glyphicon glyphicon-list-alt"></i>
-                        </a>
-                        <button class="btn btn-default btn-group" title="Экспорт в эксель"
-                                onclick="$('#customer_table').tableExport({type: 'excel', fileName: 'Таблица',
+
+	<form id="delete_customer" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
+	<div class="container-fluid">
+		<div class="table-responsive">
+			<div class="clearfix"></div>
+			<div id="toolbar_customer" class="btn-toolbar" role="toolbar">
+				<div class="btn-group">
+					<button id="add_customer" data-toggle="modal" type="button" class="btn btn-default"
+					        title="Добавить" data-target="#add_customer_modal">
+						<i class="glyphicon glyphicon-plus-sign"></i>
+					</button>
+					<a id="change_customer" href="" class="btn btn-default"
+					   title="Изменить">
+						<i class="glyphicon glyphicon-edit"></i>
+					</a>
+					<button form="delete_customer" type="submit" class="btn btn-default delete-confirmation" title="Удалить">
+						<i class="glyphicon glyphicon-floppy-remove"></i>
+					</button>
+					<a id="change_customer_shipment" type="button" href=""
+					   class="btn btn-default"
+					   title="Место разгрузки">
+						<i class="glyphicon glyphicon-list-alt"></i>
+					</a>
+					<button class="btn btn-default" title="Экспорт в эксель"
+					        onclick="$('#customer_table').tableExport({type: 'excel', fileName: 'Таблица',
                                     ignoreColumn: ['checkbox','id']});">
-                            <i class="glyphicon glyphicon-export"></i>
-                        </button>
-                    </div>
-                </div>
-                <table id="customer_table" data-toolbar="#toolbar_customer" data-search="true" data-click-to-select="true"
-                       data-id-field="id" data-single-select="true"
-                       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
-                    <thead>
-                        <th data-field="checkbox" data-checkbox="true"></th>
-                        <th data-field="id" data-visible="false" >id</th>
-                        <th data-field="name">Клиент</th>
-                        <th data-field="inn">ИНН</th>
-                        <th data-field="address">Адрес</th>
-                    </thead>
-                    <tbody>
-                    {% if qCustomer %}
-                    {% for q in qCustomer %}
-                        <tr>
-                            <td></td>
-                            <td>{{ q.pk }}</td>
-                            <td>
-                                {{ q.name }}
-                            </td>
-                            <td>
-                                {{ q.inn|default_if_none:'Не назначен' }}
-                            </td>
-                            <td>
-                                {{ q.address|default_if_none:'Не назначен' }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    {% endif %}
-                    </tbody>
-                </table>
-            </div>
-    </div>
-    <div class="container">
-        <div id="add_customer_modal" class="modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <b><p class="text-center">Добавить клиента</p></b>
-                    </div>
-                    <div class="modal-body">
-                        <form action="add" method="post" class="modal-form" role="form">
-                            {% csrf_token %}
-                            {% for field in form %}
-                                {% bootstrap_field field %}
-                            {% endfor %}
-                            <button class="btn btn-success">Добавить</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+						<i class="glyphicon glyphicon-export"></i>
+					</button>
+				</div>
+			</div>
+			<table id="customer_table" data-toolbar="#toolbar_customer" data-search="true" data-click-to-select="true"
+			       data-id-field="id" data-single-select="true"
+			       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+				<thead>
+				<th data-field="checkbox" data-checkbox="true"></th>
+				<th data-field="id" data-visible="false">id</th>
+				<th data-field="name">Клиент</th>
+				<th data-field="inn">ИНН</th>
+				<th data-field="address">Адрес</th>
+				</thead>
+				<tbody>
+				{% if qCustomer %}
+					{% for q in qCustomer %}
+						<tr>
+							<td></td>
+							<td>{{ q.pk }}</td>
+							<td>
+								{{ q.name }}
+							</td>
+							<td>
+								{{ q.inn|default_if_none:'Не назначен' }}
+							</td>
+							<td>
+								{{ q.address|default_if_none:'Не назначен' }}
+							</td>
+						</tr>
+					{% endfor %}
+				{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="container">
+		<div id="add_customer_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить клиента</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add/" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endblock %}

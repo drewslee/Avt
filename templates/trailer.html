@@ -1,31 +1,33 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
+
+	<form id="delete_trailer" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
 	<div class="container-fluid">
 	<div class="table-responsive">
 		<div class="clearfix"></div>
-		<div id="toolbar_trailer">
+		<div id="toolbar_trailer" class="btn-toolbar" role="toolbar">
 			<div class="btn-group">
 
-				<button id="add_trailer" data-toggle="modal" type="button" class="btn btn-default btn-group"
+				<button id="add_trailer" data-toggle="modal" type="button" class="btn btn-default"
 				        title="Добавить" data-target="#add_trailer_modal">
 					<i class="glyphicon glyphicon-plus-sign"></i>
 				</button>
 
-				<a id="change_trailer" href="" class="btn btn-default btn-group"
+				<a id="change_trailer" href="" class="btn btn-default"
 				   title="Изменить">
 					<i class="glyphicon glyphicon-edit"></i>
 				</a>
 
-				<form id="delete_trailer" action="delete/" method="post" class="">
-					{% csrf_token %}
-					<input type="hidden" name="pk" value="">
-					<button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
-						<i class="glyphicon glyphicon-floppy-remove"></i>
-					</button>
-				</form>
+				<button form="delete_trailer" type="submit" class="btn btn-default delete-confirmation" title="Удалить">
+					<i class="glyphicon glyphicon-floppy-remove"></i>
+				</button>
 
-				<button class="btn btn-default btn-group" title="Экспорт в эксель"
+				<button class="btn btn-default" title="Экспорт в эксель"
 				        onclick="$('#trailer_table').tableExport({type: 'excel', fileName: 'Таблица',
                                     ignoreColumn: ['checkbox','id']});">
 					<i class="glyphicon glyphicon-export"></i>

@@ -1,31 +1,32 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
+
+	<form id="delete_mediator" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
 	<div class="container-fluid">
 		<div class="table-responsive">
 			<div class="clearfix"></div>
-			<div id="toolbar_mediator">
+			<div id="toolbar_mediator" class="btn-toolbar" role="toolbar">
 				<div class="btn-group">
 
-					<button id="add_mediator" data-toggle="modal" type="button" class="btn btn-default btn-group"
+					<button id="add_mediator" data-toggle="modal" type="button" class="btn btn-default"
 					        title="Добавить" data-target="#add_mediator_modal">
 						<i class="glyphicon glyphicon-plus-sign"></i>
 					</button>
 
-					<a id="change_mediator" href="" class="btn btn-default btn-group"
+					<a id="change_mediator" href="" class="btn btn-default"
 					   title="Изменить">
 						<i class="glyphicon glyphicon-edit"></i>
 					</a>
+					<button form="delete_mediator" type="submit" class="btn btn-default delete-confirmation" title="Удалить">
+						<i class="glyphicon glyphicon-floppy-remove"></i>
+					</button>
 
-					<form id="delete_mediator" action="delete/" method="post" class="">
-						{% csrf_token %}
-						<input type="hidden" name="pk" value="">
-						<button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
-							<i class="glyphicon glyphicon-floppy-remove"></i>
-						</button>
-					</form>
-
-					<button class="btn btn-default btn-group" title="Экспорт в эксель"
+					<button class="btn btn-default" title="Экспорт в эксель"
 					        onclick="$('#mediator_table').tableExport({type: 'excel', fileName: 'Таблица',
                                     ignoreColumn: ['checkbox','id']});">
 						<i class="glyphicon glyphicon-export"></i>
@@ -67,7 +68,6 @@
                 </table>
             </div>
     </div>
-
 	<div class="container">
 		<div id="add_mediator_modal" class="modal" role="dialog">
 			<div class="modal-dialog">

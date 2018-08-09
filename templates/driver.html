@@ -1,28 +1,29 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <div class="container">
-        {% if qDriver %}
+
+	<form id="delete_driver" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
+    <div class="container-fluid">
             <div class="table-responsive">
                 <div class="clearfix"></div>
-                <div id="toolbar_driver">
+                <div id="toolbar_driver" class="btn-toolbar" role="toolbar">
                     <div class="btn-group">
-                        <button id="add_driver" data-toggle="modal" type="button" class="btn btn-default btn-group"
+                        <button id="add_driver" data-toggle="modal" type="button" class="btn btn-default"
                                 title="Добавить" data-target="#add_driver_modal">
                             <i class="glyphicon glyphicon-plus-sign"></i>
                         </button>
-                        <a id="change_driver" href="" class="btn btn-default btn-group"
+                        <a id="change_driver" href="" class="btn btn-default"
                            title="Изменить">
                             <i class="glyphicon glyphicon-edit"></i>
                         </a>
-                        <form id="delete_driver" action="delete/" method="post" class="">
-	                          {% csrf_token %}
-	                          <input type="hidden" name="pk" value="">
-	                        <button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
-	                          <i class="glyphicon glyphicon-floppy-remove"></i>
-	                        </button>
-                        </form>
-                        <button class="btn btn-default btn-group" title="Экспорт в эксель"
+	                    <button form="delete_driver" type="submit" class="btn btn-default delete-confirmation" title="Удалить">
+		                    <i class="glyphicon glyphicon-floppy-remove"></i>
+	                    </button>
+                        <button class="btn btn-default" title="Экспорт в эксель"
                                 onclick="$('#driver_table').tableExport({type: 'excel', fileName: 'Таблица',
                                     ignoreColumn: ['checkbox','id']});">
                             <i class="glyphicon glyphicon-export"></i>
@@ -40,6 +41,7 @@
                         <th data-field="driver_card">Удостоверение</th>
                     </thead>
                     <tbody>
+                    {% if qDriver %}
                     {% for q in qDriver %}
                         <tr>
                             <td></td>
@@ -55,10 +57,10 @@
                             </td>
                         </tr>
                     {% endfor %}
+                    {% endif %}
                     </tbody>
                 </table>
             </div>
-        {% endif %}
     </div>
 <div class="container">
     <div id="add_driver_modal" class="modal" role="dialog">

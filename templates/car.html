@@ -1,90 +1,93 @@
 {% extends "index.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <div class="container">
-        <div class="table-responsive">
-            <div class="clearfix"></div>
-            <div id="toolbar_car">
-                <div class="btn-group">
-                    <button id="add_car" data-toggle="modal" type="button" class="btn btn-default btn-group"
-                            title="Добавить" data-target="#add_car_modal">
-                        <i class="glyphicon glyphicon-plus-sign"></i>
-                    </button>
-                    <a id="change_car" href="" class="btn btn-default btn-group"
-                            title="Изменить">
-                        <i class="glyphicon glyphicon-edit"></i>
-                        </a>
-	                <form id="delete_car" action="delete/" method="post" class="">
-		                {% csrf_token %}
-		                <input type="hidden" name="pk" value="">
-		                <button type="submit" class="btn btn-default btn-group delete-confirmation" title="Удалить">
-			                <i class="glyphicon glyphicon-floppy-remove"></i>
-		                </button>
-	                </form>
-                    <button class="btn btn-default btn-group" title="Экспорт в эксель"
-                            onclick="$('#car_table').tableExport({type: 'excel', fileName: 'Таблица',
-                                    ignoreColumn: ['checkbox','id']});">
-                        <i class="glyphicon glyphicon-export"></i>
-                    </button>
-                </div>
-            </div>
-            {% if qCar %}
-                <table id="car_table" data-toolbar="#toolbar_car" data-search="true" data-click-to-select="true"
-                       data-id-field="id" data-single-select="true"
-                       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
-                    <thead>
-                    <tr>
-                        <th data-field="checkbox" data-checkbox="true"></th>
-                        <th data-field="id" data-visible="false">id</th>
-                        <th data-field="number">Номер</th>
-                        <th data-field="pts">ПТС</th>
-                        <th data-field="trailer">Номер прицепа</th>
-                        <th data-field="mediator">Посредник</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for q in qCar %}
-                        <tr>
-                            <td></td>
-                            <td>{{ q.pk }}</td>
-                            <td>
-                                {{ q.number }}
-                            </td>
-                            <td>
-                                {{ q.pts|default_if_none:'Не заполнен' }}
-                            </td>
-                            <td>
-                                {{ q.trailer|default_if_none:'Нету' }}
-                            </td>
-                            <td>
-                                {{ q.mediator|default_if_none:'Нету' }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-    </div>
 
-<div class="container">
-    <div id="add_car_modal" class="modal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <b><p class="text-center">Добавить машину</p></b>
-                    </div>
-                    <div class="modal-body">
-                        <form action="add" method="post" class="modal-form" role="form">
-                            {% csrf_token %}
-                            {% for field in form %}
-                                {% bootstrap_field field %}
-                            {% endfor %}
-                            <button class="btn btn-success">Добавить</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-    </div>
-</div>
+	<form id="delete_car" action="delete/" method="post">
+		{% csrf_token %}
+		<input class="hidden" type="hidden" name="pk" value="">
+	</form>
+
+	<div class="container-fluid">
+		<div class="table-responsive">
+			<div class="clearfix"></div>
+			<div id="toolbar_car" class="btn-toolbar" role="toolbar">
+				<div class="btn-group">
+					<button id="add_car" data-toggle="modal" type="button" class="btn btn-default"
+					        title="Добавить" data-target="#add_car_modal">
+						<i class="glyphicon glyphicon-plus-sign"></i>
+					</button>
+					<a id="change_car" href="" class="btn btn-default"
+					   title="Изменить">
+						<i class="glyphicon glyphicon-edit"></i>
+					</a>
+					<button form="delete_car" type="submit" class="btn btn-default delete-confirmation"
+					        title="Удалить">
+						<i class="glyphicon glyphicon-floppy-remove"></i>
+					</button>
+					<button class="btn btn-default" title="Экспорт в эксель"
+					        onclick="$('#car_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+						<i class="glyphicon glyphicon-export"></i>
+					</button>
+				</div>
+			</div>
+			{% if qCar %}
+				<table id="car_table" data-toolbar="#toolbar_car" data-search="true" data-click-to-select="true"
+				       data-id-field="id" data-single-select="true"
+				       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+					<thead>
+					<tr>
+						<th data-field="checkbox" data-checkbox="true"></th>
+						<th data-field="id" data-visible="false">id</th>
+						<th data-field="number">Номер</th>
+						<th data-field="pts">ПТС</th>
+						<th data-field="trailer">Номер прицепа</th>
+						<th data-field="mediator">Посредник</th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for q in qCar %}
+						<tr>
+							<td></td>
+							<td>{{ q.pk }}</td>
+							<td>
+								{{ q.number }}
+							</td>
+							<td>
+								{{ q.pts|default_if_none:'Не заполнен' }}
+							</td>
+							<td>
+								{{ q.trailer|default_if_none:'Нету' }}
+							</td>
+							<td>
+								{{ q.mediator|default_if_none:'Нету' }}
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="add_car_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить машину</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add/" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
