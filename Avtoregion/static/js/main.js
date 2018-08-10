@@ -1,12 +1,16 @@
 // This function gets cookie with a given name
-function getCookie(name) {
+function getCookie(name)
+{
     var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
+    if (document.cookie && document.cookie != '')
+    {
         var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
+        for (var i = 0; i < cookies.length; i++)
+        {
             var cookie = jQuery.trim(cookies[i]);
             // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            if (cookie.substring(0, name.length + 1) == (name + '='))
+            {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
@@ -18,12 +22,14 @@ function getCookie(name) {
 /*
 The functions below will create a header with csrftoken
 */
-function csrfSafeMethod(method) {
+function csrfSafeMethod(method)
+{
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-function sameOrigin(url) {
+function sameOrigin(url)
+{
     // test that a given url is a same-origin URL
     // url could be relative or scheme relative or absolute
     var host = document.location.host; // host + port
@@ -96,49 +102,18 @@ function getfile()
     xhttp.send(JSON.stringify($data));
 }
 
-function CellStyle(value, row, field, index)
+$(function ()
 {
-    if (value.trim() === "Создан") {
-        return {
-            css: {"color": "PaleVioletRed "}
-        }
-    }
-    if (value.trim() === "Загружен") {
-        return {
-            css: {"color": "Teal"}
-        }
-    }
-   if (value.trim() === "Выгружен")
-   {
-      return {
-          css: {"color": "blue"}
-      }
-   }
-    if (value.trim() === "Закончен") {
-        return {
-            css: {"color": "SpringGreen"}
-        }
-    }
-    if (value.trim() === "Проведён") {
-        return {
-            css: {"color": "SeaGreen"}
-        }
-    }
-   return value
-
-}
-
-
-
-$(function () {
 
 
     var csrftoken = getCookie('csrftoken');
 
 
     $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+        beforeSend: function (xhr, settings)
+        {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url))
+            {
                 // Send the token to same-origin, relative URLs only.
                 // Send the token only if the method warrants CSRF protection
                 // Using the CSRFToken value acquired earlier
@@ -150,7 +125,7 @@ $(function () {
 
     $('input[name="daterange"]').daterangepicker({
         "autoApply": true,
-        "parentEl" : 'toolbar',
+        "parentEl": 'toolbar',
         "alwaysShowCalendars": true,
         ranges: {
             'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
@@ -189,11 +164,13 @@ $(function () {
 
         }
     });
-    $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+    $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker)
+    {
         $('form[id="push_date"]').submit()
     });
 
-    $(document).on('click', '.delete-confirmation', function () {
+    $(document).on('click', '.delete-confirmation', function ()
+    {
         return confirm('Вы уверены, что хотите удалить?');
     });
     $('#id_race_date').on('apply.daterangepicker', function (ev, picker)
@@ -212,25 +189,26 @@ $(function () {
     var $supplier_table = $('#supplier_table');
     var $product_table = $('#product_table');
     var $trailer_table = $('#trailer_table');
-    var $mediator_table= $('#mediator_table');
+    var $mediator_table = $('#mediator_table');
     var $units_table = $('#units_table');
 
     $car_table.bootstrapTable({
-       showColumns: true,
-       locale: 'ru-RU',
-       pagination: true,
-       showPaginationSwitch: true,
-       cookie: true,
-       cookieIdTable: 'CarCookId',
-       onColumnSearch: function ()
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'CarCookId',
+        onColumnSearch: function ()
         {
             $car_table.bootstrapTable("resetSearch");
         }
     });
 
-    $car_table.on('check.bs.table', function (event, row, $element) {
+    $car_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_car')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_car input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_car input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
     $driver_table.bootstrapTable({
@@ -246,9 +224,10 @@ $(function () {
         }
     });
 
-    $driver_table.on('check.bs.table', function (event, row, $element) {
-        $('#change_driver')[0].setAttribute('href',  row.id + '/update/');
-        $('#delete_driver input[name= "pk"]')[0].setAttribute('value',  row.id);
+    $driver_table.on('check.bs.table', function (event, row, $element)
+    {
+        $('#change_driver')[0].setAttribute('href', row.id + '/update/');
+        $('#delete_driver input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
     $customer_table.bootstrapTable({
@@ -264,13 +243,15 @@ $(function () {
         }
     });
 
-    $customer_table.on('check.bs.table', function (event, row, $element) {
+    $customer_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_customer')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_customer input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_customer input[name= "pk"]')[0].setAttribute('value', row.id);
         $('#change_customer_shipment')[0].setAttribute('href', row.id + '/unload_place/');
     });
 
-    $customer_table.on('dbl-click-row.bs.table', function(event, row, $element) {
+    $customer_table.on('dbl-click-row.bs.table', function (event, row, $element)
+    {
         $('#change_customer')[0].setAttribute('href', row.id + '/update/');
     });
 
@@ -287,9 +268,10 @@ $(function () {
         }
     });
 
-    $supplier_table.on('check.bs.table', function (event, row, $element) {
+    $supplier_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_supplier')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_supplier input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_supplier input[name= "pk"]')[0].setAttribute('value', row.id);
         $('#change_supplier_load')[0].setAttribute('href', row.id + '/load_place/');
     });
 
@@ -311,9 +293,10 @@ $(function () {
         }
     });
 
-    $product_table.on('check.bs.table', function (event, row, $element) {
+    $product_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_product')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_product input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_product input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
     $trailer_table.bootstrapTable({
@@ -329,9 +312,10 @@ $(function () {
         }
     });
 
-    $trailer_table.on('check.bs.table', function (event, row, $element) {
+    $trailer_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_trailer')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_trailer input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_trailer input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
     $mediator_table.bootstrapTable({
@@ -347,9 +331,10 @@ $(function () {
         }
     });
 
-    $mediator_table.on('check.bs.table', function (event, row, $element) {
+    $mediator_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_mediator')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_mediator input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_mediator input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
     $units_table.bootstrapTable({
@@ -365,9 +350,10 @@ $(function () {
         }
     });
 
-    $units_table.on('check.bs.table', function (event, row, $element) {
+    $units_table.on('check.bs.table', function (event, row, $element)
+    {
         $('#change_unit')[0].setAttribute('href', row.id + '/update/');
-        $('#delete_unit input[name= "pk"]')[0].setAttribute('value',  row.id);
+        $('#delete_unit input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
     $race_table.bootstrapTable({
@@ -377,9 +363,68 @@ $(function () {
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'RaceCookId',
+        rowStyle: function (row, index)
+        {
+            if (row.state.trim() === "Авария")
+            {
+                return {
+                    css: {
+                        "background-color": "Tomato",
+                        "color": "white"
+                    }
+                }
+            }
+
+            if (row.state.trim() === "Создан")
+            {
+                return {
+                    css: {
+                        "background-color": "Violet",
+                        "color": "white"
+                    }
+                }
+            }
+            if (row.state.trim() === "Загружен")
+            {
+                return {
+                    css: {
+                        "background-color": "Teal",
+                        "color": "white"
+                    }
+                }
+            }
+            if (row.state.trim() === "Выгружен")
+            {
+                return {
+                    css: {
+                        "background-color": "lightblue",
+                        "color": "black"
+                    }
+                }
+            }
+            if (row.state.trim() === "Закончен")
+            {
+                return {
+                    css: {
+                        "background-color": "MediumSeaGreen",
+                        "color": "white"
+                    }
+                }
+            }
+            if (row.state.trim() === "Проведен")
+            {
+                return {
+                    css: {
+                        "background-color": "Orange",
+                        "color": "white"
+                    }
+                }
+            }
+            return row
+        },
         onColumnSearch: function ()
         {
-           $('#race_table').bootstrapTable("resetSearch");
+            $('#race_table').bootstrapTable("resetSearch");
         },
         formatLoadingMessage: function ()
         {
@@ -389,7 +434,8 @@ $(function () {
 
     $('.dropdown-toggle').dropdown();
 
-    $(document).on("click", '#state', function () {
+    $(document).on("click", '#state', function ()
+    {
         $('#ModalUpdate').modal('show');
     });
 
@@ -397,22 +443,24 @@ $(function () {
     {
         $('#id_modal_message').html('<p>Вы уверены?</p>');
         $('#delete_race_ok')[0].disabled = false;
-        $('#ModalMessage').modal({backdrop:true})
+        $('#ModalMessage').modal({backdrop: true})
     });
 
     $(document).on('hide.bs.modal', '#ModalMessage', function ()
     {
-       location.reload();
+        location.reload();
     });
-    
-    $(document).on("click", '#delete_race_ok', function (event) {
+
+    $(document).on("click", '#delete_race_ok', function (event)
+    {
         $('#delete_race_ok')[0].disabled = true;
         event.preventDefault();
 
         var rows = document.getElementsByClassName('selected'),
             list = [],
             url = $('#delete_race').attr('data-url');
-        for (var i = 0; i < rows.length; ++i) {
+        for (var i = 0; i < rows.length; ++i)
+        {
             list.push(rows[i].id);
         }
         $.ajax(
@@ -422,7 +470,8 @@ $(function () {
                 traditional: true,
                 data: JSON.stringify({"id_list": list}),
                 dataType: 'json',
-                success: function (resp) {
+                success: function (resp)
+                {
                     if (resp['data'] === 'success')
                     {
                         $('#id_modal_message').html('<p>Успешно удалено!</p>');
@@ -437,11 +486,12 @@ $(function () {
 
     $(document).on("click", '#update_state', function (event)
     {
-      $('#update_state_ok')[0].disabled = false;
-      $('#ModalUpdate').modal('show');
+        $('#update_state_ok')[0].disabled = false;
+        $('#ModalUpdate').modal('show');
     });
 
-    $(document).on('hide.bs.modal', '#ModalUpdate', function(){
+    $(document).on('hide.bs.modal', '#ModalUpdate', function ()
+    {
         location.reload();
     });
 
@@ -449,24 +499,27 @@ $(function () {
     {
         event.preventDefault();
         var rows = document.getElementsByClassName('selected');
-        if (rows.length > 1) {
+        if (rows.length > 1)
+        {
             $('#id_modal_update').html('Выбрано слишком много рейсов, выбирать для редактирования можно только один!');
             $race_table.bootstrapTable('uncheckAll');
             $('#ModalUpdateRace').modal('show');
         }
-        else
-            if (rows.length === 1) {
+        else if (rows.length === 1)
+        {
             window.location.href = '/Race/update/' + rows[0].id + '/';
-            }
+        }
     });
 
-    $(document).on("click", '#update_state_ok', function (event) {
+    $(document).on("click", '#update_state_ok', function (event)
+    {
         $('#update_state_ok')[0].disabled = true;
         event.preventDefault();
         var url = $('#update_state').attr('data-url'),
             rows = document.getElementsByClassName('selected'),
             list = [];
-        for (var i = 0; i < rows.length; ++i) {
+        for (var i = 0; i < rows.length; ++i)
+        {
             list.push(rows[i].id);
         }
         var state = $('#status_select option:selected').text();
@@ -477,17 +530,20 @@ $(function () {
                 traditional: true,
                 data: JSON.stringify({"id_list": list, "state": state}),
                 dataType: 'json',
-                success: function () {
+                success: function ()
+                {
                     $('#modal-body-state').html('<p>Всё обновлено!</p>');
                 }
             })
     });
-    $(document).on("click", '#packing_list', function (event) {
+    $(document).on("click", '#packing_list', function (event)
+    {
         event.preventDefault();
         var url = $('#ModalPackingList').attr('data-url');
         var rows = document.getElementsByClassName('selected'),
             list = [];
-        for (var i = 0; i < rows.length; ++i) {
+        for (var i = 0; i < rows.length; ++i)
+        {
             list.push(rows[i].id);
         }
         $.ajax(
@@ -497,18 +553,21 @@ $(function () {
                 traditional: true,
                 data: JSON.stringify({"id_list": list}),
                 dataType: 'json',
-                success: function (data) {
+                success: function (data)
+                {
                     $('#result_pack').html(data['data']);
                     $('#ModalPackingList').modal('show');
                 }
             })
     });
-    $(document).on("click", '#way_list', function (event) {
+    $(document).on("click", '#way_list', function (event)
+    {
         event.preventDefault();
         var url = $('#ModalWayList').attr('data-url');
         var rows = document.getElementsByClassName('selected'),
             list = [];
-        for (var i = 0; i < rows.length; ++i) {
+        for (var i = 0; i < rows.length; ++i)
+        {
             list.push(rows[i].id);
         }
         $.ajax(
@@ -518,7 +577,8 @@ $(function () {
                 traditional: true,
                 data: JSON.stringify({"id_list": list}),
                 dataType: 'json',
-                success: function (data) {
+                success: function (data)
+                {
                     $('#result_way').html(data['data']);
                     $('#ModalWayList').modal('show');
                 }
@@ -531,27 +591,29 @@ $(function () {
         var place_load = $('#id_place_load');
 
         $.ajax(
-        {
-            type: "GET",
-            url: url,
-            data: {
-                'id': supplierId
-            },
-            dataType: 'json',
-            success: function (resp)
             {
-                place_load.empty();
-                for (i = 0; i < resp.length; i++) {
-                    var option = '<option value="' + resp[i].id_load_place + '">' + resp[i].address + '</option>';
-                    place_load.append(option);
+                type: "GET",
+                url: url,
+                data: {
+                    'id': supplierId
+                },
+                dataType: 'json',
+                success: function (resp)
+                {
+                    place_load.empty();
+                    for (i = 0; i < resp.length; i++)
+                    {
+                        var option = '<option value="' + resp[i].id_load_place + '">' + resp[i].address + '</option>';
+                        place_load.append(option);
+                    }
                 }
-            }
 
 
-        });
+            });
     });
 
-    $("#id_customer").change(function () {
+    $("#id_customer").change(function ()
+    {
         var url = $('#id_race_form').attr('data-form-customer-url');
         var customerId = $(this).val();
         var place_unload = $('#id_shipment');
@@ -563,9 +625,11 @@ $(function () {
                     'id': customerId
                 },
                 dataType: 'json',
-                success: function (resp) {
+                success: function (resp)
+                {
                     place_unload.empty();
-                    for (i = 0; i < resp.length; i++) {
+                    for (i = 0; i < resp.length; i++)
+                    {
                         var option = '<option value="' + resp[i].id_shipment + '">' + resp[i].name + '</option>';
                         place_unload.append(option)
                     }
@@ -573,35 +637,46 @@ $(function () {
             })
     });
 
-    $(document).keydown(function(e) {
+    $(document).keydown(function (e)
+    {
 
-  // Set self as the current item in focus
-  var self = $(':focus'),
-      // Set the form by the current item in focus
-      form = self.parents('form:eq(0)'),
-      focusable;
+        // Set self as the current item in focus
+        var self = $(':focus'),
+            // Set the form by the current item in focus
+            form = self.parents('form:eq(0)'),
+            focusable;
 
-  // Array of Indexable/Tab-able items
-  focusable = form.find('input,select,button,a,textarea,div[contenteditable=true]').filter(':visible');
+        // Array of Indexable/Tab-able items
+        focusable = form.find('input,select,button,a,textarea,div[contenteditable=true]').filter(':visible');
 
-  function enterKey(){
-    if (e.which === 13 && !self.is('div[contenteditable=true]')) { // [Enter] key
+        function enterKey()
+        {
+            if (e.which === 13 && !self.is('div[contenteditable=true]'))
+            { // [Enter] key
 
-      // If not a regular hyperlink/button
-      if ($.inArray(self, focusable) && (!self.is('a,button'))){
-        // Then prevent the default [Enter] key behaviour from submitting the form
-        e.preventDefault();
-      } // Otherwise follow the link/button as by design
+                // If not a regular hyperlink/button
+                if ($.inArray(self, focusable) && (!self.is('a,button')))
+                {
+                    // Then prevent the default [Enter] key behaviour from submitting the form
+                    e.preventDefault();
+                } // Otherwise follow the link/button as by design
 
-      // Focus on the next item (either previous or next depending on shift)
-      focusable.eq(focusable.index(self) + (e.shiftKey ? -1 : 1)).focus().select();
+                // Focus on the next item (either previous or next depending on shift)
+                focusable.eq(focusable.index(self) + (e.shiftKey ? -1 : 1)).focus().select();
 
-      return false;
-    }
-  }
-  // We need to capture the [Shift] key and check the [Enter] key either way.
-  if (e.shiftKey) { enterKey() } else { enterKey() }
-});
+                return false;
+            }
+        }
+
+        // We need to capture the [Shift] key and check the [Enter] key either way.
+        if (e.shiftKey)
+        {
+            enterKey()
+        } else
+        {
+            enterKey()
+        }
+    });
 
 });
 

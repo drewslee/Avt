@@ -672,7 +672,7 @@ def save_excel(request):
                                                                              end_date),
                    format)
     col = 0
-    for title in ['№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.']:
+    for title in ['№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.', 'Плечо', 'Кол-во рейсов', 'Состояние']:
         ws.write_string(3, col, title, format)
         col += 1
     i = 0
