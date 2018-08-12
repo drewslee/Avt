@@ -17,6 +17,8 @@ from django.conf.urls import url
 from django.urls import reverse_lazy
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
+from django.conf import settings
+from django.conf.urls import include, url
 from . import views
 
 urlpatterns = [
@@ -101,3 +103,9 @@ urlpatterns = [
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
 
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

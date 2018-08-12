@@ -27,7 +27,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
-from django.views.decorators.cache import never_cache
 from braces.views import JSONRequestResponseMixin
 from Avtoregion.templatetags import custom_filters
 
@@ -117,13 +116,24 @@ class RaceViewList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.GET.get('daterange') is None:
-            end_date = Race.objects.latest().race_date
+            end_date = Race.objects.latest('race_date').race_date
             start_date = end_date - timedelta(weeks=1)
-            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by(
-                'race_date')
+            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).select_related('unit_load',
+                                                                                                   'unit_unload',
+                                                                                                   'driver', 'car',
+                                                                                                   'customer',
+                                                                                                   'supplier',
+                                                                                                   'product',
+                                                                                                   'shipment')
         else:
             start_date, end_date = datestr_to_dateaware(self.request.GET.get('daterange'))
-            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('race_date')
+            queryset = Race.objects.filter(race_date__range=[start_date, end_date]).select_related('unit_load',
+                                                                                                   'unit_unload',
+                                                                                                   'driver', 'car',
+                                                                                                   'customer',
+                                                                                                   'supplier',
+                                                                                                   'product',
+                                                                                                   'shipment')
         return queryset
 
     def get_context_data(self, **kwargs):

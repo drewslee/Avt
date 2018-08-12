@@ -260,6 +260,7 @@ class Race(models.Model):
 
     class Meta:
         get_latest_by = 'race_date'
+        ordering = ('race_date',)
 
     def __str__(self):
         return '%s' % self.id_race

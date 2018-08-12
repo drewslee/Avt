@@ -379,7 +379,7 @@ $(function ()
             {
                 return {
                     css: {
-                        "background-color": "Violet",
+                        "background-color": "RosyBrown",
                         "color": "white"
                     }
                 }

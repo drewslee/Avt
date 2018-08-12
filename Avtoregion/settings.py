@@ -14,6 +14,7 @@ import os
 import hashlib
 from envconf import Env
 
+
 env = Env(DEBUG=(bool, False))
 env.read_env()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -28,7 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS', cast=list)
-
+INTERNAL_IPS = env('INTERNAL_IPS', cast=list)
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SESSION_COOKIE_SECURE = False
@@ -48,10 +49,12 @@ INSTALLED_APPS = [
     'Avtoregion',
     'bootstrap3',
     'Avtoregion.templatetags.verbose_names',
-    'braces'
+    'braces',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
