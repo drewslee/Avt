@@ -388,8 +388,8 @@ $(function ()
             {
                 return {
                     css: {
-                        "background-color": "Teal",
-                        "color": "white"
+                        "background-color": "lightblue",
+                        "color": "black"
                     }
                 }
             }
@@ -397,8 +397,8 @@ $(function ()
             {
                 return {
                     css: {
-                        "background-color": "lightblue",
-                        "color": "black"
+                        "background-color": "Teal",
+                        "color": "white"
                     }
                 }
             }
