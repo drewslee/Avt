@@ -379,8 +379,8 @@ $(function ()
             {
                 return {
                     css: {
-                        "background-color": "RosyBrown",
-                        "color": "white"
+                        "background-color": "BlanchedAlmond",
+                        "color": "black"
                     }
                 }
             }

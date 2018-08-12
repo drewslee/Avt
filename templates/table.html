@@ -1,94 +1,122 @@
 {% load staticfiles %}
 {% load cache %}
 {% if q_resp %}
-	<div class="container">
-		<div class="table-responsive">
-			<table id="tab" class="table table-hover table-condensed">
-				{% if type_name == 'supplier' %}
-					<h1 class="h1">
-						<span id="organization" class="text-left">{{ q_resp.first.supplier.name }}</span>
-						c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
-						по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
-					</h1>
-				{% endif %}
-				{% if type_name == 'customer' %}
-					<h1 class="h1">
-					<span id="organization">{{ q_resp.first.customer.name }}</span>
-					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
-					по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
-					</h1>
-				{% endif %}
-				{% if type_name == 'mediator' %}
-					<h1 class="h1">
-					<span id="organization">{{ q_resp.first.car.mediator.name }}</span>
-					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
-					по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
-					</h1>
-				{% endif %}
-				<thead>
-				<th>#</th>
-				<th>Дата</th>
-				<th>Номер машины</th>
-				<th>Водитель</th>
-				<th>Вес</th>
-				<th>Груз</th>
-				<th>Ед. изм.</th>
+    <div class="container">
+        <div class="table-responsive">
+            <table id="tab" class="table table-hover table-condensed">
+                {% if type_name == 'supplier' %}
+                    <h1 class="h1">
+                        <span id="organization" class="text-left">{{ q_resp.first.supplier.name }}</span>
+                        c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
+                        по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
+                    </h1>
+                {% endif %}
+                {% if type_name == 'customer' %}
+                    <h1 class="h1">
+                        <span id="organization">{{ q_resp.first.customer.name }}</span>
+                        c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
+                        по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
+                    </h1>
+                {% endif %}
+                {% if type_name == 'mediator' %}
+                    <h1 class="h1">
+                        <span id="organization">{{ q_resp.first.car.mediator.name }}</span>
+                        c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
+                        по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
+                    </h1>
+                {% endif %}
+                <thead>
+                <th>#</th>
+                <th>Дата</th>
+                <th>Номер машины</th>
+                <th>Водитель</th>
+                <th>Вес</th>
+                <th>Груз</th>
+                <th>Ед. изм.</th>
                 <th>Плечо</th>
-				<th>Кол-во рейсов</th>
-				<th>Состояние</th>
-				</thead>
-				<tfoot>
-				<tr>
-					<td>Всего загружено:</td>
-					<td></td>
-					<td></td>
-					<td>
-					</td>
-					<td>
-						{% if q_weight.weight_unload__sum %}
-							{{ q_weight.weight_unload__sum|floatformat:3 }}
-						{% endif %}
-						{% if q_weight.weight_load__sum %}
-							{{ q_weight.weight_load__sum|floatformat:3 }}
-						{% endif %}
-					</td>
-					<td>
-					</td>
-					<td>
-					</td>
-					<td>
-					</td>
-					<td>
-					</td>
-				</tr>
-				</tfoot>
-				<tbody id="tab_body">
-				{% for q in q_resp %}
-					<tr>
-						<td>{{ forloop.counter }}</td>
-						<td>{{ q.race_date|date:"d.m.y" }}</td>
-						<td>{{ q.car }}</td>
-						<td>{{ q.driver.name }}</td>
-						{% if q_weight.weight_load__sum %}
-							<td>{{ q.weight_load|floatformat:"3" }}</td>
-							<td>{{ q.product.name }}</td>
-							<td>{{ q.unit_load.short_name|default:'т.' }}</td>
-						{% endif %}
-						{% if q_weight.weight_unload__sum %}
-							<td>{{ q.weight_unload|floatformat:"3" }}</td>
-							<td>{{ q.product.name }}</td>
-							<td>{{ q.unit_unload.short_name|default:'т.' }}</td>
-						{% endif %}
-              <td>{{ q.shoulder }}</td>
-							<td>{{ q.count }}</td>
-						  <td>{{ q.state }}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-			<button id="excel" data-url="{% url 'AccExcel' %}" onclick="getfile()">
-				В Excel
-			</button>
-		</div>
-	</div>
+                <th>Кол-во рейсов</th>
+                <th>Состояние</th>
+                </thead>
+                <tfoot>
+                <tr>
+                    <td>Всего загружено:</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                    </td>
+                    <td>
+                        {% if q_weight.weight_unload__sum %}
+                            {{ q_weight.weight_unload__sum|floatformat:3 }}
+                        {% endif %}
+                        {% if q_weight.weight_load__sum %}
+                            {{ q_weight.weight_load__sum|floatformat:3 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+                </tfoot>
+                <tbody id="tab_body">
+                {% for q in q_resp %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ q.race_date|date:"d.m.y" }}</td>
+                        <td>{{ q.car }}</td>
+                        <td>{{ q.driver.name }}</td>
+                        {% if q_weight.weight_load__sum %}
+                            <td>{{ q.weight_load|floatformat:"3" }}</td>
+                            <td>{{ q.product.name }}</td>
+                            <td>{{ q.unit_load.short_name|default:'т.' }}</td>
+                        {% endif %}
+                        {% if q_weight.weight_unload__sum %}
+                            <td>{{ q.weight_unload|floatformat:"3" }}</td>
+                            <td>{{ q.product.name }}</td>
+                            <td>{{ q.unit_unload.short_name|default:'т.' }}</td>
+                        {% endif %}
+                        <td>{{ q.shoulder }}</td>
+                        <td>{{ q.count }}</td>
+                        <td itemprop="td_state_acc">{{ q.state }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button id="excel" data-url="{% url 'AccExcel' %}" onclick="getfile()">
+                В Excel
+            </button>
+        </div>
+    </div>
 {% endif %}
+<script type="application/javascript">
+    $(function () {
+        var i;
+        var $arr_state = $('td[itemprop="td_state_acc"]');
+        for (i=0; i < $arr_state.length; i++) {
+            switch($arr_state[i].outerText.trim()) {
+                case 'Создан':
+                    $arr_state[i].parentNode.style.background= 'BlanchedAlmond';
+                    break;
+                case 'Загружен':
+                    $arr_state[i].parentNode.style.background = 'Teal';
+                    break;
+                case 'Выгружен':
+                    $arr_state[i].parentNode.style.background = 'lightblue';
+                    break;
+                case 'Закончен':
+                    $arr_state[i].parentNode.style.background = 'MediumSeaGreen';
+                    break;
+                case 'Проведен':
+                    $arr_state[i].parentNode.style.background = 'Orange';
+                    break;
+                case 'Авария':
+                    $arr_state[i].parentNode.style.background = 'blue';
+                    break;
+            }
+        }
+    })
+</script>
