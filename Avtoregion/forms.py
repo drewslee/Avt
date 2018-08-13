@@ -131,11 +131,6 @@ class RaceForm(ModelForm):
     unit_unload = ModelChoiceField(queryset=Units.objects.filter(has_deleted=False),
                                    initial='т.',
                                    label='Ед. изм. выгружено')
-    supplier = ModelChoiceField(queryset=Supplier.objects.filter(has_deleted=False), label='Поставщик')
-    customer = ModelChoiceField(queryset=Customer.objects.filter(has_deleted=False), label='Клиент')
-    product = ModelChoiceField(queryset=Product.objects.filter(has_deleted=False), label='Груз')
-    driver = ModelChoiceField(queryset=Driver.objects.filter(has_deleted=False), label='Водитель')
-    car = ModelChoiceField(queryset=Car.objects.filter(has_deleted=False), label='Машина')
 
     class Meta:
         model = Race
@@ -162,6 +157,17 @@ class RaceForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['supplier'].queryset = Supplier.objects.filter(has_deleted=False)
+        self.fields['supplier'].label = 'Поставщик'
+        self.fields['customer'].queryset = Customer.objects.filter(has_deleted=False)
+        self.fields['customer'].label = 'Клиент'
+        self.fields['product'].queryset = Product.objects.filter(has_deleted=False)
+        self.fields['product'].label = 'Груз'
+        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False)
+        self.fields['driver'].label = 'Водитель'
+        self.fields['car'].queryset = Car.objects.filter(has_deleted=False)
+        self.fields['car'].label = 'Машина'
+
         self.fields['place_load'].queryset = LoadingPlace.objects.none()
         self.fields['shipment'].queryset = Shipment.objects.none()
 
@@ -182,3 +188,16 @@ class RaceForm(ModelForm):
                 pass
         elif self.instance.pk:
             self.fields['shipment'].queryset = self.instance.customer.shipment_set
+
+
+class RaceUpdateForm(RaceForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['supplier'].queryset = Supplier.objects.all()
+        self.fields['customer'].queryset = Customer.objects.all()
+        self.fields['product'].queryset = Product.objects.all()
+        self.fields['driver'].queryset = Driver.objects.all()
+        self.fields['car'].queryset = Car.objects.all()
+
+    def get_form_kwargs(self):
+        super(ModelForm, self).get

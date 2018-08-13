@@ -37,6 +37,7 @@ from .forms import DriverForm
 from .forms import MediatorForm
 from .forms import ProductForm
 from .forms import RaceForm
+from .forms import RaceUpdateForm
 from .forms import ShipmentForm
 from .forms import SupplierForm
 from .forms import TrailerForm
@@ -161,7 +162,7 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
 
 class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
-    form_class = RaceForm
+    form_class = RaceUpdateForm
     template_name = 'Avtoregion/race_update_form.html'
     success_message = "Рейс обновлён успешно"
     permission_required = ('Avtoregion.change_race',)
@@ -558,9 +559,11 @@ class Accumulate(JSONRequestResponseMixin, View):
                 method = self.dispatch_method(key)
                 q_resp, q_weight, type_prod = method([start_date, end_date])
 
+        select_state = (x[1] for x in Race.STATE)
         table = render_to_string(template_name='table.html',
                                  context={'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type_prod,
-                                          'start_date': start_date, 'end_date': end_date - timedelta(days=1)})
+                                          'start_date': start_date, 'end_date': end_date - timedelta(days=1),
+                                          'select_state': select_state})
         return self.render_json_response({"data": table})
 
     def get_query_supplier(self, date):
@@ -667,12 +670,14 @@ def save_excel(request):
         'valign': 'vcenter',
     })
     format_border = wb.add_format({'border': 1})
-    ws.set_column('A:A', 5)
-    ws.set_column('B:B', 20)
-    ws.set_column('C:C', 20)
-    ws.set_column('D:D', 20)
-    ws.set_column('F:F', 20)
-    ws.set_column('G:G', 5)
+    ws.set_column('A:A', 1)
+    ws.set_column('B:B', 5)
+    ws.set_column('C:C', 10)
+    ws.set_column('D:D', 18)
+    ws.set_column('E:E', 20)
+    ws.set_column('F:F', 10)
+    ws.set_column('G:G', 18)
+    ws.set_column('H:H', 5)
 
     # Sheet header, first row
     ws.merge_range('A1:G2',
@@ -682,7 +687,7 @@ def save_excel(request):
                                                                              end_date),
                    format)
     col = 0
-    for title in ['№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.', 'Плечо', 'Кол-во рейсов', 'Состояние']:
+    for title in ['', '№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.', 'Плечо', 'Кол-во рейсов', 'Состояние']:
         ws.write_string(3, col, title, format)
         col += 1
     i = 0
@@ -690,7 +695,7 @@ def save_excel(request):
     while i < len(json_data):
         col = 0
         for value in json_data.get(str(i)):
-            if col == 4:
+            if col == 5:
                 ws.write_number(row, col, float(value.replace(',', '.')), format_border)
             else:
                 ws.write(row, col, value, format_border)

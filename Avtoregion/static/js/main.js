@@ -121,9 +121,9 @@ $(function ()
             }
         }
     });
+    var $datarange = $('input[name="daterange"]')
 
-
-    $('input[name="daterange"]').daterangepicker({
+    $datarange.daterangepicker({
         "autoApply": true,
         "parentEl": 'toolbar',
         "alwaysShowCalendars": true,
@@ -164,7 +164,7 @@ $(function ()
 
         }
     });
-    $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker)
+    $datarange.on('apply.daterangepicker', function (ev, picker)
     {
         $('form[id="push_date"]').submit()
     });

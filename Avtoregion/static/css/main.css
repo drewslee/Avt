@@ -69,6 +69,11 @@
     border: none;
 }
 
+#dropdownMenu1 {
+    border-bottom-right-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
 .glyphicon-animate {
     -animation: spin .7s infinite linear;
     -webkit-animation: spin2 .7s infinite linear;
