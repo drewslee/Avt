@@ -19,13 +19,13 @@ from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from django.conf.urls import include, url
+from django.views.generic.base import RedirectView
 from . import views
 
 urlpatterns = [
     url(r'^login/$', views.LoginViewMix.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(next_page=reverse_lazy('login')), name='logout'),
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.RaceViewList.as_view(), name='Race'),
     url(r'^Constants$', views.ConstantsViewList.as_view(), name='Constants'),
     url(r'^Race/$', views.RaceViewList.as_view(), name='Race'),
     url(r'^Race/add/$', views.RaceCreate.as_view(), name='RaceCreate'),
@@ -101,6 +101,7 @@ urlpatterns = [
     url(r'^Accumulate/Excel$', views.save_excel, name='AccExcel'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
+    url(r'^.*$', RedirectView.as_view(url=reverse_lazy('Race')), name='index'),
 
 ]
 
