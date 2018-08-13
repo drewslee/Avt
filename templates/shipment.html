@@ -41,7 +41,7 @@
 
     {% if perms.Avtoregion.add_shipment %}
         <div class="form-group">
-            <form action="add" method="post">
+            <form action="add/" method="post">
                 {% csrf_token %}
                 {% for field in form %}
                     {% bootstrap_field field %}
