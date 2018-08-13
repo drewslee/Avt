@@ -40,13 +40,13 @@ urlpatterns = [
 
     url(r'^Car/$', views.CarViewList.as_view(), name='CarList'),
     url(r'^Car/add/$', views.CarAdd.as_view(), name='CarAdd'),
-    url(r'^Car/update(?P<pk>\d+)/$', views.CarUpdate.as_view(),
+    url(r'^Car/(?P<pk>\d+)/update/$', views.CarUpdate.as_view(),
         name='CarUpdate'),
     url(r'^Car/delete/$', views.CarDelete.as_view(), name='CarDelete'),
 
     url(r'^Unit/$', views.UnitsViewList.as_view(), name='UnitList'),
     url(r'^Unit/add/$', views.UnitAdd.as_view(), name='UnitAdd'),
-    url(r'^Unit/update(?P<pk>\d+)/$', views.UnitUpdate.as_view(),
+    url(r'^Unit/(?P<pk>\d+)/update/$', views.UnitUpdate.as_view(),
         name='UnitUpdate'),
     url(r'^Unit/delete/$', views.UnitDelete.as_view(), name='UnitDelete'),
 
@@ -58,7 +58,7 @@ urlpatterns = [
 
     url(r'^Driver/$', views.DriverViewList.as_view(), name='DriverList'),
     url(r'^Driver/add/$', views.DriverAdd.as_view(), name='DriverAdd'),
-    url(r'^Driver/update(?P<pk>\d+)/$', views.DriverUpdate.as_view(template_name='Avtoregion/update_form.html'),
+    url(r'^Driver/(?P<pk>\d+)/update/$', views.DriverUpdate.as_view(template_name='Avtoregion/update_form.html'),
         name='DriverUpdate'),
     url(r'^Driver/delete/$', views.DriverDelete.as_view(), name='DriverDelete'),
 
