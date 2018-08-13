@@ -2,162 +2,166 @@
 {% load staticfiles %}
 {% block content %}
     <div class="container-fluid">
-            <div class="table-responsive">
-                <div class="clearfix"></div>
-                <div id="toolbar" role="toolbar">
-                    <div class="form-inline">
-                        <div class="btn-group">
-	                          <a href="{% url 'Race' %}" class="btn btn-default" title="Текущие рейсы">
-		                          <i class="glyphicon glyphicon-blackboard"></i></a>
-	                          <a id="dropdownMenu1" type="button" class="btn btn-default dropdown-toggle" aria-haspopup="true"
-	                                  aria-expanded="true" data-toggle="dropdown">
-		                          <i class="glyphicon glyphicon-book"></i>
-	                          </a>
-		                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-			                          <li><a href="{% url 'CarList' %}">Машины</a></li>
-			                          <li><a href="{% url 'DriverList' %}">Водители</a></li>
-			                          <li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
-			                          <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
-			                          <li><a href="{% url 'ProductList' %}">Груз</a></li>
-			                          <li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
-			                          <li><a href="{% url 'MediatorList' %}">Посредники</a></li>
-			                          <li><a href="{% url 'UnitList' %}">Единицы измерения</a></li>
-			                          <li><a href="{% url 'Constants' %}">Константы</a></li>
-			                          <li role="separator" class="divider"></li>
-			                          <li><a href="{% url 'Acc' %}">Реестр</a></li>
-			                          <li><a href="{% url 'CarAcc' %}">Реестр по машине</a></li>
-			                          <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
-		                          </ul>
-                            <a id="add_race" type="button" href="{% url 'RaceCreate' %}"
-                               class="btn btn-default"
-                               title="Добавить рейс"><i class="glyphicon glyphicon-plus-sign"></i></a>
-                            <a id="change_race" type="button" href="" class="btn btn-default"
-                               title="Изменить рейс"><i
-                                    class="glyphicon glyphicon-edit"></i></a>
-                            <button id="delete_race" data-url="{% url 'RaceDelete' %}" type="button"
-                                    class="btn btn-default"
-                                    title="Удалить рейс"><i class="glyphicon glyphicon-floppy-remove"></i></button>
-                            <button id="update_state" data-url="{% url 'RaceUpdateAjax' %}"
-                                    class="btn btn-default"
-                                    title="Обновить статус"><i class="glyphicon glyphicon-bookmark"></i></button>
-                            <button id="packing_list" type="submit" class="btn btn-default"
-                                    title="Товарная накладная">
-                                <i class="glyphicon glyphicon-list-alt"></i></button>
-                            <button id="way_list" type="submit" class="btn btn-default" title="Путевой лист">
-                                <i class="glyphicon glyphicon-road"></i>
-                            </button>
-                            <button class="btn btn-default" title="Экспорт в эксель"
-                                    onclick="$('#race_table').tableExport({type: 'excel', fileName: 'Таблица',
-                                    ignoreColumn: ['checkbox', 'number']});" >
-                                <i class="glyphicon glyphicon-export"></i>
-                            </button>
-														<a class="btn btn-default" href="{% url 'logout' %}" title="Выход">
-																<i class="glyphicon glyphicon-arrow-right"></i>
-														</a>
-                        </div>
-                        <div class="input-group date calendar-shift" id="datetimepicker">
-                             <form id="push_date" action="" method="get">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                        <input type="text" class="width-103% form-control" name="daterange"
-                                               value="{{ start_date }} - {{ end_date }}  ">
-                                    </div>
-                             </form>
-                        </div>
+        <div class="table-responsive">
+            <div class="clearfix"></div>
+            <div id="toolbar" role="toolbar">
+                <div class="form-inline">
+                    <div class="btn-group">
+                        <a href="{% url 'Race' %}" class="btn btn-default" title="Текущие рейсы">
+                            <i class="glyphicon glyphicon-blackboard"></i></a>
+                        <a id="dropdownMenu1" type="button" class="btn btn-default dropdown-toggle" aria-haspopup="true"
+                           aria-expanded="true" data-toggle="dropdown">
+                            <i class="glyphicon glyphicon-book"></i>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="{% url 'CarList' %}">Машины</a></li>
+                            <li><a href="{% url 'DriverList' %}">Водители</a></li>
+                            <li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
+                            <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
+                            <li><a href="{% url 'ProductList' %}">Груз</a></li>
+                            <li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
+                            <li><a href="{% url 'MediatorList' %}">Посредники</a></li>
+                            <li><a href="{% url 'UnitList' %}">Единицы измерения</a></li>
+                            <li><a href="{% url 'Constants' %}">Константы</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'Acc' %}">Реестр</a></li>
+                            <li><a href="{% url 'CarAcc' %}">Реестр по машине</a></li>
+                            <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
+                        </ul>
+                        <a id="add_race" type="button" href="{% url 'RaceCreate' %}"
+                           class="btn btn-default"
+                           title="Добавить рейс"><i class="glyphicon glyphicon-plus-sign"></i></a>
+                        <a id="change_race" type="button" href="" class="btn btn-default"
+                           title="Изменить рейс"><i
+                                class="glyphicon glyphicon-edit"></i></a>
+                        <button id="delete_race" data-url="{% url 'RaceDelete' %}" type="button"
+                                class="btn btn-default"
+                                title="Удалить рейс"><i class="glyphicon glyphicon-floppy-remove"></i></button>
+                        <button id="update_state" data-url="{% url 'RaceUpdateAjax' %}"
+                                class="btn btn-default"
+                                title="Обновить статус"><i class="glyphicon glyphicon-bookmark"></i></button>
+                        <button id="packing_list" type="submit" class="btn btn-default"
+                                title="Товарная накладная">
+                            <i class="glyphicon glyphicon-list-alt"></i></button>
+                        <button id="way_list" type="submit" class="btn btn-default" title="Путевой лист">
+                            <i class="glyphicon glyphicon-road"></i>
+                        </button>
+                        <button class="btn btn-default" title="Экспорт в эксель"
+                                onclick="$('#race_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox', 'number']});">
+                            <i class="glyphicon glyphicon-export"></i>
+                        </button>
+                        <a class="btn btn-default" href="{% url 'logout' %}" title="Выход">
+                            <i class="glyphicon glyphicon-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="input-group date calendar-shift" id="datetimepicker">
+                        <form id="push_date" action="" method="get">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                <input type="text" class="width-103% form-control" name="daterange"
+                                       value="{{ start_date }} - {{ end_date }}  ">
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <table id="race_table" data-toolbar="#toolbar" data-id-field="id" data-filter-show-clear="true"
-                   data-toggle="table" data-search="true" data-filter-control="true" data-buttons-align="right"
-                   data-click-to-select="true" data-side-pagination="client" data-search-align="right"
-                   data-show-toggle="true"
-                   data-classes="table table-hover table-small-font table-condensed table-no-bordered">
-                <thead class="small">
-                <tr>
-                    <th data-field="checkbox" data-checkbox="true"></th>
-                    <th data-field="number">#</th>
-                    <th data-field="date" data-filter-control="input">Дата</th>
-                    <th data-tableexport-value="Машина" data-field="car" data-sortable="true" data-filter-control="select">Машина</th>
-                    <th data-tableexport-value="Водитель" data-field="driver" data-sortable="true" data-filter-control="select">Водитель</th>
-                    <th data-field="operation">Операция</th>
-                    <th data-field="supplier" data-sortable="true" data-filter-control="select">Поставщик</th>
-                    <th data-field="customer" data-sortable="true" data-filter-control="select">Клиент</th>
-                    <th data-field="place_unload" data-visible="false">Место разгрузки</th>
-                    <th data-field="product" data-filter-control="select">Груз</th>
-                    <th data-field="s_milage" data-visible="false">Начало трека</th>
-                    <th data-field="e_milage" data-visible="false">Конец трека</th>
-                    <th data-field="gas_start" data-visible="false">Горючего на начало</th>
-                    <th data-field="gas_end" data-visible="false">Горючего на конец</th>
-                    <th data-field="gas_given" data-visible="false">Горючего выдано</th>
-                    <th data-field="loaded">Загружено</th>
-                    <th data-field="unloaded">Выгружено</th>
-	                <th data-field="count" data-visible="false">Кол-во рейсов</th>
-                    <th data-field="state" data-cell-style="CellStyle">Состояние</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% if qRace %}
-									{% for q in qRace %}
-											<tr id="{{ q.pk }}">
-																					 <td></td>
-																					 <td>{{ forloop.counter }}</td>
-																					 <td>
-																					 {{ q.race_date }}
-																					 </td>
-																					 <td>
-																					 {{ q.car }}
-																					 </td>
-																					 <td>
-																					 {{ q.driver }}
-																					 </td>
-																					 <td>
-																					 {{ q.type_ship }}
-																					 </td>
-																					 <td>
-																					 {{ q.supplier }}
-																					 </td>
-																					 <td>
-																					 {{ q.customer }}
-																					 </td>
-																					 <td>
-																					 {{ q.shipment|default_if_none:"Нет" }}
-																					 </td>
-																					 <td>
-																					 {{ q.product }}
-																					 </td>
-																					 <td>
-																					 {{ q.s_milage }}
-																					 </td>
-																					 <td>
-																					 {{ q.e_milage }}
-																					 </td>
-																					 <td>
-																					 {{ q.gas_start }}
-																					 </td>
-																					 <td>
-																					 {{ q.gas_end }}
-																					 </td>
-																					 <td>
-																					 {{ q.gas_given }}
-																					 </td>
-																					 <td>
-																					 {{ q.weight_load }}{{ q.unit_load.short_name }}
-																					 </td>
-																					 <td>
-																					 {{ q.weight_unload }}{{ q.unit_unload.short_name }}
-																					 </td>
-																					 <td>
-																					 {{ q.count }}
-																					 </td>
-																					 <td>
-																					 {{ q.state }}
-																					 </td>
-																					 </tr>
-									{% endfor %}
-                {% endif %}
-                </tbody>
-            </table>
-            </div>
+        </div>
+        <table id="race_table" data-toolbar="#toolbar" data-id-field="id" data-filter-show-clear="true"
+               data-toggle="table" data-search="true" data-filter-control="true" data-buttons-align="right"
+               data-click-to-select="true" data-side-pagination="client" data-search-align="right"
+               data-show-toggle="true"
+               data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+            <thead class="small">
+            <tr>
+                <th data-field="checkbox" data-checkbox="true"></th>
+                <th data-field="number">#</th>
+                <th data-field="date" data-filter-control="input">Дата</th>
+                <th data-tableexport-value="Машина" data-field="car" data-sortable="true" data-filter-control="select">
+                    Машина
+                </th>
+                <th data-tableexport-value="Водитель" data-field="driver" data-sortable="true"
+                    data-filter-control="select">Водитель
+                </th>
+                <th data-field="operation">Операция</th>
+                <th data-field="supplier" data-sortable="true" data-filter-control="select">Поставщик</th>
+                <th data-field="customer" data-sortable="true" data-filter-control="select">Клиент</th>
+                <th data-field="place_unload" data-visible="false">Место разгрузки</th>
+                <th data-field="product" data-filter-control="select">Груз</th>
+                <th data-field="s_milage" data-visible="false">Начало трека</th>
+                <th data-field="e_milage" data-visible="false">Конец трека</th>
+                <th data-field="gas_start" data-visible="false">Горючего на начало</th>
+                <th data-field="gas_end" data-visible="false">Горючего на конец</th>
+                <th data-field="gas_given" data-visible="false">Горючего выдано</th>
+                <th data-field="loaded">Загружено</th>
+                <th data-field="unloaded">Выгружено</th>
+                <th data-field="count" data-visible="false">Кол-во рейсов</th>
+                <th data-field="state" data-cell-style="CellStyle">Состояние</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if qRace %}
+                {% for q in qRace %}
+                    <tr id="{{ q.pk }}">
+                        <td></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {{ q.race_date }}
+                        </td>
+                        <td>
+                            {{ q.car }}
+                        </td>
+                        <td>
+                            {{ q.driver }}
+                        </td>
+                        <td>
+                            {{ q.type_ship }}
+                        </td>
+                        <td>
+                            {{ q.supplier }}
+                        </td>
+                        <td>
+                            {{ q.customer }}
+                        </td>
+                        <td>
+                            {{ q.shipment|default_if_none:"Нет" }}
+                        </td>
+                        <td>
+                            {{ q.product }}
+                        </td>
+                        <td>
+                            {{ q.s_milage }}
+                        </td>
+                        <td>
+                            {{ q.e_milage }}
+                        </td>
+                        <td>
+                            {{ q.gas_start }}
+                        </td>
+                        <td>
+                            {{ q.gas_end }}
+                        </td>
+                        <td>
+                            {{ q.gas_given }}
+                        </td>
+                        <td>
+                            {{ q.weight_load }}{{ q.unit_load.short_name }}
+                        </td>
+                        <td>
+                            {{ q.weight_unload }}{{ q.unit_unload.short_name }}
+                        </td>
+                        <td>
+                            {{ q.count }}
+                        </td>
+                        <td>
+                            {{ q.state }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
 
 
     <div id="ModalUpdate" class="modal fade">
