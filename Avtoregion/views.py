@@ -780,9 +780,7 @@ class AjaxUpdateState(JSONRequestResponseMixin, View):
 
     def post(self, request, *args, **kwargs):
         ids = self.request_json.get('id_list')
-        print(ids)
         state = self.request_json.get('state')
-        print(state)
         if ids:
             for id in ids:
                 self.model.objects.filter(id_race=int(id)).update(state=state)
