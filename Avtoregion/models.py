@@ -268,8 +268,9 @@ class Race(models.Model):
     def get_absolute_url(self):
         return reverse('RaceUpdate', kwargs={'pk': self.pk})
 
-    def get_foreign_fields(self):
-        return [getattr(self, f.name) for f in self._meta.fields if isinstance(
+    @classmethod
+    def get_foreign_fields(cls):
+        return [getattr(cls, f.name) for f in cls._meta.fields if isinstance(
             f, models.fields.related.ForeignKey)]
 
     @property

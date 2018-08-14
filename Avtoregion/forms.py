@@ -198,6 +198,3 @@ class RaceUpdateForm(RaceForm):
         self.fields['product'].queryset = Product.objects.all()
         self.fields['driver'].queryset = Driver.objects.all()
         self.fields['car'].queryset = Car.objects.all()
-
-    def get_form_kwargs(self):
-        super(ModelForm, self).get

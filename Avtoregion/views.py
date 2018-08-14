@@ -173,6 +173,17 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
         else:
             return super(UpdateView, self).get_success_url()
 
+    def form_valid(self, form):
+        """check if fields had been marked as deleted"""
+        is_invalid = False
+        for foreign_field in self.model.get_foreign_fields():
+            if (getattr(self.object, foreign_field.field.name)).has_deleted:
+                is_invalid = True
+                form.add_error(foreign_field.field.name, 'Этот объект помечен на удаление!')
+        if is_invalid:
+            return self.form_invalid(form)
+        return super(RaceUpdate, self).form_valid(form)
+
 
 class RaceDelete(PermissionRequiredMixin, JSONRequestResponseMixin, View):
     model = Race
@@ -687,7 +698,8 @@ def save_excel(request):
                                                                              end_date),
                    format)
     col = 0
-    for title in ['', '№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.', 'Плечо', 'Кол-во рейсов', 'Состояние']:
+    for title in ['', '№', 'Дата', 'Номер машины', 'Водитель', 'Вес', 'Груз', 'Ед.', 'Плечо', 'Кол-во рейсов',
+                  'Состояние']:
         ws.write_string(3, col, title, format)
         col += 1
     i = 0
