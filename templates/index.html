@@ -2,52 +2,54 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Main</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="{% static "css/main.css" %}">
-    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
-    <link rel="stylesheet" href="{% static "css/bootstrap_fix.css" %}">
-    <link rel="stylesheet" href="{% static "css/Material_Icons.css" %}">
-    <link rel="stylesheet" href="{% static "css/font-awesome4.7.0.min.css" %}">
-    <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
-		<!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="{% static "js/BootstrapTable/bootstrap-table.min.css" %}">
-    <!-- jQuery library-->
-    <script type="text/javascript" src="{% static "js/jquery-3.3.1.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
-		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-    <!--<script type="text/javascript" src="{% static 'js/main.'|add:JS_MD5|add:'.js' %}"></script>-->
-    <script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/BootstrapTable/locale/bootstrap-table-ru-RU.min.js" %}"></script>
-    <script type="text/javascript"
-            src="{% static "js/BootstrapTable/extensions/cookie/bootstrap-table-cookie.min.js" %}">
-    </script>
-		<script type="text/javascript"
-						src="{% static "js/BootstrapTable/extensions/filter-control/bootstrap-table-filter-control.min.js" %}">
-		</script>
-    <script type="text/javascript"
-            src="{% static "js/BootstrapTable/extensions/bootstrap-table-contextmenu/dist/bootstrap-table-contextmenu.min.js" %}">
-    </script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Main</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="{% static "css/main.css" %}">
+	<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/bootstrap_fix.css" %}">
+	<link rel="stylesheet" href="{% static "css/Material_Icons.css" %}">
+	<link rel="stylesheet" href="{% static "css/font-awesome4.7.0.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
+	<link rel="stylesheet" href="{% static "js/BootstrapTable/bootstrap-table.min.css" %}">
+	<!-- jQuery library-->
+	<script type="text/javascript" src="{% static "js/jquery-3.3.1.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/datarange-config.js" %}"></script>
+	<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+	<!--<script type="text/javascript" src="{% static 'js/main.'|add:JS_MD5|add:'.js' %}"></script>-->
+	<script type="text/javascript" src="{% static 'js/bootstraptable-config.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/modal-config.js' %}"></script>
+	<script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/BootstrapTable/locale/bootstrap-table-ru-RU.min.js" %}"></script>
+	<script type="text/javascript"
+	        src="{% static "js/BootstrapTable/extensions/cookie/bootstrap-table-cookie.min.js" %}">
+	</script>
+	<script type="text/javascript"
+	        src="{% static "js/BootstrapTable/extensions/filter-control/bootstrap-table-filter-control.min.js" %}">
+	</script>
+	<script type="text/javascript"
+	        src="{% static "js/BootstrapTable/extensions/bootstrap-table-contextmenu/dist/bootstrap-table-contextmenu.min.js" %}">
+	</script>
 
-    <script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/libs/FileSaver/FileSaver.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/libs/js-xlsx/xlsx.core.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/tableExport.min.js" %}"></script>
 
 </head>
 {% if user.is_anonymous %}
-    <body>
-    {% block login %}
-    {% endblock %}
-    </body>
+	<body>
+	{% block login %}
+	{% endblock %}
+	</body>
 {% else %}
-    <body>
-    {% include 'messages.html' %}
-    {% block content %}
-    {% endblock %}
-    </body>
+	<body>
+	{% include 'messages.html' %}
+	{% block content %}
+	{% endblock %}
+	</body>
 {% endif %}
 </html>
