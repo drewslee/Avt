@@ -191,6 +191,15 @@ class RaceForm(ModelForm):
 
 
 class RaceUpdateForm(RaceForm):
+    race_date = DateTimeField(
+                              label='Дата выезда:',
+                              widget=DateTimeInput(attrs={'id': 'id_race_date_update', 'autofocus': ''})
+                              )
+    arrival_time = DateTimeField(
+                                 label='Дата приезда:',
+                                 widget=DateTimeInput(attrs={'id': 'id_arrival_time_update'})
+                                 )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['supplier'].queryset = Supplier.objects.all()

@@ -747,15 +747,6 @@ def datestr_to_dateaware(date):
     return start_date, end_date
 
 
-def ajax_track(req):
-    if req.is_ajax():
-        data = json.dumps({'gas_start': 0, 's_milage': 0})
-        if req.GET.get('id').strip():
-            rce = Race.objects.filter(car_id=int(req.GET.get('id'))).latest(field_name='id_race')
-            data = json.dumps({'gas_start': float(rce.gas_end), 's_milage': float(rce.e_milage)})
-        return HttpResponse(data, content_type='application/json')
-
-
 def ajax_sup(req):
     if req.is_ajax():
         data = {}

@@ -29,7 +29,6 @@ urlpatterns = [
     url(r'^Constants$', views.ConstantsViewList.as_view(), name='Constants'),
     url(r'^Race/$', views.RaceViewList.as_view(), name='Race'),
     url(r'^Race/add/$', views.RaceCreate.as_view(), name='RaceCreate'),
-    url(r'^Race/add/ajax_track', views.ajax_track, name='RaceAjaxTrack'),
     url(r'^Race/add/ajax_sup', views.ajax_sup, name='RaceAjaxSup'),
     url(r'^Race/add/get_unload_place', views.get_unload_place, name='RaceAjaxCus'),
     url(r'^Race/update/ajax', views.AjaxUpdateState.as_view(), name='RaceUpdateAjax'),

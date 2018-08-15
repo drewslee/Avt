@@ -1,5 +1,150 @@
 $(function ()
 {
+    $('#id_race_date').daterangepicker({
+        "singleDatePicker": true,
+        "autoApply": true,
+        "timePicker": true,
+        "timePicker24Hour": true,
+        "startDate": new Date(),
+        "endDate" : new Date(),
+        locale: {
+            "monthNames": [
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"
+            ],
+            format: 'YYYY-MM-DD H:mm',
+            "firstDay": 1,
+            "weekLabel": "Неделя",
+            "daysOfWeek": [
+                "Вс",
+                "Пн",
+                "Вт",
+                "Ср",
+                "Чт",
+                "Пт",
+                "Сб"
+            ]
+
+        }
+    });
+    $('#id_arrival_time').daterangepicker({
+        "singleDatePicker": true,
+        "autoApply": true,
+        "timePicker": true,
+        "timePicker24Hour": true,
+        "startDate": new Date(),
+        "endDate" : new Date(),
+        locale: {
+            "monthNames": [
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"
+            ],
+            format: 'YYYY-MM-DD H:mm',
+            "firstDay": 1,
+            "weekLabel": "Неделя",
+            "daysOfWeek": [
+                "Вс",
+                "Пн",
+                "Вт",
+                "Ср",
+                "Чт",
+                "Пт",
+                "Сб"
+            ]
+
+        }
+
+    });
+    $('#id_arrival_time_update').daterangepicker({
+        "singleDatePicker": true,
+        "autoApply": true,
+        "timePicker": true,
+        "timePicker24Hour": true,
+        locale: {
+            "monthNames": [
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"
+            ],
+            format: 'DD.MM.YYYY H:mm:ss',
+            "firstDay": 1,
+            "weekLabel": "Неделя",
+            "daysOfWeek": [
+                "Вс",
+                "Пн",
+                "Вт",
+                "Ср",
+                "Чт",
+                "Пт",
+                "Сб"
+            ]
+
+        }
+    });
+    $('#id_race_date_update').daterangepicker({
+        "singleDatePicker": true,
+        "autoApply": true,
+        "timePicker": true,
+        "timePicker24Hour": true,
+        locale: {
+            "monthNames": [
+                "Январь",
+                "Февраль",
+                "Март",
+                "Апрель",
+                "Май",
+                "Июнь",
+                "Июль",
+                "Август",
+                "Сентябрь",
+                "Октябрь",
+                "Ноябрь",
+                "Декабрь"
+            ],
+            format: 'DD.MM.YYYY H:mm:ss',
+            "firstDay": 1,
+            "weekLabel": "Неделя",
+            "daysOfWeek": [
+                "Вс",
+                "Пн",
+                "Вт",
+                "Ср",
+                "Чт",
+                "Пт",
+                "Сб"
+            ]
+
+        }
+    });
     var $datarange = $('input[name="daterange"]');
 
     $datarange.daterangepicker({
