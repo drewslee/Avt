@@ -3,320 +3,332 @@
 {% load static %}
 {% load custom_filters %}
 {% block content %}
-    <link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
-    <link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
-    <link rel="stylesheet" href="{% static "css/chosenIcon.css" %}">
-    <script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
-    <div class="container">
-        <div class="col-lg-4">
-            <h2>По поставщику</h2>
-            <form action="" method="post" id="post-form-supplier">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                        <input name="daterange" type="text" class="form-control" id="daterange"/>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <select name="supplier" class="icon-select" id="supplier">
-                        {% for field in q_sup %}
-                            <option data-icon="fa-building"
-                                    value="{{ field.id_supplier }}">{{ field.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <select id="service" name="service" class="form-control">
-                        {% for field in race_type %}
-                            <option value="{{ field }}">{{ field }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-	            <div class="form-group">
-		            <select id="state" name="state" class="form-control">
-		            <option></option>
-			            {% for field in state %}
-				            <option value="{{ field }}">{{ field }}</option>
-			            {% endfor %}
-		            </select>
-	            </div>
-                <div class="form-group">
-                    <select name="product" multiple class="form-control" id="product">
-                        {% for field in q_prod %}
-                            <option value="{{ field.name }}">{{ field.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% buttons %}
-                    <button class="btn btn-success btn-sm"> {% bootstrap_icon "star" %}Сформировать</button>
-                {% endbuttons %}
-            </form>
-        </div>
-        <div class="col-lg-4">
-            <h2>По покупателю</h2>
-            <form action="" method="post" id="post-form-customer">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="input-group">
+	<link rel="stylesheet" href="{% static "css/daterangepicker.css" %}">
+	<link rel="stylesheet" href="{% static "css/chosen.min.css" %}">
+	<link rel="stylesheet" href="{% static "css/chosenIcon.css" %}">
+	<script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
+	<div class="container">
+		<div class="col-lg-4">
+			<h2>По поставщику</h2>
+			<form action="" method="post" id="post-form-supplier">
+				{% csrf_token %}
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+						<input name="daterange" type="text" class="form-control" id="daterange"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<select name="supplier" class="icon-select" id="supplier">
+						{% for field in q_sup %}
+							<option data-icon="fa-building"
+							        value="{{ field.id_supplier }}">{{ field.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select id="service" name="service" class="form-control">
+						{% for field in race_type %}
+							<option value="{{ field }}">{{ field }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select id="state" name="state" class="form-control">
+						<option></option>
+						{% for field in state %}
+							<option value="{{ field }}">{{ field }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select name="product" multiple class="form-control" id="product">
+						{% for field in q_prod %}
+							<option value="{{ field.name }}">{{ field.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				{% buttons %}
+					<button class="btn btn-success btn-sm"> {% bootstrap_icon "star" %}Сформировать</button>
+				{% endbuttons %}
+			</form>
+		</div>
+		<div class="col-lg-4">
+			<h2>По покупателю</h2>
+			<form action="" method="post" id="post-form-customer">
+				{% csrf_token %}
+				<div class="form-group">
+					<div class="input-group">
 			<span class="input-group-addon">
 				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;</span>
-                        <input name="daterange" type="text" class="form-control" id="daterange">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <select name="customer" class="form-control icon-select" id="customer">
+						<input name="daterange" type="text" class="form-control" id="daterange">
+					</div>
+				</div>
+				<div class="form-group">
+					<select name="customer" class="form-control icon-select" id="customer">
 
-                        {% for field in q_cus %}
-                            <option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <select name="unload_place" class="form-control icon-select" id="unload_place">
-                        <option></option>
-                    </select>
-                </div>
-	            <div class="form-group">
-		            <select id="state" name="state" class="form-control">
-		              <option></option>
-			            {% for field in state %}
-				            <option value="{{ field }}">{{ field }}</option>
-			            {% endfor %}
-		            </select>
-	            </div>
-                <div class="form-group">
-                    <select name="product" multiple class="form-control icon-select" id="product">
-                        {% for field in q_prod %}
-                            <option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% buttons %}
-                    <button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
-                {% endbuttons %}
-            </form>
-        </div>
-        <div class="col-lg-4">
-            <h2>По посреднику</h2>
-            <form action="" method="post" id="post-form-mediator">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="input-group">
+						{% for field in q_cus %}
+							<option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select name="unload_place" class="form-control icon-select" id="unload_place">
+						<option></option>
+					</select>
+				</div>
+				<div class="form-group">
+					<select id="state" name="state" class="form-control">
+						<option></option>
+						{% for field in state %}
+							<option value="{{ field }}">{{ field }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select name="product" multiple class="form-control icon-select" id="product">
+						{% for field in q_prod %}
+							<option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				{% buttons %}
+					<button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
+				{% endbuttons %}
+			</form>
+		</div>
+		<div class="col-lg-4">
+			<h2>По посреднику</h2>
+			<form action="" method="post" id="post-form-mediator">
+				{% csrf_token %}
+				<div class="form-group">
+					<div class="input-group">
 			<span class="input-group-addon">
 				<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;</span>
-                        <input name="daterange" type="text" class="form-control" id="daterange">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <select name="mediator" class="form-control icon-select" id="mediator">
+						<input name="daterange" type="text" class="form-control" id="daterange">
+					</div>
+				</div>
+				<div class="form-group">
+					<select name="mediator" class="form-control icon-select" id="mediator">
 
-                        {% for field in q_med %}
-                            <option data-icon="fa-credit-card" value="{{ field.id_mediator }}">{{ field.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-	            <div class="form-group">
-		            <select id="state" name="state" class="form-control">
-		              <option></option>
-			            {% for field in state %}
-				            <option value="{{ field }}">{{ field }}</option>
-			            {% endfor %}
-		            </select>
-	            </div>
-                <div class="form-group">
-                    <select name="product" multiple class="form-control icon-select" id="product">
-                        {% for field in q_prod %}
-                            <option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                {% buttons %}
-                    <button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
-                {% endbuttons %}
-            </form>
-        </div>
-    </div>
-    <script type="text/javascript">
+						{% for field in q_med %}
+							<option data-icon="fa-credit-card" value="{{ field.id_mediator }}">{{ field.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select id="state" name="state" class="form-control">
+						<option></option>
+						{% for field in state %}
+							<option value="{{ field }}">{{ field }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<select name="product" multiple class="form-control icon-select" id="product">
+						{% for field in q_prod %}
+							<option data-icon="" value="{{ field.name }}">{{ field.name }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				{% buttons %}
+					<button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
+				{% endbuttons %}
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">
 
-        $(function () {
+      $(function ()
+      {
 
-            $('select[multiple]').chosen({
-                placeholder_text_multiple: 'Выберите фракцию'
-            });
-            $('select[name="supplier"]').chosen({
-                placeholder_text_single: 'Выберите организацию'
+          $('select[multiple]').chosen({
+              placeholder_text_multiple: 'Выберите фракцию'
+          });
+          $('select[name="supplier"]').chosen({
+              placeholder_text_single: 'Выберите организацию'
 
-            });
-            $('select[name="customer"]').chosen({
-                placeholder_text_single: 'Выберите организацию',
-                inherit_select_classes: false
+          });
+          $('select[name="customer"]').chosen({
+              placeholder_text_single: 'Выберите организацию',
+              inherit_select_classes: false
 
-            });
-            $('select[name="service"]').chosen({
-                disable_search: true,
-                inherit_select_classes: false
+          });
+          $('select[name="service"]').chosen({
+              disable_search: true,
+              inherit_select_classes: false
 
-            });
-            $('select[name="state"]').chosen({
-		            placeholder_text_single: 'Выберите состояние рейса',
-                disable_search: true,
-                inherit_select_classes: false,
-		            allow_single_deselect: true
+          });
+          $('select[name="state"]').chosen({
+              placeholder_text_single: 'Выберите состояние рейса',
+              disable_search: true,
+              inherit_select_classes: false,
+              allow_single_deselect: true
 
-            });
-            $('select[name="unload_place"]').chosen({
-                placeholder_text_single: 'Выберите место разгрузки',
-                inherit_select_classes: false,
-                allow_single_deselect: true
+          });
+          $('select[name="unload_place"]').chosen({
+              placeholder_text_single: 'Выберите место разгрузки',
+              inherit_select_classes: false,
+              allow_single_deselect: true
 
-            });
-            $(".icon-select").chosenIcon({});
+          });
+          $(".icon-select").chosenIcon({});
 
-            var id_customer = document.getElementById('customer');
-            var select_unload = document.getElementById('unload_place');
-            var cus = id_customer.value;
-            $.ajax(
-                {
-                    type: "GET",
-                    url: "{% url 'RaceAjaxCus' %}",
-                    data: {id: cus},
-                    dataType: 'json',
-                    success: function (resp) {
-                        while (select_unload.length > 1) {
-                            select_unload.remove(select_unload.length - 1)
-                        }
-                        for (var i = 0; i < resp.length; i++) {
-                            var option = document.createElement('option');
-                            option.text = resp[i].name;
-                            option.value = resp[i].id_shipment;
-                            select_unload.add(option);
-                            $('#unload_place').trigger("chosen:updated");
-                        }
-                    }
-                });
+          var id_customer = document.getElementById('customer');
+          var select_unload = document.getElementById('unload_place');
+          var cus = id_customer.value;
+          $.ajax(
+              {
+                  type: "GET",
+                  url: "{% url 'RaceAjaxCus' %}",
+                  data: {id: cus},
+                  dataType: 'json',
+                  success: function (resp)
+                  {
+                      while (select_unload.length > 1)
+                      {
+                          select_unload.remove(select_unload.length - 1)
+                      }
+                      for (var i = 0; i < resp.length; i++)
+                      {
+                          var option = document.createElement('option');
+                          option.text = resp[i].name;
+                          option.value = resp[i].id_shipment;
+                          select_unload.add(option);
+                          $('#unload_place').trigger("chosen:updated");
+                      }
+                  }
+              });
 
-            $('#customer').chosen().change(function () {
-                var cus = id_customer.value;
-                $.ajax(
-                    {
-                        type: "GET",
-                        url: "{% url 'RaceAjaxCus' %}",
-                        data: {id: cus},
-                        dataType: 'json',
-                        success: function (resp) {
-                            while (select_unload.length > 1) {
-                                select_unload.remove(select_unload.length - 1)
-                            }
-                            for (var i = 0; i < resp.length; i++) {
-                                var option = document.createElement('option');
-                                option.text = resp[i].name;
-                                option.value = resp[i].id_shipment;
-                                select_unload.add(option);
-                                $('#unload_place').trigger("chosen:updated");
-                            }
-                        }
-                    })
+          $('#customer').chosen().change(function ()
+          {
+              var cus = id_customer.value;
+              $.ajax(
+                  {
+                      type: "GET",
+                      url: "{% url 'RaceAjaxCus' %}",
+                      data: {id: cus},
+                      dataType: 'json',
+                      success: function (resp)
+                      {
+                          while (select_unload.length > 1)
+                          {
+                              select_unload.remove(select_unload.length - 1)
+                          }
+                          for (var i = 0; i < resp.length; i++)
+                          {
+                              var option = document.createElement('option');
+                              option.text = resp[i].name;
+                              option.value = resp[i].id_shipment;
+                              select_unload.add(option);
+                              $('#unload_place').trigger("chosen:updated");
+                          }
+                      }
+                  })
 
-            });
-        });
-        $('#post-form-supplier').on('submit', function (event) {
-            event.preventDefault();
-            var $form = $("#post-form-supplier");
-            var $daterange = $form.find("input[name='daterange']").val();
-            var $service = $form.find("#service option:selected").val();
-            var $supplier = $form.find("#supplier option:selected").val();
-            var $product = $form.find("#product").val();
-            var $state = $form.find("#state option:selected").val();
+          });
+      });
+      $('#post-form-supplier').on('submit', function (event)
+      {
+          event.preventDefault();
+          var $form = $("#post-form-supplier");
+          var $daterange = $form.find("input[name='daterange']").val();
+          var $service = $form.find("#service option:selected").val();
+          var $supplier = $form.find("#supplier option:selected").val();
+          var $product = $form.find("#product").val();
+          var $state = $form.find("#state option:selected").val();
 
-            var data = {
-                daterange: $daterange,
-                service: $service,
-                supplier: $supplier,
-                product: $product,
-		            state: $state
-            };
-
-
-            $.post({
-                url: {% url 'Acc' %},
-                traditional: true,
-                data: JSON.stringify(data),
-                success: function (resp) {
-                    $('#tab_res').html(resp['data']);
-                }
-
-
-            });
-        });
-        $('#post-form-customer').on('submit', function (event) {
-            event.preventDefault();
-            // language=JQuery-CSS
-            var $form = $("#post-form-customer");
-            var $daterange = $form.find("input[name='daterange']").val();
-            var $customer = $form.find("#customer option:selected").val();
-            var $unload_place = $form.find("#unload_place option:selected").val();
-            var $product = $form.find("#product").val();
-            var $state = $form.find("#state").val();
-
-            var data = {
-                daterange: $daterange,
-                customer: $customer,
-                product: $product,
-                unload_place: $unload_place,
-		            state: $state
-            };
+          var data = {
+              daterange: $daterange,
+              service: $service,
+              supplier: $supplier,
+              product: $product,
+              state: $state
+          };
 
 
-            $.post({
-                url: {% url 'Acc' %},
-                traditional: true,
-                data: JSON.stringify(data),
-                success: function (resp) {
-                    $('#tab_res').html(resp['data']);
-
-                }
-
-
-            });
-        });
-        $('#post-form-mediator').on('submit', function (event) {
-            event.preventDefault();
-            // language=JQuery-CSS
-            var $form = $("#post-form-mediator");
-            var $daterange = $form.find("input[name='daterange']").val();
-            var $mediator = $form.find("#mediator option:selected").val();
-            var $product = $form.find("#product").val();
-            var $state = $form.find("#state").val();
-
-            var data = {
-                daterange: $daterange,
-                mediator: $mediator,
-                product: $product,
-		            state: $state
-            };
+          $.post({
+              url: {% url 'Acc' %},
+              traditional: true,
+              data: JSON.stringify(data),
+              success: function (resp)
+              {
+                  $('#tab_res').html(resp['data']);
+              }
 
 
-            $.post({
-                url: {% url 'Acc' %},
-                traditional: true,
-                data: JSON.stringify(data),
-                success: function (resp) {
-                    $('#tab_res').html(resp['data']);
+          });
+      });
+      $('#post-form-customer').on('submit', function (event)
+      {
+          event.preventDefault();
+          // language=JQuery-CSS
+          var $form = $("#post-form-customer");
+          var $daterange = $form.find("input[name='daterange']").val();
+          var $customer = $form.find("#customer option:selected").val();
+          var $unload_place = $form.find("#unload_place option:selected").val();
+          var $product = $form.find("#product").val();
+          var $state = $form.find("#state").val();
 
-                }
+          var data = {
+              daterange: $daterange,
+              customer: $customer,
+              product: $product,
+              unload_place: $unload_place,
+              state: $state
+          };
 
 
+          $.post({
+              url: {% url 'Acc' %},
+              traditional: true,
+              data: JSON.stringify(data),
+              success: function (resp)
+              {
+                  $('#tab_res').html(resp['data']);
 
-            });
-        });
+              }
 
 
-    </script>
-    <div id="tab_res">
-        {% include "table.html" %}
-    </div>
-    {% comment %}  {% if q_weight.weight_load__sum %}{{ q_resp.first.supplier.name|hyphen}}{% now "d_m_y_H:m" %}{% endif %}{% if q_weight.weight_unload__sum %}{% now "d_m_y_H:m" %}{{q_resp.first.customer.name|hyphen}}{% endif %} {% endcomment %}
+          });
+      });
+      $('#post-form-mediator').on('submit', function (event)
+      {
+          event.preventDefault();
+          // language=JQuery-CSS
+          var $form = $("#post-form-mediator");
+          var $daterange = $form.find("input[name='daterange']").val();
+          var $mediator = $form.find("#mediator option:selected").val();
+          var $product = $form.find("#product").val();
+          var $state = $form.find("#state").val();
+
+          var data = {
+              daterange: $daterange,
+              mediator: $mediator,
+              product: $product,
+              state: $state
+          };
+
+
+          $.post({
+              url: {% url 'Acc' %},
+              traditional: true,
+              data: JSON.stringify(data),
+              success: function (resp)
+              {
+                  $('#tab_res').html(resp['data']);
+
+              }
+
+
+          });
+      });
+
+
+	</script>
+	<div id="tab_res">
+		{% include "table.html" %}
+	</div>
 {% endblock %}
