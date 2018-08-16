@@ -39,8 +39,7 @@
 						<i class="glyphicon glyphicon-plus-sign"></i>
 					</button>
 
-					<a id="change_mediator" href="" class="btn btn-default"
-					   title="Изменить">
+					<a id="change_mediator" href="" class="btn btn-default" title="Изменить">
 						<i class="glyphicon glyphicon-edit"></i>
 					</a>
 					<button form="delete_mediator" type="submit" class="btn btn-default delete-confirmation" title="Удалить">
@@ -70,9 +69,7 @@
                       {% for q in qMediator %}
                         <tr>
                             <td></td>
-	                          <td>
-		                          {{ q.pk }}
-	                          </td>
+	                          <td>{{ q.pk }}</td>
                             <td>
                                 {{ q.name }}
                             </td>

@@ -556,29 +556,29 @@ class Accumulate(JSONRequestResponseMixin, View):
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request_json.get('daterange'))
+        name_type = self.request_json.get('type')
 
-        q_resp, q_weight, type_prod = {}, {}, ""
+        q_resp, q_weight = {}, {}
+        select_state = (x[1] for x in Race.STATE)
 
         ctx = {
-            'supplier': self.request_json.get('supplier'),
-            'customer': self.request_json.get('customer'),
-            'mediator': self.request_json.get('mediator'),
+            name_type: self.request_json.get(name_type)
         }
 
-        for key, value in ctx.items():
-            if value is not None:
-                method = self.dispatch_method(key)
-                q_resp, q_weight, type_prod = method([start_date, end_date])
+        if ctx[name_type] is not None:
+            try:
+                method = self.dispatch_method(name_type)
+                q_resp, q_weight = method([start_date, end_date])
+            except AttributeError:
+                print('Method not exist!')
 
-        select_state = (x[1] for x in Race.STATE)
         table = render_to_string(template_name='table.html',
-                                 context={'q_resp': q_resp, 'q_weight': q_weight, 'type_name': type_prod,
+                                 context={'q_resp': q_resp, 'q_weight': q_weight, 'type_prod': name_type,
                                           'start_date': start_date, 'end_date': end_date - timedelta(days=1),
                                           'select_state': select_state})
         return self.render_json_response({"data": table})
 
     def get_query_supplier(self, date):
-        type_prod = 'supplier'
         query = Q(type_ship__exact=self.request_json.get('service'),
                   supplier_id=self.request_json.get('supplier'),
                   race_date__range=date)
@@ -588,10 +588,9 @@ class Accumulate(JSONRequestResponseMixin, View):
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
         q_resp.select_related('car', 'driver', 'product')
-        return q_resp, q_weight, type_prod
+        return q_resp, q_weight
 
     def get_query_customer(self, date):
-        type_prod = 'customer'
         query = Q(customer_id=self.request_json['customer'],
                   race_date__range=date)
 
@@ -604,10 +603,9 @@ class Accumulate(JSONRequestResponseMixin, View):
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_unload'))
         q_resp.select_related('car', 'driver', 'product')
-        return q_resp, q_weight, type_prod
+        return q_resp, q_weight
 
     def get_query_mediator(self, date):
-        type_prod = 'mediator'
         query = Q(car__mediator__id_mediator=self.request_json['mediator'],
                   race_date__range=date)
 
@@ -616,7 +614,7 @@ class Accumulate(JSONRequestResponseMixin, View):
 
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
-        return q_resp, q_weight, type_prod
+        return q_resp, q_weight
 
     def get_query_product(self, query):
         if self.request_json['product']:

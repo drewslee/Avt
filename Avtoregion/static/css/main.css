@@ -16,24 +16,31 @@
 .table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #race_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #car_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #supplier_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #customer_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #driver_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #mediator_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #trailer_table th:first-child {
     border-top-left-radius: 10px;
 }
@@ -41,9 +48,11 @@
 #product_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 #units_table th:first-child {
     border-top-left-radius: 10px;
 }
+
 .table th:last-child {
     border-top-right-radius: 10px;
 }
@@ -53,7 +62,7 @@
 }
 
 .table tr:last-child td:last-child {
-   border-radius: 0 0 10px 0;
+    border-radius: 0 0 10px 0;
 }
 
 .table tr td:last-child {
@@ -80,16 +89,36 @@
 }
 
 @-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
+    from {
+        transform: scale(1) rotate(0deg);
+    }
+    to {
+        transform: scale(1) rotate(360deg);
+    }
 }
 
 .calendar-shift {
     bottom: 1px;
 }
 
+.rotate {
+    -moz-transition: all 2s linear;
+    -webkit-transition: all 2s linear;
+    transition: all 2s linear;
+}
+
+.rotate.down {
+    -ms-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}

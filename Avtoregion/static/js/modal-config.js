@@ -24,8 +24,19 @@ $(function ()
         $('#ModalUpdate').modal('show');
     });
 
-    $(document).on('hide.bs.modal', '#ModalUpdate', function ()
+    $(document).on('hide.bs.modal', '#account_update_state', function ()
     {
-        location.reload();
+        if (typeof(Storage) !== "undefined") {
+          var $daterange = sessionStorage.getItem('daterange');
+          var $type =  sessionStorage.getItem('type');
+          var $service = sessionStorage.getItem('service');
+          var $supplier =  sessionStorage.getItem('supplier');
+          var $mediator = sessionStorage.getItem('mediator');
+          var $customer = sessionStorage.getItem('customer');
+          var $load_place =  sessionStorage.getItem('load_place');
+          var $unload_place =  sessionStorage.getItem('unload_place');
+          var $product =  sessionStorage.getItem('product');
+          var $state =  sessionStorage.getItem('state');
+        }
     });
 });

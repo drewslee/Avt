@@ -120,6 +120,62 @@ $(function ()
         }
     });
 
+    $('#account-form').on('submit', function (event)
+    {
+        event.preventDefault();
+        var $form = $("#account-form");
+        var $daterange = $form.find("#account_daterange").val();
+        var $type = $form.find("#account_type option:selected").val();
+        var $service = $form.find("#account_service option:selected").val();
+        var $supplier = $form.find("#account_supplier option:selected").val();
+        var $mediator = $form.find("#account_mediator option:selected").val();
+        var $customer = $form.find("#account_customer option:selected").val();
+        var $load_place = $form.find("#account_load_place option:selected").val();
+        var $unload_place = $form.find("#account_unload_place option:selected").val();
+        var $product = $form.find("#account_product").val();
+        var $state = $form.find("#account_state option:selected").val();
+
+        if (typeof(Storage) !== "undefined") {
+            sessionStorage.setItem('daterange', $daterange);
+            sessionStorage.setItem('type', $type);
+            sessionStorage.setItem('service', $service);
+            sessionStorage.setItem('supplier', $supplier);
+            sessionStorage.setItem('mediator', $mediator);
+            sessionStorage.setItem('customer', $customer);
+            sessionStorage.setItem('load_place', $load_place);
+            sessionStorage.setItem('unload_place', $unload_place);
+            sessionStorage.setItem('product', $product);
+            sessionStorage.setItem('state', $state);
+        }
+
+        var data = {
+            daterange: $daterange,
+            type: $type,
+            service: $service,
+            supplier: $supplier,
+            mediator: $mediator,
+            customer: $customer,
+            load_place: $load_place,
+            unload_place: $unload_place,
+            product: $product,
+            state: $state
+        };
+
+
+        $.post({
+            url: $form.attr('action') ,
+            traditional: true,
+            data: JSON.stringify(data),
+            success: function (resp)
+            {
+                $('#tab_res').html(resp['data']);
+                $('.toggle-toolbar').collapse('toggle');
+            }
+
+
+        });
+    });
+
     $(document).on("click", '#delete_race_ok', function (event)
     {
         $('#delete_race_ok')[0].disabled = true;

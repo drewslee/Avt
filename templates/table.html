@@ -44,21 +44,21 @@
                    data-toggle="table"
                    data-click-to-select="true" data-side-pagination="client"
                    data-classes="table table-hover table-small-font table-condensed table-no-bordered">
-			{% if type_name == 'supplier' %}
+			{% if type_prod == 'supplier' %}
 				<h1 class="h1">
 					<span id="organization" class="text-left">{{ q_resp.first.supplier.name }}</span>
 					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
 					по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
 				</h1>
 			{% endif %}
-			{% if type_name == 'customer' %}
+			{% if type_prod == 'customer' %}
 				<h1 class="h1">
 					<span id="organization">{{ q_resp.first.customer.name }}</span>
 					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
 					по <span id="end_date" class="text-right">{{ end_date|date:"d.m.Y" }}</span>
 				</h1>
 			{% endif %}
-			{% if type_name == 'mediator' %}
+			{% if type_prod == 'mediator' %}
 				<h1 class="h1">
 					<span id="organization">{{ q_resp.first.car.mediator.name }}</span>
 					c <span id="start_date" class="text-center">{{ start_date|date:"d.m.Y" }}</span>
