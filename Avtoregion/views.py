@@ -549,9 +549,11 @@ class Accumulate(JSONRequestResponseMixin, View):
         q_prod = Product.objects.all()
         q_cus = Customer.objects.all()
         q_med = Mediator.objects.all()
+        state = (x[1] for x in Race.STATE)
+        select_state = (x[1] for x in Race.STATE)
         context = {'q_sup': q_sup, 'q_cus': q_cus, 'q_med': q_med, 'q_prod': q_prod,
                    'race_type': (Race.TYPE[0][0], Race.TYPE[1][0]),
-                   'state': (Race.CREATE, Race.LOAD, Race.UNLOAD, Race.FINISH, Race.END, Race.ACCIDENT)}
+                   'state': state, 'select_state': select_state}
         return render(request=self.request, template_name='Avtoregion/account.html', context=context)
 
     def post(self, *args, **kwargs):
@@ -559,7 +561,6 @@ class Accumulate(JSONRequestResponseMixin, View):
         name_type = self.request_json.get('type')
 
         q_resp, q_weight = {}, {}
-        select_state = (x[1] for x in Race.STATE)
 
         ctx = {
             name_type: self.request_json.get(name_type)
@@ -574,8 +575,8 @@ class Accumulate(JSONRequestResponseMixin, View):
 
         table = render_to_string(template_name='table.html',
                                  context={'q_resp': q_resp, 'q_weight': q_weight, 'type_prod': name_type,
-                                          'start_date': start_date, 'end_date': end_date - timedelta(days=1),
-                                          'select_state': select_state})
+                                          'start_date': start_date, 'end_date': end_date - timedelta(days=1)
+                                          })
         return self.render_json_response({"data": table})
 
     def get_query_supplier(self, date):

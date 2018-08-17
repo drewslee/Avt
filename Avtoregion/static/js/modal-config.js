@@ -1,11 +1,6 @@
 $(function ()
 {
 
-    $(document).on("click", '#state', function ()
-    {
-        $('#ModalUpdate').modal('show');
-    });
-
     $(document).on('click', '#delete_race', function ()
     {
         $('#id_modal_message').html('<p>Вы уверены?</p>');
