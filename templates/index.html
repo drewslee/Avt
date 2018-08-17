@@ -24,8 +24,11 @@
 	<script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/chosen-config.js" %}"></script>
-	<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-	<!--<script type="text/javascript" src="{% static 'js/main.'|add:JS_MD5|add:'.js' %}"></script>-->
+	{% if request.META.DEBUG == 'True' %}
+		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+	{% else %}
+		<script type="text/javascript" src="{% static 'js/main.'|add:JS_MD5|add:'.js' %}"></script>
+	{% endif %}
 	<script type="text/javascript" src="{% static 'js/bootstraptable-config.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/modal-config.js' %}"></script>
 	<script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
