@@ -24,6 +24,12 @@ $(function ()
         $('#ModalAccountUpdate').modal('show');
     });
 
+    $(document).on("click", '#update_state_from_race', function (event)
+    {
+        $('#update_state_ok')[0].disabled = false;
+        $('#ModalUpdate').modal('show');
+    });
+
     $(document).on('hide.bs.modal', '#ModalAccountUpdate', function ()
     {
         if (typeof(Storage) !== "undefined") {

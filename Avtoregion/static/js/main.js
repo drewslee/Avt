@@ -43,6 +43,46 @@ function sameOrigin(url)
         !(/^(\/\/|http:|https:).*/.test(url));
 }
 
+function reserv()
+{
+    localStorage.setItem('id_race_date', $('#id_race_date').val());
+    localStorage.setItem('id_arrival_time', $('#id_arrival_time').val());
+    localStorage.setItem('id_ttn_number', $('#id_ttn_number').val());
+    localStorage.setItem('id_car', $('#id_car').val());
+    localStorage.setItem('id_driver', $('#id_driver').val());
+    localStorage.setItem('id_type_ship', $('#id_type_ship').val());
+    localStorage.setItem('id_supplier', $('#id_supplier').val());
+    localStorage.setItem('id_place_load', $('#id_place_load').val());
+    localStorage.setItem('id_customer', $('#id_customer').val());
+    localStorage.setItem('id_order_type_race', $('#id_order_type_race').val());
+    localStorage.setItem('id_shipment', $('#id_shipment').val());
+    localStorage.setItem('id_product', $('#id_product').val());
+    localStorage.setItem('id_s_milage', $('#id_s_milage').val());
+    localStorage.setItem('id_e_milage', $('#id_e_milage').val());
+    localStorage.setItem('id_weight_load', $('#id_weight_load').val());
+    localStorage.setItem('id_unit_load', $('#id_unit_load').val());
+    localStorage.setItem('id_weight_unload', $('#id_weight_unload').val());
+    localStorage.setItem('id_unit_unload', $('#id_unit_unload').val());
+    localStorage.setItem('id_comm', $('#id_comm').val());
+    localStorage.setItem('id_state', $('#id_state').val());
+    localStorage.setItem('id_gas_start', $('#id_gas_start').val());
+    localStorage.setItem('id_gas_end', $('#id_gas_end').val());
+    localStorage.setItem('id_gas_given', $('#id_gas_given').val());
+    localStorage.setItem('id_shoulder', $('#id_shoulder').val());
+    localStorage.setItem('id_count', $('#id_count').val());
+
+}
+
+function reestablish()
+{
+    for(var i=0, len=localStorage.length; i<len; i++){
+        var key = localStorage.key(i);
+        var value = localStorage[key];
+        $('#'+key).val(value)
+    }
+
+}
+
 function getfile()
 {
     var csrftoken = getCookie('csrftoken');
