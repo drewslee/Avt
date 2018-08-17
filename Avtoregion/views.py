@@ -713,8 +713,8 @@ def save_excel(request):
         row += 1
         i += 1
     else:
-        ws.merge_range('A{}:D{}'.format(row + 1, row + 1), 'ИТОГО:', format)
-        ws.write_formula(row, 4, '=SUM(E5:E{})'.format(row), format)
+        ws.merge_range('A{}:E{}'.format(row + 1, row + 1), 'ИТОГО:', format)
+        ws.write_formula(row, 5, '=SUM(F5:F{})'.format(row), format)
         ws.write_string(row + 2, 0, 'Исполнительный директор ООО "Авторегион"     ___________/Денисов А.Н./')
 
     return response
