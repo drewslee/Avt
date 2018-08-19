@@ -198,12 +198,12 @@ class Units(models.Model):
 
 class Race(models.Model):
     UNHANDLED = 'Не проведен'
-    HANDLE_SUP = 'Попоставщик'
+    HANDLE_SUP = 'Поставщик'
     HANDLE_CUS = 'Покупатель'
     HANDLE_ALL = 'Поставщик/Покупатель'
     STATE_ACC = (
         (UNHANDLED, ''),
-        (HANDLE_SUP, 'По попоставщику'),
+        (HANDLE_SUP, 'По поставщику'),
         (HANDLE_CUS, 'По покупателю'),
         (HANDLE_ALL, 'Проведен')
     )
