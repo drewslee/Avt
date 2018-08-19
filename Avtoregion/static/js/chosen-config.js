@@ -56,4 +56,21 @@ $(function ()
     });
 
     $(".icon-select").chosenIcon({});
+
+    $('#account_customer, #account_mediator, #account_unload_place').parent().hide();
+
+    $('#account_type').on('change', function (event, params) {
+        if (params.selected === 'supplier') {
+            $('#account_customer, #account_mediator, #account_unload_place').parent().hide();
+            $('#account_supplier, #account_load_place').parent().show();
+        }
+        if (params.selected === 'customer') {
+            $('#account_supplier, #account_mediator, #account_load_place').parent().hide();
+            $('#account_customer, #account_unload_place').parent().show();
+        }
+        if (params.selected === 'mediator') {
+            $('#account_supplier, #account_customer, #account_unload_place , #account_load_place').parent().hide();
+            $('#account_mediator').parent().show();
+        }
+    })
 });

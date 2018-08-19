@@ -197,7 +197,7 @@ class Units(models.Model):
 
 
 class Race(models.Model):
-    UNHANDLED = ''
+    UNHANDLED = 'Не проведен'
     HANDLE_SUP = 'Попоставщик'
     HANDLE_CUS = 'Покупатель'
     HANDLE_ALL = 'Поставщик/Покупатель'
@@ -261,7 +261,7 @@ class Race(models.Model):
         related_name='unit_unload')
     comm = models.TextField(null=True, blank=True)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=9)
-    fulfill = models.CharField(default=STATE_ACC[0], choices=STATE_ACC, max_length=255)
+    fulfill = models.CharField(default=STATE_ACC[0], choices=STATE_ACC, max_length=255, blank=True)
     gas_start = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     gas_end = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     gas_given = models.DecimalField(max_digits=5, decimal_places=0, default=0)

@@ -177,9 +177,12 @@ class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
         """check if fields had been marked as deleted"""
         is_invalid = False
         for foreign_field in self.model.get_foreign_fields():
-            if (getattr(self.object, foreign_field.field.name)).has_deleted:
-                is_invalid = True
-                form.add_error(foreign_field.field.name, 'Этот объект помечен на удаление!')
+            try:
+                if (getattr(self.object, foreign_field.field.name)).has_deleted:
+                    is_invalid = True
+                    form.add_error(foreign_field.field.name, 'Этот объект помечен на удаление!')
+            except AttributeError:
+                pass
         if is_invalid:
             return self.form_invalid(form)
         return super(RaceUpdate, self).form_valid(form)

@@ -135,6 +135,7 @@ class RaceForm(ModelForm):
     class Meta:
         model = Race
         fields = '__all__'
+        exclude = {'fulfill'}
         labels = {
             'ttn_number': 'Номер ТТН',
             'type_ship': 'Реализация',
