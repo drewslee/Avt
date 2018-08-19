@@ -69,16 +69,10 @@
                       {% for q in qMediator %}
                         <tr>
                             <td></td>
-	                          <td>{{ q.pk }}</td>
-                            <td>
-                                {{ q.name }}
-                            </td>
-                            <td>
-                                {{ q.address }}
-                            </td>
-                            <td>
-                                {{ q.inn|default_if_none:"Не назначен" }}
-                            </td>
+	                        <td>{{ q.pk }}</td>
+                            <td>{{ q.name }}</td>
+                            <td>{{ q.address }}</td>
+                            <td>{{ q.inn|default_if_none:"Не назначен" }}</td>
                         </tr>
                      {% endfor %}
                     {% endif %}

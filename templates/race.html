@@ -105,57 +105,23 @@
                     <tr id="{{ q.pk }}">
                         <td></td>
                         <td>{{ forloop.counter }}</td>
-                        <td>
-                            {{ q.race_date }}
-                        </td>
-                        <td>
-                            {{ q.car }}
-                        </td>
-                        <td>
-                            {{ q.driver }}
-                        </td>
-                        <td>
-                            {{ q.type_ship }}
-                        </td>
-                        <td>
-                            {{ q.supplier }}
-                        </td>
-                        <td>
-                            {{ q.customer }}
-                        </td>
-                        <td>
-                            {{ q.shipment|default_if_none:"Нет" }}
-                        </td>
-                        <td>
-                            {{ q.product }}
-                        </td>
-                        <td>
-                            {{ q.s_milage }}
-                        </td>
-                        <td>
-                            {{ q.e_milage }}
-                        </td>
-                        <td>
-                            {{ q.gas_start }}
-                        </td>
-                        <td>
-                            {{ q.gas_end }}
-                        </td>
-                        <td>
-                            {{ q.gas_given }}
-                        </td>
-                        <td>
-                            {{ q.weight_load }}{{ q.unit_load.short_name }}
-                        </td>
-                        <td>
-                            {{ q.weight_unload }}{{ q.unit_unload.short_name }}
-                        </td>
-                        <td>
-                            {{ q.count }}
-                        </td>
-                        <td>
-                            {{ q.state }}
-                        </td>
+                        <td>{{ q.race_date }}</td>
+                        <td>{{ q.car }}</td>
+                        <td>{{ q.driver }}</td>
+                        <td>{{ q.type_ship }}</td>
+                        <td>{{ q.supplier }}</td>
+                        <td>{{ q.customer }}</td>
+                        <td>{{ q.shipment|default_if_none:"Нет" }}</td>
+                        <td>{{ q.product }}</td>
+                        <td>{{ q.s_milage }}</td>
+                        <td>{{ q.e_milage }}</td>
+                        <td>{{ q.gas_start }}</td>
+                        <td>{{ q.gas_end }}</td>
+                        <td>{{ q.gas_given }}</td>
+                        <td>{{ q.weight_load }}{{ q.unit_load.short_name }}</td>
+                        <td>{{ q.weight_unload }}{{ q.unit_unload.short_name }}</td>
+                        <td>{{ q.count }}</td>
+                        <td>{{ q.state }}</td>
                     </tr>
                 {% endfor %}
             {% endif %}

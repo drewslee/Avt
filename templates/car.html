@@ -71,18 +71,10 @@
 						<tr>
 							<td></td>
 							<td>{{ q.pk }}</td>
-							<td>
-								{{ q.number }}
-							</td>
-							<td>
-								{{ q.pts|default_if_none:'Не заполнен' }}
-							</td>
-							<td>
-								{{ q.trailer|default_if_none:'Нету' }}
-							</td>
-							<td>
-								{{ q.mediator|default_if_none:'Нету' }}
-							</td>
+							<td>{{ q.number }}</td>
+							<td>{{ q.pts|default_if_none:'Не заполнен' }}</td>
+							<td>{{ q.trailer|default_if_none:'Нету' }}</td>
+							<td>{{ q.mediator|default_if_none:'Нету' }}</td>
 						</tr>
 					{% endfor %}
 					</tbody>

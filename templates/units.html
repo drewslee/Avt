@@ -71,12 +71,8 @@
                         <tr>
                             <td></td>
 	                          <td>{{ q.pk }}</td>
-                            <td>
-                                {{ q.name }}
-                            </td>
-                            <td>
-                                {{ q.short_name|default_if_none:"Не назначен" }}
-                            </td>
+                            <td>{{ q.name }}</td>
+                            <td>{{ q.short_name|default_if_none:"Не назначен" }}</td>
                         </tr>
                     {% endfor %}
                     {% endif %}

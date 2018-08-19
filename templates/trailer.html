@@ -69,18 +69,10 @@
 				{% for q in qTrailer %}
 					<tr>
 						<td></td>
-						<td>
-							{{ q.pk }}
-						</td>
-						<td>
-							{{ q.number }}
-						</td>
-						<td>
-							{{ q.brand_trailer }}
-						</td>
-						<td>
-							{{ q.garage_number_trailer }}
-						</td>
+						<td>{{ q.pk }}</td>
+						<td>{{ q.number }}</td>
+						<td>{{ q.brand_trailer }}</td>
+						<td>{{ q.garage_number_trailer }}</td>
 					</tr>
 				{% endfor %}
 			{% endif %}
