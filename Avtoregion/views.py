@@ -592,16 +592,16 @@ class Accumulate(JSONRequestResponseMixin, View):
         query = self.get_query_product(query)
         query = self.get_query_state(query)
 
-        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0).select_related('car',
+                                            'driver', 'product', 'supplier', 'customer', 'unit_load', 'unit_unload')
         q_weight = q_resp.aggregate(Sum('weight_load'))
-        q_resp.select_related('car', 'driver', 'product')
         return q_resp, q_weight
 
     def get_query_customer(self, date):
         if self.request_json.get('customer').strip():
-            query = Q(customer_id=self.request_json.get('customer').strip(), race_date__range=date)
+            query = Q(customer_id=self.request_json.get('customer').strip(), arrival_time__range=date)
         else:
-            query = Q(race_date__range=date)
+            query = Q(arrival_time__range=date)
 
         query = self.get_query_product(query)
         query = self.get_query_state(query)
@@ -609,9 +609,9 @@ class Accumulate(JSONRequestResponseMixin, View):
         if self.request_json.get('unload_place').strip():
             query.add(Q(shipment_id=self.request_json.get('unload_place')), Q.AND)
 
-        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
+        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0).select_related('car',
+                                            'driver', 'product', 'supplier', 'customer', 'unit_load', 'unit_unload')
         q_weight = q_resp.aggregate(Sum('weight_unload'))
-        q_resp.select_related('car', 'driver', 'product')
         return q_resp, q_weight
 
     def get_query_mediator(self, date):
@@ -623,6 +623,7 @@ class Accumulate(JSONRequestResponseMixin, View):
 
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_load'))
+        q_resp.select_related('car', 'driver', 'product', 'supplier', 'customer', 'unit_load', 'unit_unload')
         return q_resp, q_weight
 
     def get_query_product(self, query):
