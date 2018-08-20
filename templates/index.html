@@ -20,17 +20,21 @@
 	<script type="text/javascript" src="{% static "js/bootstrap.min.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/moment-with-locales.min.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/daterangepicker.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/datarange-config.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/chosen.jquery.min.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/chosenIcon.jquery.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/chosen-config.js" %}"></script>
 	{% if request.META.DEBUG == 'True' %}
+        <script type="text/javascript" src="{% static "js/datarange-config.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/chosen-config.js" %}"></script>
 		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstraptable-config.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/modal-config.js' %}"></script>
 	{% else %}
-		<script type="text/javascript" src="{% static 'js/main.'|add:JS_MD5|add:'.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/datarange-config.'|add:JS_DATERANGE|add:'.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/chosen-config.'|add:JS_CHOSEN|add:'.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/main.'|add:JS_MAIN|add:'.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstraptable-config.'|add:JS_BOOTSTRAP|add:'.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/modal-config.'|add:JS_MODAL|add:'.js' %}"></script>
 	{% endif %}
-	<script type="text/javascript" src="{% static 'js/bootstraptable-config.js' %}"></script>
-	<script type="text/javascript" src="{% static 'js/modal-config.js' %}"></script>
 	<script type="text/javascript" src="{% static "js/BootstrapTable/bootstrap-table.min.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/BootstrapTable/locale/bootstrap-table-ru-RU.min.js" %}"></script>
 	<script type="text/javascript"

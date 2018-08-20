@@ -144,7 +144,19 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'Avtoregion', 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 try:
-    JS_FILE_PATH = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'main.js')
-    JS_MD5 = md5sum(JS_FILE_PATH)
+    JS_FILE_MAIN = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'main.js')
+    JS_MAIN = md5sum(JS_FILE_MAIN)
+    JS_FILE_BOOTSTRAP = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'bootstraptable-config.js')
+    JS_BOOTSTRAP = md5sum(JS_FILE_BOOTSTRAP)
+    JS_FILE_CHOSEN = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'chosen-config.js')
+    JS_CHOSEN = md5sum(JS_FILE_CHOSEN)
+    JS_FILE_DATERANGE = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'datarange-config.js')
+    JS_DATERANGE = md5sum(JS_FILE_DATERANGE)
+    JS_FILE_MODAL = os.path.join(os.path.join(STATIC_ROOT, 'js'), 'modal-config.js')
+    JS_MODAL = md5sum(JS_FILE_MODAL)
 except:
-    JS_MD5 = ""
+    JS_MAIN = ""
+    JS_BOOTSTRAP = ""
+    JS_DATERANGE = ""
+    JS_MODAL = ""
+    JS_CHOSEN = ""
