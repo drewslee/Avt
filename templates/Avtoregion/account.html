@@ -20,9 +20,9 @@
 					<div class="row">
 						<div class="form-group">
 							<select id="account_type" class="form-control">
-								<option value="supplier">Поставщик</option>
-								<option value="customer">Покупатель</option>
-								<option value="mediator">Посредник</option>
+								<option data-icon="fa-building" value="supplier">Поставщик</option>
+								<option data-icon="fa-credit-card" value="customer">Покупатель</option>
+								<option data-icon="fa-credit-card" value="mediator">Посредник</option>
 							</select>
 						</div>
 					</div>
@@ -30,10 +30,9 @@
 					<div class="row">
 						<div class="form-group">
 							<select id="account_supplier" name="supplier" class="form-control icon-select">
+								<option></option>
 								{% for field in q_sup %}
-									<option data-icon="fa-building"
-									        value="{{ field.id_supplier }}">{{ field.name }}
-									</option>
+									<option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
 								{% endfor %}
 							</select>
 						</div>
@@ -50,6 +49,7 @@
 					<div class="row">
 						<div class="form-group">
 							<select id="account_customer" class="form-control icon-select">
+								<option></option>
 								{% for field in q_cus %}
 									<option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
 								{% endfor %}
@@ -68,6 +68,7 @@
 					<div class="row">
 						<div class="form-group">
 							<select id="account_mediator" class="form-control icon-select">
+								<option></option>
 								{% for field in q_med %}
 									<option data-icon="fa-credit-card" value="{{ field.id_mediator }}">{{ field.name }}</option>
 								{% endfor %}

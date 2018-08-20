@@ -6,7 +6,8 @@ $(function ()
         width: '100%'
     });
     $('#account_supplier').chosen({
-        placeholder_text_single: 'Выберите организацию',
+        placeholder_text_single: 'Выберите поставщика',
+        allow_single_deselect: true,
         width: '100%'
 
     });
@@ -16,13 +17,14 @@ $(function ()
 
     });
     $('#account_mediator').chosen({
-        placeholder_text_single: 'Выберите организацию',
+        placeholder_text_single: 'Выберите посредника',
         width: '100%'
 
     });
     $('#account_customer').chosen({
-        placeholder_text_single: 'Выберите организацию',
+        placeholder_text_single: 'Выберите покупателя',
         inherit_select_classes: false,
+        allow_single_deselect: true,
         width: '100%'
 
     });

@@ -182,6 +182,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'RaceCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Race/update/' + row.id + '/' ;
+        },
         rowStyle: function (row, index)
         {
             if (row.state.trim() === "Авария")

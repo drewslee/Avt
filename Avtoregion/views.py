@@ -583,9 +583,12 @@ class Accumulate(JSONRequestResponseMixin, View):
         return self.render_json_response({"data": table})
 
     def get_query_supplier(self, date):
-        query = Q(type_ship__exact=self.request_json.get('service'),
-                  supplier_id=self.request_json.get('supplier'),
-                  race_date__range=date)
+        if self.request_json.get('supplier').strip():
+            query = Q(type_ship__exact=self.request_json.get('service'),
+                      supplier_id=self.request_json.get('supplier').strip(),
+                      race_date__range=date)
+        else:
+            query = Q(type_ship__exact=self.request_json.get('service'), race_date__range=date)
         query = self.get_query_product(query)
         query = self.get_query_state(query)
 
@@ -595,14 +598,16 @@ class Accumulate(JSONRequestResponseMixin, View):
         return q_resp, q_weight
 
     def get_query_customer(self, date):
-        query = Q(customer_id=self.request_json['customer'],
-                  race_date__range=date)
+        if self.request_json.get('customer').strip():
+            query = Q(customer_id=self.request_json.get('customer').strip(), race_date__range=date)
+        else:
+            query = Q(race_date__range=date)
 
         query = self.get_query_product(query)
         query = self.get_query_state(query)
 
         if self.request_json.get('unload_place').strip():
-            query.add(Q(shipment_id=self.request_json['unload_place']), Q.AND)
+            query.add(Q(shipment_id=self.request_json.get('unload_place')), Q.AND)
 
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0)
         q_weight = q_resp.aggregate(Sum('weight_unload'))
@@ -610,7 +615,7 @@ class Accumulate(JSONRequestResponseMixin, View):
         return q_resp, q_weight
 
     def get_query_mediator(self, date):
-        query = Q(car__mediator__id_mediator=self.request_json['mediator'],
+        query = Q(car__mediator__id_mediator=self.request_json.get('mediator'),
                   race_date__range=date)
 
         query = self.get_query_product(query)
