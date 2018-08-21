@@ -593,7 +593,12 @@ class Accumulate(JSONRequestResponseMixin, View):
         query = self.get_query_state(query)
 
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0).select_related('car',
-                                            'driver', 'product', 'supplier', 'customer', 'unit_load', 'unit_unload')
+                                                                                                           'driver',
+                                                                                                           'product',
+                                                                                                           'supplier',
+                                                                                                           'customer',
+                                                                                                           'unit_load',
+                                                                                                           'unit_unload')
         q_weight = q_resp.aggregate(Sum('weight_load'))
         return q_resp, q_weight
 
@@ -610,18 +615,32 @@ class Accumulate(JSONRequestResponseMixin, View):
             query.add(Q(shipment_id=self.request_json.get('unload_place')), Q.AND)
 
         q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_unload__gt=0).select_related('car',
-                                            'driver', 'product', 'supplier', 'customer', 'unit_load', 'unit_unload')
+                                                                                                             'driver',
+                                                                                                             'product',
+                                                                                                             'supplier',
+                                                                                                             'customer',
+                                                                                                             'unit_load',
+                                                                                                             'unit_unload')
         q_weight = q_resp.aggregate(Sum('weight_unload'))
         return q_resp, q_weight
 
     def get_query_mediator(self, date):
-        query = Q(car__mediator__id_mediator=self.request_json.get('mediator'),
-                  race_date__range=date)
+        if self.request_json.get('mediator').strip():
+            query = Q(car__mediator__id_mediator=self.request_json.get('mediator'),
+                      race_date__range=date)
+        else:
+            query = Q(car__mediator__id_mediator__isnull=False, race_date__range=date)
 
         query = self.get_query_product(query)
         query = self.get_query_state(query)
 
-        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0)
+        q_resp = Race.objects.filter(query).order_by('race_date').filter(weight_load__gt=0).select_related('car',
+                                                                                                           'driver',
+                                                                                                           'product',
+                                                                                                           'supplier',
+                                                                                                           'customer',
+                                                                                                           'unit_load',
+                                                                                                           'unit_unload')
         q_weight = q_resp.aggregate(Sum('weight_load'))
         q_resp.select_related('car', 'driver', 'product', 'supplier', 'customer', 'unit_load', 'unit_unload')
         return q_resp, q_weight
