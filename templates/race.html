@@ -96,6 +96,7 @@
                 <th data-field="gas_given" data-visible="false">Горючего выдано</th>
                 <th data-field="loaded">Загружено</th>
                 <th data-field="unloaded">Выгружено</th>
+                <th data-field="shoulder" data-visible="false">Плечо</th>
                 <th data-field="count" data-visible="false">Кол-во рейсов</th>
                 <th data-field="state" data-cell-style="CellStyle">Состояние</th>
             </tr>
@@ -122,6 +123,7 @@
                         <td>{{ q.gas_given }}</td>
                         <td>{{ q.weight_load }}{{ q.unit_load.short_name }}</td>
                         <td>{{ q.weight_unload }}{{ q.unit_unload.short_name }}</td>
+												<td>{{ q.shoulder}}</td>
                         <td>{{ q.count }}</td>
                         <td>{{ q.state }}</td>
                     </tr>
