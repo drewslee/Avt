@@ -103,11 +103,12 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
     def post(self, *args, **kwargs):
         kwargs.update(self.request.POST)
         kwargs.pop('csrfmiddlewaretoken')
+        kwargs.pop('previous')
         for k, v in kwargs.items():
             kwargs[k] = v[0]
         kwargs['id'] = 1
         self.model.objects.update(**kwargs)
-        return HttpResponseRedirect(redirect_to='Constants')
+        return HttpResponseRedirect(redirect_to='Race')
 
 
 class RaceViewList(LoginRequiredMixin, ListView):
