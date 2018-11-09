@@ -358,3 +358,33 @@ class Race(models.Model):
             return self.car.mediator.name + " " + self.car.mediator.address
         else:
             return const.organization_unit_full + " " + const.address
+
+            
+class Abonent(models.Model):
+    START, AUTH, PASS, READY, RACE, ACCEPTED, LOAD, UNLOAD, BAN = 'start', 'auth', 'pass', 'ready', 'race', 'race_accepted', 'load', 'unload', 'ban'
+    STATE = (
+        (START, 'Начало'),
+        (AUTH, 'Аутентификация'),
+        (PASS, 'Запрос ключа'),
+        (READY, 'Готов'),
+        (RACE, 'Рейс'),
+        (ACCEPTED, 'Принято'),
+        (LOAD, 'Погрузка'),
+        (UNLOAD, 'Разгрузка'),
+        (BAN, 'Заблокирован'),
+    )
+    id_abonent = models.AutoField(primary_key=True)
+    telegram_id = models.DecimalField(
+        unique=True, max_digits=10, decimal_places=0, max_length=10, blank=False, null=True)
+    telegram_nick = models.CharField(max_length=16, default='NoName', verbose_name='Никнейм')	
+    secret = models.CharField(max_length=8, default='12345678', verbose_name='Секретный ключ')	
+    auth_try = models.DecimalField(max_digits=5, decimal_places=0, default=0)
+    active = models.BooleanField(default=True)
+    state = models.CharField(default=STATE[0], choices=STATE, max_length=25)
+    last_seen = models.DateTimeField(null=True, blank=True)
+    car = models.ForeignKey(Car, null=True, blank=True)
+    context = models.CharField(max_length=255, null=True, blank=True)
+    
+    def __str__(self):
+        return '{}:{}'.format(self.telegram_nick, self.telegram_id)
+                    

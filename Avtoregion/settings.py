@@ -12,13 +12,15 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import hashlib
+import logging
 from envconf import Env
 
 
-env = Env(DEBUG=(bool, False))
+env = Env(DEBUG=(bool, True))
 env.read_env()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+logging.basicConfig(filename=u'avt.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)    
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/

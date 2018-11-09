@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.views.generic.base import RedirectView
 from . import views
+from . import avtrgnbot
 
 urlpatterns = [
     url(r'^login/$', views.LoginViewMix.as_view(), name='login'),
@@ -95,7 +96,7 @@ urlpatterns = [
         name='MediatorUpdate'),
     url(r'^Mediator/delete/$', views.MediatorDelete.as_view(), name='MediatorDelete'),
 
-
+    url(r'bot/$', views.start_bot, name='Bot'),
     url(r'^Accumulate/$', views.Accumulate.as_view(), name='Acc'),
     url(r'^Accumulate/Excel$', views.save_excel, name='AccExcel'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
