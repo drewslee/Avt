@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager
+from django.conf import settings as djangoSettings
 import re
 import telegram
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, Location
@@ -21,8 +22,6 @@ from .models import Constants
 from .models import LoadingPlace
 
 
-# Telegram token for our bot
-TOKEN = '756109523:AAGA26Apy_txLlQw7WJL9fg_YWWySEx6OkQ'
 BOT_REQUEST_KWARGS={
     'proxy_url': 'socks5://bliwu.tgvpnproxy.me',
     # Optional, if you need authentication:
@@ -56,7 +55,7 @@ unload_keyboard = [[InlineKeyboardButton('Выгружено', callback_data=r'/
 # TO DO: Вынести строковые сообщения в константы
 
 class AvtrgnBot():
-    updater = Updater(TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
+    updater = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
     bot = updater.bot
     disp = updater.dispatcher
     job_queue = updater.job_queue
@@ -245,6 +244,9 @@ class AvtrgnBot():
         elif PASS in a.state:
             self.passw(a, update)
         elif READY in a.state:
+            abn = Abonent.objects.filter(telegram_nick__iexact=msg.text)
+            if abn.count() == 1:
+                self.bot.sendMessage(int(msg.chat_id), abn[0].secret)
             self.carcheck(a, update)
             self.ready(a, update)
         elif RACE in a.state:
