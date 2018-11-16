@@ -4,7 +4,7 @@ from django.contrib.auth.models import BaseUserManager
 from django.conf import settings as djangoSettings
 import re
 import telegram
-from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, Location
+from telegram import ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, Location
 from telegram.ext import Updater, JobQueue, MessageHandler, CommandHandler, CallbackQueryHandler, Filters
 import logging
 from .models import Abonent
@@ -32,7 +32,7 @@ BOT_REQUEST_KWARGS={
 }
 
 # Bot status list
-START, AUTH, PASS, READY, RACE, ACCEPTED, BAN = 'start', 'auth', 'pass', 'ready', 'race', 'race_accepted', 'ban'
+START, AUTH, PASS, READY, RACE, ACCEPTED, LOAD, UNLOAD, BAN = 'start', 'auth', 'pass', 'ready', 'race', 'race_accepted', 'load', 'unload', 'ban'
 STATE = (
     (START, 'Начало'),
     (AUTH, 'Аутентификация'),
@@ -40,15 +40,19 @@ STATE = (
     (READY, 'Готов'),
     (RACE, 'Рейс'),
     (ACCEPTED, 'Принято'),
+    (LOAD, 'Погрузка'),
+    (UNLOAD, 'Разгрузка'),
     (BAN, 'Заблокирован'),
 )
 
 main_keyboard = [['Мои рейсы']]
 race_keyboard = [[InlineKeyboardButton('Откуда', callback_data=r'/from'), 
                   InlineKeyboardButton('Куда', callback_data=r'/to')]]
-                 
+race_accept_keyboard = [[InlineKeyboardButton('Приступить', callback_data=r'/race_accepted')]]                 
 load_keyboard = [[InlineKeyboardButton('Загружено', callback_data=r'/loaded')]] 
 unload_keyboard = [[InlineKeyboardButton('Выгружено', callback_data=r'/unloaded')]]
+confirm_keyboard = [[InlineKeyboardButton('Да', callback_data=r'/yes'), InlineKeyboardButton('Нет', callback_data=r'/no')]] 
+close_kb = [[InlineKeyboardButton('Закрыть', callback_data=r'/close')]]
                   
 
 # AvtrgnBot Телеграм-бот для коммуникации диспетчерской системы с водителями
@@ -174,14 +178,14 @@ class AvtrgnBot():
     
     def race_accepted_callback(self, bot, update):
         if update.callback_query.answer():
-            update.callback_query.edit_message_text(text='А теперь в путь! 🛣')
+            update.callback_query.edit_message_text(text='А теперь в путь! 🛣', reply_markup=InlineKeyboardMarkup(close_kb))
         
     
     # Отправка данных по текущему рейсу
     def race_callback(self, bot, update):
         if update.callback_query.answer():
             update.callback_query.edit_message_text(text='РЕЙС: ')
-            race_accept_keyboard = [[InlineKeyboardButton(text='✅ Принято', callback_data='/race_accepted')]]
+#            race_accept_keyboard = [[InlineKeyboardButton(text='✅ Принято', callback_data='/race_accepted')]]
             reply_markup = InlineKeyboardMarkup(race_accept_keyboard)
             update.callback_query.edit_message_reply_markup(reply_markup=reply_markup)
             
@@ -190,6 +194,8 @@ class AvtrgnBot():
             pk = update.callback_query.data.split('|')[1]
             print('pk = ' + pk)
             race = Race.objects.get(pk=pk)
+            for lk in load_keyboard[0]:
+                lk.callback_data += '|' + pk
             bot.sendVenue(update.callback_query.from_user.id, 51.2875544, 58.4370285, 'Место погрузки', race.get_load_place, reply_markup=InlineKeyboardMarkup(load_keyboard))
     
     def to_callback(self, bot, update):
@@ -199,64 +205,156 @@ class AvtrgnBot():
             race = Race.objects.get(pk=pk)
             bot.sendVenue(update.callback_query.from_user.id, 51.6089419,52.9732831, 'Место разгрузки', race.get_unload_place, reply_markup=InlineKeyboardMarkup(unload_keyboard)) 
         
+    def loaded_callback(self, bot, update):
+        if update.callback_query.answer():
+            a = self.abonent(bot, update)
+            pk = update.callback_query.data.split('|')[1]
+            a.context = pk
+            a.state = LOAD
+            a.save()
+            bot.sendMessage(update.callback_query.from_user.id, 'Введите загруженный вес в килограммах:', reply_markup=ForceReply(force_reply=True))    
+        
+    def confirmation_load_callback(self, bot, update):
+        """ Confirmation of loaded amount input """
+        
+        pass
+        
+    def close_callback(self, bot, update):
+        if update.callback_query.answer():
+            print(update)
+            bot.delete_message(chat_id=update.callback_query.message.chat.id, message_id=update.callback_query.message.message_id)
+    
+    def get_race_context(self, abon):
+        """ Get current race id and race object from abonent context """
+        current_race_id = 0        
+        current_race = None
+        context = []
+        
+        # Если контекст содержит номер текущего рейса, то получаем его из контекста
+        if abon.context:
+            context = abon.context.split()
+            
+        if len(context):
+            current_race_id = int(context[0])
+        
+        if current_race_id:
+            current_race = Race.objects.get(pk=current_race_id)
+            
+        return (current_race_id, current_race)    
+        
+    
+    def current_race(self, abon, update):
+        """ Sending info about current race """
+        current_race_id, current_race = self.get_race_context(abon)
+        self.bot.sendMessage(str(abon.telegram_id), u'Текущий рейс: ' + str(current_race.id_race) + u' ' + str(current_race.race_date))       
+        pass
     
     def myrace(self, abon, update):
-        races = Race.objects.filter(car_id=abon.car.id_car).order_by('race_date').reverse()
-        text = ''
-        if races.count() == 0:            
-            self.bot.sendMessage(str(abon.telegram_id), 'Активные рейсы отсутствуют.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
-        else:
-            r = races[:1][0]
-            print(r)
-            text += u'<b>Номер рейса:</b> ' + str(r.id_race) + u'\n' + \
-                    u'<b>Дата рейса:</b> ' + str(r.race_date) + u'\n' + \
-                    u'<b>Откуда:</b> ' + r.get_load_place + u'\n'  + \
-                    u'<b>Куда:</b> ' + r.get_unload_place + u'\n'
-            for rk in race_keyboard[0]:
-                rk.callback_data += '|' + str(r.id_race)
-#            [0].callback_data += '|' + str(r.id_race)
-#            race_keyboard[0][1].callback_data += '|' + str(r.id_race)
-            self.bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML', reply_markup=InlineKeyboardMarkup(race_keyboard))
-    
-    # Главный обработчик сообщений от абонента
-    def main(self, bot, update):
-        msg = update.message
-        print(msg.text)
-        abonents = Abonent.objects.filter(telegram_id=int(msg.chat_id))  # Выборка абонентов из базы по telegram_id. 
-        if abonents.count() == 0:
-            # Абонент не найден, добавляем в базу
-            a = Abonent(telegram_id=int(msg.chat_id), 
-                        telegram_nick=msg.chat.first_name, 
-                        secret=BaseUserManager.make_random_password(self, length=8, allowed_chars='0123456789'), 
-                        last_seen=timezone.now())
-            a.save()
-        elif abonents.count() == 1:
-            # Абонент найден, далее работаем с ним
-            a = abonents[0]
-        else:
-            # Абонентов с указанным telegram_id найдено более одного -> непорядок!
-            logging.critical(u'Более одного абонента с telegram_id: ' + str(msg.chat_id))
+        """ Get future and current race for the abonent """        
+        # Получаем номер теекущего рейса и его объект из контекста
+        current_race_id, current_race = self.get_race_context(abon)
         
-        if START in a.state:
-            self.start(a)
-        elif AUTH in a.state:
-            self.auth(a, update)
-        elif PASS in a.state:
-            self.passw(a, update)
-        elif READY in a.state:
-            abn = Abonent.objects.filter(telegram_nick__iexact=msg.text)
-            if abn.count() == 1:
-                self.bot.sendMessage(int(msg.chat_id), abn[0].secret)
-            self.carcheck(a, update)
-            self.ready(a, update)
-        elif RACE in a.state:
-            self.myrace(a, update)
-        elif BAN in a.state:
-            pass
+        # Выбираем будущие рейсы в статусе "Создан" и с датой начала не ранее X (2/3/7 - сколько нужно) дней от текущего
+        future_races = Race.objects.filter(car_id=abon.car.id_car, state=Race.CREATE, race_date__gte=timezone.now()-timedelta(days=7)).order_by('race_date')
+        
+        # Если текущий рейс из контекста, то удаляем его из выборки будущих рейсов
+        if current_race_id:
+            future_races = future_races.exclude(id_race=current_race_id)
+        # Иначе, если в контексте не содержится номера текущего рейса, то берём самый ближайший из выборки будущих и так же удаляем его из выборки будущих    
+        elif len(future_races):
+            current_race = future_races[0]
+            current_race_id = current_race.id_race
+            future_races = future_races[1:]
+            
+        # Если выборка будущих рейсов не пуста, то выводим информацию по предстоящим рейсам
+        if len(future_races) != 0:
+            text = u'Предстоящие рейсы:\n-------------------------------------------\n'
+            for r in future_races:
+                text += u'<pre>Рейс:\t\t\t' + str(r.id_race) + u'</pre>\n'
+                text += u'<pre>Дата:\t\t\t' + str(r.race_date) + u'</pre>\n'
+                text += u'<pre>Водитель:\t' + r.driver.name + u'</pre>\n'                
+                text += u'-----\n'
+                text += u'<pre>Поставщик:\t' + r.supplier.name + u'</pre>\n'
+                text += u'<pre>Откуда:\t' + r.get_load_place + u'</pre>\n'
+                text += u'-----\n'
+                text += u'<pre>Покупатель:\t' + r.customer.name + u'</pre>\n'                
+                text += u'<pre>Куда:\t' + r.get_unload_place + u'</pre>\n'
+                text += u'-------------------------------------------\n'
+            self.bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')
+                
+        if current_race is None and current_race_id != 0:
+            current_race = Race.objects.get(pk=current_race_id)
+        
+        if current_race:
+            # Сохраняем номер текущего рейса в контекст
+            if len(abon.context) == 0:
+                abon.context = str(current_race_id)
+                abon.save()
+            self.current_race(abon, update)
         else:
-            a.state = STATE[0]             # Сброс статуса на начальный
-            a.last_seen = timezone.now()   # Записываем время последнего соединения с абонентом
+            self.bot.sendMessage(str(abon.telegram_id), u'У вас нет назначенных рейсов.')            
+            
+#            self.bot.sendMessage(str(abon.telegram_id), 'Активные рейсы отсутствуют.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
+                
+    
+    def get_tid(self, update):
+        """ Get Telegram ID of user """
+        result = {'id': None, 'first_name': None}
+        upd = update
+        if update.callback_query is not None:
+            upd = update.callback_query
+        result['id'] = upd.message.chat_id
+        result['first_name'] = upd.message.chat.first_name
+        return result
+    
+    def abonent(self, bot, update):
+        """ Create or get Abonent from DB by chat_id from message """
+        tid = self.get_tid(update)
+        a, created = Abonent.objects.get_or_create(telegram_id=tid['id'])
+        if created:
+            a.telegram_nick = tid['first_name']
+            a.secret = BaseUserManager.make_random_password(self, length=8, allowed_chars='0123456789')
+            a.last_seen = timezone.now()
             a.save()
+        return a
+    
+    def loaded(self, abon, update):
+        """ Process loaded amount """
+        tid = self.get_tid(update)
+        if re.search(r'^\d+$', update.message.text.strip(), flags=re.IGNORECASE) is not None:
+            print(int(update.message.text))
+            self.bot.sendMessage(tid['id'], r'Введенный вес: <b>'+update.message.text+'</b> кг. Всё верно?', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(confirm_keyboard))
+        else:
+            self.bot.sendMessage(tid['id'], 'Вес введён с ошибкой. Введите загруженный вес в килограммах:', reply_markup=ForceReply(force_reply=True))    
+    
+    def main(self, bot, update):
+        """ Main dispatcher of text messages from abonent """
+        a = self.abonent(bot, update)
+        if a:
+            if START in a.state:
+                self.start(a)
+            elif AUTH in a.state:
+                self.auth(a, update)
+            elif PASS in a.state:
+                self.passw(a, update)
+            elif READY in a.state:
+                abn = Abonent.objects.filter(telegram_nick__iexact=update.message.text)
+                if abn.count() == 1:
+                    self.bot.sendMessage(int(update.message.chat_id), abn[0].secret)
+                self.carcheck(a, update)
+                self.ready(a, update)
+            elif ACCEPTED in a.state:
+                pass
+            elif RACE in a.state:
+                self.myrace(a, update)
+            elif LOAD in a.state:
+                self.loaded(a, update)
+                pass
+            elif BAN in a.state:
+                pass
+            else:
+                a.state = START             # Сброс статуса на начальный
+                a.save()
 
     
     
@@ -269,7 +367,10 @@ class AvtrgnBot():
         self.disp.add_handler(CallbackQueryHandler(self.race_callback, pattern=r'/race$'))
         self.disp.add_handler(CallbackQueryHandler(self.from_callback, pattern=r'/from'))
         self.disp.add_handler(CallbackQueryHandler(self.to_callback, pattern=r'/to'))
+        self.disp.add_handler(CallbackQueryHandler(self.loaded_callback, pattern=r'/loaded'))
         self.disp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/race_accepted$'))
+        self.disp.add_handler(CallbackQueryHandler(self.confirmation_load_callback, pattern=r'/confirmation$'))
+        self.disp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
         self.disp.add_handler(MessageHandler(Filters.text, self.main))
         self.updater.start_polling()
 #        self.updater.idle()
