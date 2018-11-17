@@ -1,6 +1,8 @@
 .env
 .gitignore
+.DS_Store
 *.log
 __pycache__/
 temp/
 migrations/
+.idea/
