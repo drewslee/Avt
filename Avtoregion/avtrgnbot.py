@@ -2,10 +2,13 @@ from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings as djangoSettings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 import re
 import telegram
 from telegram import ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, Location
 from telegram.ext import Updater, JobQueue, MessageHandler, CommandHandler, CallbackQueryHandler, Filters
+
 import logging
 from .models import Abonent
 from .models import Car
