@@ -70,7 +70,7 @@ function reserv()
     localStorage.setItem('id_gas_given', $('#id_gas_given').val());
     localStorage.setItem('id_shoulder', $('#id_shoulder').val());
     localStorage.setItem('id_count', $('#id_count').val());
-
+    localStorage.setItem('id_price', $('#id_price').val());
 }
 
 function reestablish()

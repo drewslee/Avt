@@ -6,8 +6,18 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import re
 import telegram
-from telegram import ForceReply, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, Location
-from telegram.ext import Updater, JobQueue, MessageHandler, CommandHandler, CallbackQueryHandler, Filters
+from telegram import ForceReply
+from telegram import ReplyKeyboardMarkup 
+from telegram import ReplyKeyboardRemove 
+from telegram import InlineKeyboardButton 
+from telegram import InlineKeyboardMarkup
+from telegram import Location
+from telegram.ext import Updater
+from telegram.ext import JobQueue
+from telegram.ext import MessageHandler
+from telegram.ext import CommandHandler
+from telegram.ext import CallbackQueryHandler
+from telegram.ext import Filters
 
 import logging
 from .models import Abonent
@@ -34,8 +44,11 @@ BOT_REQUEST_KWARGS={
     }
 }
 
+RACE_DATE_RANGE = 3 # Диапазон дней от текущей даты, за которые рейсы считаются предстоящими
+
 # Bot status list
-START, AUTH, PASS, READY, RACE, ACCEPTED, LOAD, UNLOAD, BAN = 'start', 'auth', 'pass', 'ready', 'race', 'race_accepted', 'load', 'unload', 'ban'
+START, AUTH, PASS, READY, RACE, ACCEPTED, LOAD, UNLOAD, BAN = \
+'start', 'auth', 'pass', 'ready', 'race', 'race_accepted', 'load', 'unload', 'ban'
 STATE = (
     (START, 'Начало'),
     (AUTH, 'Аутентификация'),
@@ -61,12 +74,14 @@ close_kb = [[InlineKeyboardButton('Закрыть', callback_data=r'/close')]]
 # AvtrgnBot Телеграм-бот для коммуникации диспетчерской системы с водителями
 # TO DO: Вынести строковые сообщения в константы
 
+TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
+
 class AvtrgnBot():
-    updater = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
-    bot = updater.bot
-    disp = updater.dispatcher
-    job_queue = updater.job_queue
-    me = bot.getMe()
+    #updater = TELEGRAM
+    #bot = updater.bot
+    #disp = updater.dispatcher
+    #job_queue = updater.job_queue
+    #me = bot.getMe()
     states = dict(STATE)
     number_mask = r'^[ABCEHKMOPTYXАВСЕНКМОРТУХ]\s*\d{3}\s*[ABCEHKMOPTYXАВСЕНКМОРТУХ]{2}\s*(\d{2})?$'
     number_sub_mask = r'^([ABCEHKMOPTYXАВСЕНКМОРТУХ])\s*(\d{3})\s*([ABCEHKMOPTYXАВСЕНКМОРТУХ]{2})\s*(\d{2})?$'
@@ -83,7 +98,12 @@ class AvtrgnBot():
     }
 
     def __init__(self):
-        pass
+        self.updater = TELEGRAM
+        self.bot = self.updater.bot
+        self.disp = self.updater.dispatcher
+        self.job_queue = self.updater.job_queue
+        self.me = self.bot.getMe()
+        
     
     # Процедура отправки типового сообщения
     def send(self, uid, m = 'hello', **kwargs):
@@ -102,8 +122,6 @@ class AvtrgnBot():
             
     # Обработка начального статуса            
     def start(self, abon):
-#        self.bot.sendMessage(str(abon.telegram_id), 'Добро пожаловать! Вам нужно авторизоваться. Для регистрации пришлите госномер автомобиля в формате x123xy (буквы латинницей)', reply_markup = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Auth', callback_data='/auth')]]))
-#        self.move(abon, 'hello', AUTH, try_increment=0, reset_auth_car=False)
         self.send(str(abon.telegram_id))
         self.send(str(abon.telegram_id), 'auth')
         abon.state = AUTH
@@ -163,7 +181,9 @@ class AvtrgnBot():
     
     # Обработка начальной команды /start
     def start_callback(self, bot, update):
-        self.bot.sendMessage(str(update.message.chat_id), 'Ваши рейсы', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))        
+        self.bot.sendMessage(str(update.message.chat_id), 
+                             'Ваши рейсы', 
+                             reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))        
         self.main(bot, update)
         
             
@@ -199,14 +219,22 @@ class AvtrgnBot():
             race = Race.objects.get(pk=pk)
             for lk in load_keyboard[0]:
                 lk.callback_data += '|' + pk
-            bot.sendVenue(update.callback_query.from_user.id, 51.2875544, 58.4370285, 'Место погрузки', race.get_load_place, reply_markup=InlineKeyboardMarkup(load_keyboard))
+            bot.sendVenue(update.callback_query.from_user.id, 
+                          51.2875544, 58.4370285, 
+                          'Место погрузки', 
+                          race.get_load_place, 
+                          reply_markup=InlineKeyboardMarkup(load_keyboard))
     
     def to_callback(self, bot, update):
         if update.callback_query.answer():            
             pk = update.callback_query.data.split('|')[1]
             print('pk = ' + pk)
             race = Race.objects.get(pk=pk)
-            bot.sendVenue(update.callback_query.from_user.id, 51.6089419,52.9732831, 'Место разгрузки', race.get_unload_place, reply_markup=InlineKeyboardMarkup(unload_keyboard)) 
+            bot.sendVenue(update.callback_query.from_user.id, 
+                          51.6089419, 52.9732831, 
+                          'Место разгрузки', 
+                          race.get_unload_place, 
+                          reply_markup=InlineKeyboardMarkup(unload_keyboard)) 
         
     def loaded_callback(self, bot, update):
         if update.callback_query.answer():
@@ -215,7 +243,9 @@ class AvtrgnBot():
             a.context = pk
             a.state = LOAD
             a.save()
-            bot.sendMessage(update.callback_query.from_user.id, 'Введите загруженный вес в килограммах:', reply_markup=ForceReply(force_reply=True))    
+            bot.sendMessage(update.callback_query.from_user.id, 
+                            'Введите загруженный вес в килограммах:', 
+                            reply_markup=ForceReply(force_reply=True))    
         
     def confirmation_load_callback(self, bot, update):
         """ Confirmation of loaded amount input """
@@ -225,7 +255,8 @@ class AvtrgnBot():
     def close_callback(self, bot, update):
         if update.callback_query.answer():
             print(update)
-            bot.delete_message(chat_id=update.callback_query.message.chat.id, message_id=update.callback_query.message.message_id)
+            bot.delete_message( chat_id=update.callback_query.message.chat.id, 
+                                message_id=update.callback_query.message.message_id)
     
     def get_race_context(self, abon):
         """ Get current race id and race object from abonent context """
@@ -249,8 +280,11 @@ class AvtrgnBot():
     def current_race(self, abon, update):
         """ Sending info about current race """
         current_race_id, current_race = self.get_race_context(abon)
-        self.bot.sendMessage(str(abon.telegram_id), u'Текущий рейс: ' + str(current_race.id_race) + u' ' + str(current_race.race_date))       
-        pass
+        self.bot.sendMessage(str(abon.telegram_id), u'Текущий рейс: ' + \
+                             str(current_race.id_race) + u' ' + \
+                             str(current_race.race_date),
+                             reply_markup=InlineKeyboardMarkup(race_accept_keyboard))       
+        
     
     def myrace(self, abon, update):
         """ Get future and current race for the abonent """        
@@ -258,12 +292,15 @@ class AvtrgnBot():
         current_race_id, current_race = self.get_race_context(abon)
         
         # Выбираем будущие рейсы в статусе "Создан" и с датой начала не ранее X (2/3/7 - сколько нужно) дней от текущего
-        future_races = Race.objects.filter(car_id=abon.car.id_car, state=Race.CREATE, race_date__gte=timezone.now()-timedelta(days=7)).order_by('race_date')
+        future_races = Race.objects.filter( car_id=abon.car.id_car, 
+                                            state=Race.CREATE, 
+                                            race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
         
         # Если текущий рейс из контекста, то удаляем его из выборки будущих рейсов
         if current_race_id:
             future_races = future_races.exclude(id_race=current_race_id)
-        # Иначе, если в контексте не содержится номера текущего рейса, то берём самый ближайший из выборки будущих и так же удаляем его из выборки будущих    
+        # Иначе, если в контексте не содержится номера текущего рейса, 
+        # то берём самый ближайший из выборки будущих и так же удаляем его из выборки будущих    
         elif len(future_races):
             current_race = future_races[0]
             current_race_id = current_race.id_race
@@ -295,7 +332,7 @@ class AvtrgnBot():
                 abon.save()
             self.current_race(abon, update)
         else:
-            self.bot.sendMessage(str(abon.telegram_id), u'У вас нет назначенных рейсов.')            
+            self.bot.sendMessage(str(abon.telegram_id), u'У вас нет назначенных рейсов.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))            
             
 #            self.bot.sendMessage(str(abon.telegram_id), 'Активные рейсы отсутствуют.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
                 
@@ -358,29 +395,40 @@ class AvtrgnBot():
             else:
                 a.state = START             # Сброс статуса на начальный
                 a.save()
-
     
     
     def __str__(self):
         return '{}:{}'.format(self.me['id'], self.me['username'])
-        
+    
+    
+    @staticmethod
+    @receiver(post_save, sender=Race)
+    def race_save_notify(sender, instance, created, **kwargs):
+        # get the instance of AvtrgnBot to use bot property ...
+        a = Abonent.objects.get(car_id=int(instance.car_id))
+        TELEGRAM.bot.sendMessage(int(a.telegram_id), 'Race ' + str(instance.id_race) + ' updated')
+        print('Race ' + str(instance.id_race) + ' updated')
+        pass
+
+       
     def start_bot(self):
-#        a = Abonent.objects.get(telegram_id=0)  # Выборка абонента из базы по telegram_id 
-        self.disp.add_handler(CommandHandler('start', self.start_callback))
-        self.disp.add_handler(CallbackQueryHandler(self.race_callback, pattern=r'/race$'))
-        self.disp.add_handler(CallbackQueryHandler(self.from_callback, pattern=r'/from'))
-        self.disp.add_handler(CallbackQueryHandler(self.to_callback, pattern=r'/to'))
-        self.disp.add_handler(CallbackQueryHandler(self.loaded_callback, pattern=r'/loaded'))
-        self.disp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/race_accepted$'))
-        self.disp.add_handler(CallbackQueryHandler(self.confirmation_load_callback, pattern=r'/confirmation$'))
-        self.disp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
-        self.disp.add_handler(MessageHandler(Filters.text, self.main))
-        self.updater.start_polling()
-#        self.updater.idle()
+        #disp = TELEGRAM.dispatcher
+        #print(self.disp)
+        if not self.updater.running:
+            self.disp.add_handler(CommandHandler('start', self.start_callback))
+            self.disp.add_handler(CallbackQueryHandler(self.race_callback, pattern=r'/race$'))
+            self.disp.add_handler(CallbackQueryHandler(self.from_callback, pattern=r'/from'))
+            self.disp.add_handler(CallbackQueryHandler(self.to_callback, pattern=r'/to'))
+            self.disp.add_handler(CallbackQueryHandler(self.loaded_callback, pattern=r'/loaded'))
+            self.disp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/race_accepted$'))
+            self.disp.add_handler(CallbackQueryHandler(self.confirmation_load_callback, pattern=r'/confirmation$'))
+            self.disp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
+            self.disp.add_handler(MessageHandler(Filters.text, self.main))
+            self.updater.start_polling()
         return 'ok'
 
         
 if __name__ == '__main__':
     logging.basicConfig(filename=u'bot.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-    b = AvtrgnBot()    
-    b.start_bot()
+    # b = AvtrgnBot()    
+    # b.start_bot()

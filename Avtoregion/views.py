@@ -30,7 +30,6 @@ from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
 from braces.views import JSONRequestResponseMixin
 from Avtoregion.templatetags import custom_filters
-from . import avtrgnbot
 
 from .forms import CarForm
 from .forms import CustomAuthForm
@@ -860,8 +859,3 @@ class WayView(JSONRequestResponseMixin, View):
                                                                                            'zipfilename': urlzipfile,
                                                                                            "name": 'Путевой лист'})
         return self.render_json_response({'data': templated})
-
-def start_bot(req):
-    b = avtrgnbot.AvtrgnBot()    
-    b.start_bot()
-    return HttpResponse('ok')

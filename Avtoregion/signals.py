@@ -4,5 +4,6 @@ from .models import Race
 
 
 @receiver(post_save, sender=Race)
-def my_handler(sender, **kwargs):
-    print('Race ' + str(sender.id_race) + ' saved')
+def race_handler(sender, **kwargs):
+    print(Race(sender))
+    print('Race saved')
