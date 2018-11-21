@@ -213,6 +213,7 @@ class Race(models.Model):
     LOAD = 'Загружен'
     UNLOAD = 'Выгружен'
     FINISH = 'Закончен'
+    CHECKED = 'Сверен'
     END = 'Проведен'
     ACCIDENT = 'Авария'
     STATE = (
@@ -221,6 +222,7 @@ class Race(models.Model):
         (LOAD, 'Загружен'),
         (UNLOAD, 'Выгружен'),
         (FINISH, 'Закончен'),
+        (CHECKED, 'Сверен'),
         (END, 'Проведен'),
         (ACCIDENT, 'Авария'),
     )
@@ -248,8 +250,8 @@ class Race(models.Model):
         default=ORDER[0], choices=ORDER, max_length=256)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)
-    s_milage = models.FloatField(default=0)
-    e_milage = models.FloatField(default=0)
+    s_milage = models.DecimalField(default=0, max_digits=8, decimal_places=0)
+    e_milage = models.DecimalField(default=0, max_digits=8, decimal_places=0)
     weight_load = models.FloatField(default=0)
     unit_load = models.ForeignKey(
         Units,
@@ -271,6 +273,8 @@ class Race(models.Model):
     shoulder = models.FloatField(default=0)
     count = models.DecimalField(default=1, max_digits=5, decimal_places=0)
     create_time = models.DateTimeField(auto_now=True)
+    price = models.FloatField(default=0)
+    
 
     class Meta:
         get_latest_by = 'race_date'

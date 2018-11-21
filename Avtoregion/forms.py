@@ -143,8 +143,8 @@ class RaceForm(ModelForm):
             'place_load': 'Место погрузки',
             'shipment': 'Место разгрузки',
             'product': 'Груз',
-            's_milage': 'Начало трeка',
-            'e_milage': 'Конец трeка',
+            's_milage': 'Начальное показание одометра',
+            'e_milage': 'Конечное показание одометра',
             'weight_unload': 'Разгружено',
             'weight_load': 'Загружено',
             'shoulder': 'Плечо',
@@ -154,6 +154,7 @@ class RaceForm(ModelForm):
             'gas_start': 'Горючего остаток на начало рейса',
             'gas_end': 'Горючего остаток на конец рейса',
             'count': 'Количество рейсов',
+            'price': 'Цена рейса',
         }
 
     def __init__(self, *args, **kwargs):
