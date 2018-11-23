@@ -122,11 +122,11 @@ class AvtrgnBot():
             abonent.context = None          # Сбрасываем номер автомобиля времени авторизации
         abonent.save()
     
-    def prev(self, abonent, context=None):
-        st = [s[0] for s in STATE]
+    def status(self, abonent, state, context=None):
+        #st = [s[0] for s in STATE]
         if context is not None:
             abonent.context = context
-        abonent.state = st[st.index(abonent.state)-1]
+        abonent.state = state #st[st.index(abonent.state)-1]
         abonent.save()
             
     # Обработка начального статуса            
@@ -264,17 +264,23 @@ class AvtrgnBot():
             a = self.abonent(update)
             a.state = LOADING
             a.save()
+            bot.delete_message(chat_id=update.callback_query.message.chat.id, 
+                               message_id=update.callback_query.message.message_id)
             bot.sendMessage(update.callback_query.from_user.id, 
-                            'Введите показания одометра авто ' + a.race.car.number + ' на момент погрузки:', 
+                            'Ваш рейс в состоянии погрузки. Введите показания одометра авто ' + a.race.car.number + ' на момент погрузки:', 
                             reply_markup=ForceReply(force_reply=True))    
     
     def yes_callback(self, bot, update):
+        if update.callback_query.answer():
+            a = self.abonent(update)
+            a.race.s_milage = int()
         pass
         
     def no_callback(self, bot, update):
         if update.callback_query.answer():
             a = self.abonent(update)
-            self.prev(a)
+            if LOADING in a.state:
+                self.status(a, ACCEPTED, a.context)
             self.main(bot, update)
             bot.delete_message(chat_id=update.callback_query.message.chat.id, 
                                message_id=update.callback_query.message.message_id)
@@ -317,8 +323,8 @@ class AvtrgnBot():
             r_id, r = self.get_race_context(abon)
         else:
             r = abon.race
-        text = u'Текущий рейс для авто: ' + abon.car.number
-        text += u'<pre>_____________________________________________</pre>\n'
+        text = u'Текущий рейс для: ' + abon.car.number + u'\n'
+        text += u'<pre>___________________________</pre>\n'
         text += u'<pre>Рейс:\t\t\t' + str(r.id_race) + u'</pre>\n'
         text += u'<pre>Дата:\t\t\t' + r.race_date.strftime('%d.%m.%Y %H:%M') + u'</pre>\n'
         text += u'<pre>Водитель:\t' + r.driver.name + u'</pre>\n'                
@@ -338,8 +344,7 @@ class AvtrgnBot():
                              parse_mode='HTML',
                              reply_markup=InlineKeyboardMarkup(kb))       
         
-    
-    def myrace(self, abon, update):
+    def future_race(self, abon, update, send=False):
         """ Get future and current race for the abonent """ 
         # Получаем номер теекущего рейса и его объект из контекста
         current_race_id, current_race = self.get_race_context(abon)
@@ -360,8 +365,8 @@ class AvtrgnBot():
             future_races = future_races[1:]
             
         # Если выборка будущих рейсов не пуста, то выводим информацию по предстоящим рейсам
-        if len(future_races) != 0:
-            text = u'Предстоящие рейсы для авто: ' + abon.car.number + u'\n'
+        if len(future_races) != 0 and send:
+            text = u'Предстоящие рейсы для: ' + abon.car.number + u'\n'
             text += u'<pre>_____________________________________________</pre>\n'
             text += u'<pre>Номер | Дата             | Водитель</pre>'
             text += u'<pre>—————————————————————————————————————————————</pre>'
@@ -377,13 +382,17 @@ class AvtrgnBot():
         
         if current_race_id != 0:
             # Сохраняем номер текущего рейса в контекст
-            print('context', abon.context)
             if abon.context is None:
                 abon.context = str(current_race_id)
                 abon.save()
-            self.current_race(abon, update)
         else:
             self.bot.sendMessage(str(abon.telegram_id), u'У вас нет назначенных рейсов.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))            
+        
+    
+    def myrace(self, abon, update):
+        self.future_race(abon, update)
+        self.current_race(abon, update)
+        pass
                             
     
     def get_tid(self, update):
@@ -403,12 +412,14 @@ class AvtrgnBot():
             a.last_seen = timezone.now()
             a.save()
         return a
+        
+    def valid_int(self, pattern, text):
+        return re.search(pattern, text, flags=re.IGNORECASE) is not None
     
     def odometer(self, abon, update):
         """ Process odometer value """
         tid, name = self.get_tid(update)
         if re.search(r'^\d+$', update.message.text.strip(), flags=re.IGNORECASE) is not None:
-            print(int(update.message.text))
             self.bot.sendMessage(tid, r'Введенное показание одометра: <b>'+update.message.text+'</b> км. Всё верно?', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(confirm_keyboard))
         else:
             self.bot.sendMessage(tid, 'Показания одометра введены с ошибкой. Введите правильно:', reply_markup=ForceReply(force_reply=True))    
@@ -438,14 +449,14 @@ class AvtrgnBot():
                 abn = Abonent.objects.filter(telegram_nick__iexact=update.message.text)
                 if abn.count() == 1:
                     self.bot.sendMessage(int(update.message.chat_id), abn[0].secret)
+                    
                 self.carcheck(a, update)
                 self.ready(a, update)
             elif ACCEPTED in a.state:
                 self.myrace(a, update)
-                pass
             elif RACE in a.state:
                 self.myrace(a, update)
-            elif LOADING in a.state:
+            elif LOADING in a.state:                
                 self.odometer(a, update)
             elif LOADED in a.state:
                 self.loaded(a, update)
@@ -469,7 +480,12 @@ class AvtrgnBot():
         print('Race ' + str(instance.id_race) + ' updated')
         pass
 
-       
+    def decimal(self, bot, update):
+        a = self.abonent(update)
+        if LOADING in a.state:
+            self.odometer(a, update)
+        print('decimal = ', update.message.text)
+    
     def start_bot(self):
         #disp = TELEGRAM.dispatcher
         #print(self.disp)
@@ -484,6 +500,7 @@ class AvtrgnBot():
             self.disp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
             self.disp.add_handler(CallbackQueryHandler(self.yes_callback, pattern=r'/yes$'))
             self.disp.add_handler(CallbackQueryHandler(self.no_callback, pattern=r'/no$'))
+            self.disp.add_handler(MessageHandler(Filters.regex(r'^\d+$'), self.decimal))
             self.disp.add_handler(MessageHandler(Filters.text, self.main))
             self.updater.start_polling()
         return 'ok'
