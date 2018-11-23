@@ -151,14 +151,14 @@
 			  if ($type == 'supplier') {
 					$('#account_supplier').val($supplier).trigger("chosen:updated");
 					$('#account_supplier').trigger('change', {'selected':$supplier});
-					$('#account_unload_place').val($unload_place).trigger("chosen:updated");
-					$('#account_unload_place').trigger('change', {'selected':$unload_place});
+					$('#account_load_place').val($unload_place).trigger("chosen:updated");
+					$('#account_load_place').trigger('change', {'selected':$unload_place});
 			  }
 			  if ($type == 'customer') {
 					$('#account_customer').val($customer).trigger("chosen:updated");
 					$('#account_customer').trigger('change', {'selected':$customer});
-					$('#account_load_place').val($load_place).trigger("chosen:updated");
-					$('#account_load_place').trigger('change', {'selected':$load_place});
+					$('#account_unload_place').val($load_place).trigger("chosen:updated");
+					$('#account_unload_place').trigger('change', {'selected':$load_place});
 			  }
 			  if ($type == 'mediator') {
 					$('#account_mediator').val($mediator).trigger("chosen:updated");
