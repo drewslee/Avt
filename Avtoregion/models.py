@@ -368,7 +368,8 @@ class Race(models.Model):
 
             
 class Abonent(models.Model):
-    START, AUTH, PASS, READY, RACE, ACCEPTED, LOAD, UNLOAD, BAN = 'start', 'auth', 'pass', 'ready', 'race', 'race_accepted', 'load', 'unload', 'ban'
+    START, AUTH, PASS, READY, RACE, ACCEPTED, LOADING, LOADED, UNLOADING, UNLOADED, BAN = \
+    'start', 'auth', 'pass', 'ready', 'race', 'accepted', 'loading', 'loaded', 'unloading', 'unloaded', 'ban'
     STATE = (
         (START, 'Начало'),
         (AUTH, 'Аутентификация'),
@@ -376,8 +377,10 @@ class Abonent(models.Model):
         (READY, 'Готов'),
         (RACE, 'Рейс'),
         (ACCEPTED, 'Принято'),
-        (LOAD, 'Погрузка'),
-        (UNLOAD, 'Разгрузка'),
+        (LOADING, 'Погрузка'),
+        (LOADED, 'Загружен'),
+        (UNLOADING, 'Разгрузка'),
+        (UNLOADED, 'Разгружен'),
         (BAN, 'Заблокирован'),
     )
 #    id_abonent = models.AutoField(primary_key=True)
