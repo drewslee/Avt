@@ -128,7 +128,7 @@
               $('.toggle-toolbar').collapse('toggle');
           });
 
-		  if (typeof(Storage) !== "undefined")
+		  if (typeof(Storage) !== "undefined" && sessionStorage.length > 0)
           {
 			  var $daterange = sessionStorage.getItem('daterange');
 			  var $type =  sessionStorage.getItem('type');
@@ -142,23 +142,23 @@
 			  var $state =  sessionStorage.getItem('state');
 
 			  // Restoring saved in session values of filter fields
+			  var $drp = $('#account_daterange').data('daterangepicker');
 			  var $dr = $daterange.split(' - ');
-			  var drp = $('#account_daterange').data('daterangepicker');
-			  drp.setStartDate($dr[0]);
-			  drp.setEndDate($dr[1]);
+			  $drp.setStartDate($dr[0]);
+			  $drp.setEndDate($dr[1]);
 			  $('#account_type').val($type).trigger("chosen:updated");
 			  $('#account_type').trigger('change', {'selected':$type});
 			  if ($type == 'supplier') {
 					$('#account_supplier').val($supplier).trigger("chosen:updated");
 					$('#account_supplier').trigger('change', {'selected':$supplier});
-					$('#account_load_place').val($unload_place).trigger("chosen:updated");
-					$('#account_load_place').trigger('change', {'selected':$unload_place});
+					$('#account_load_place').val($load_place).trigger("chosen:updated");
+					$('#account_load_place').trigger('change', {'selected':$load_place});
 			  }
 			  if ($type == 'customer') {
 					$('#account_customer').val($customer).trigger("chosen:updated");
 					$('#account_customer').trigger('change', {'selected':$customer});
-					$('#account_unload_place').val($load_place).trigger("chosen:updated");
-					$('#account_unload_place').trigger('change', {'selected':$load_place});
+					$('#account_unload_place').val($unload_place).trigger("chosen:updated");
+					$('#account_unload_place').trigger('change', {'selected':$unload_place});
 			  }
 			  if ($type == 'mediator') {
 					$('#account_mediator').val($mediator).trigger("chosen:updated");
