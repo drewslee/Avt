@@ -79,6 +79,12 @@ keyboards = {READY: race_accept_keyboard, ACCEPTED: loading_keyboard }
 
 TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
 
+def callback_decorator(method):
+    def wrapper(self, bot, update):
+        if update.callback_query.answer():
+            return method(self, bot, update)
+    return wrapper
+
 class AvtrgnBot():
     #updater = TELEGRAM
     #bot = updater.bot
@@ -207,94 +213,97 @@ class AvtrgnBot():
 #        reply_markup = InlineKeyboardMarkup(race_keyboard)
 #        self.bot.sendMessage(upd.message.chat.id, self.messages['select'], reply_markup=reply_markup)
         
-    
+
+    @callback_decorator
     def race_accepted_callback(self, bot, update):
-        if update.callback_query.answer():
-            a = self.abonent(update)
-            if a.context is not None and len(a.context):
-                race = Race.objects.get(pk=int(a.context))
-                a.race = race
-            else:
-                race = a.race
-            a.state = ACCEPTED
-            a.context = None
-            a.save()
-            race.race_date = timezone.now()
-            race.save()
-            kb = keyboards[a.state]
-            #kb.callback_data += '|' + str(a.race_id)
-            text = u'Направляйтесь к месту погрузки.'
-            update.callback_query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(kb))
+        a = self.abonent(update)
+        if a.context is not None and len(a.context):
+            race = Race.objects.get(pk=int(a.context))
+            a.race = race
+        else:
+            race = a.race
+        a.state = ACCEPTED
+        a.context = None
+        a.save()
+        race.race_date = timezone.now()
+        race.save()
+        kb = keyboards[a.state]
+        #kb.callback_data += '|' + str(a.race_id)
+        text = u'Направляйтесь к месту погрузки.'
+        update.callback_query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(kb))
         
     
     # Отправка данных по текущему рейсу
+    @callback_decorator
     def race_callback(self, bot, update):
-        if update.callback_query.answer():
-            update.callback_query.edit_message_text(text='РЕЙС: ')
+        update.callback_query.edit_message_text(text='РЕЙС: ')
 #            race_accept_keyboard = [[InlineKeyboardButton(text='✅ Принято', callback_data='/race_accepted')]]
-            reply_markup = InlineKeyboardMarkup(race_accept_keyboard)
-            update.callback_query.edit_message_reply_markup(reply_markup=reply_markup)
-            
+        reply_markup = InlineKeyboardMarkup(race_accept_keyboard)
+        update.callback_query.edit_message_reply_markup(reply_markup=reply_markup)
+
+
+    @callback_decorator
     def from_callback(self, bot, update):
-        if update.callback_query.answer():            
-            pk = update.callback_query.data.split('|')[1]
-            print('pk = ' + pk)
-            race = Race.objects.get(pk=pk)
-            for lk in load_keyboard[0]:
-                lk.callback_data += '|' + pk
-            bot.sendVenue(update.callback_query.from_user.id, 
-                          51.2875544, 58.4370285, 
-                          'Место погрузки', 
-                          race.get_load_place, 
-                          reply_markup=InlineKeyboardMarkup(load_keyboard))
+        pk = update.callback_query.data.split('|')[1]
+        print('pk = ' + pk)
+        race = Race.objects.get(pk=pk)
+        for lk in load_keyboard[0]:
+            lk.callback_data += '|' + pk
+        bot.sendVenue(update.callback_query.from_user.id,
+                      51.2875544, 58.4370285,
+                      'Место погрузки',
+                      race.get_load_place,
+                      reply_markup=InlineKeyboardMarkup(load_keyboard))
     
+
+    @callback_decorator
     def to_callback(self, bot, update):
-        if update.callback_query.answer():            
-            pk = update.callback_query.data.split('|')[1]
-            print('pk = ' + pk)
-            race = Race.objects.get(pk=pk)
-            bot.sendVenue(update.callback_query.from_user.id, 
-                          51.6089419, 52.9732831, 
-                          'Место разгрузки', 
-                          race.get_unload_place, 
-                          reply_markup=InlineKeyboardMarkup(unload_keyboard)) 
-        
+        pk = update.callback_query.data.split('|')[1]
+        print('pk = ' + pk)
+        race = Race.objects.get(pk=pk)
+        bot.sendVenue(update.callback_query.from_user.id,
+                      51.6089419, 52.9732831,
+                      'Место разгрузки',
+                      race.get_unload_place,
+                      reply_markup=InlineKeyboardMarkup(unload_keyboard))
+
+    @callback_decorator
     def loading_callback(self, bot, update):
-        if update.callback_query.answer():
-            a = self.abonent(update)
-            a.state = LOADING
-            a.save()
-            bot.delete_message(chat_id=update.callback_query.message.chat.id, 
-                               message_id=update.callback_query.message.message_id)
-            bot.sendMessage(update.callback_query.from_user.id, 
-                            'Ваш рейс в состоянии погрузки. Введите показания одометра авто ' + a.race.car.number + ' на момент погрузки:', 
-                            reply_markup=ForceReply(force_reply=True))    
-    
+        a = self.abonent(update)
+        #a.state = LOADING
+        #a.save()
+        bot.delete_message(chat_id=update.callback_query.message.chat.id,
+                            message_id=update.callback_query.message.message_id)
+        bot.sendMessage(update.callback_query.from_user.id,
+                        'Ваш рейс в состоянии погрузки. Введите показания одометра авто ' + a.race.car.number + ' на момент погрузки:',
+                        reply_markup=ForceReply(force_reply=True))
+
+
+    @callback_decorator
     def yes_callback(self, bot, update):
-        if update.callback_query.answer():
-            a = self.abonent(update)
-            a.race.s_milage = int()
         pass
-        
+
+    @callback_decorator
     def no_callback(self, bot, update):
-        if update.callback_query.answer():
-            a = self.abonent(update)
-            if LOADING in a.state:
-                self.status(a, ACCEPTED, a.context)
-            self.main(bot, update)
-            bot.delete_message(chat_id=update.callback_query.message.chat.id, 
+        a = self.abonent(update)
+        if LOADING in a.state:
+            self.status(a, ACCEPTED, None)
+        self.main(bot, update)
+        bot.delete_message(chat_id=update.callback_query.message.chat.id,
                                message_id=update.callback_query.message.message_id)
     
+
     def confirmation_load_callback(self, bot, update):
         """ Confirmation of loaded amount input """
         
         pass
         
+
+    @callback_decorator
     def close_callback(self, bot, update):
-        if update.callback_query.answer():
-            print(update)
-            bot.delete_message( chat_id=update.callback_query.message.chat.id, 
-                                message_id=update.callback_query.message.message_id)
+        print(update)
+        bot.delete_message( chat_id=update.callback_query.message.chat.id,
+                            message_id=update.callback_query.message.message_id)
     
     def get_keyboard(self, abon):
         return keyboards[abon.state]
@@ -304,9 +313,13 @@ class AvtrgnBot():
         current_race_id = 0        
         current_race = None
         context = []
-        
+
+        # Если рейс привязан, то получаем данные из привязанного рейса
+        if abon.race is not None:
+            current_race = abon.race
+            current_race_id = abon.race_id
         # Если контекст содержит номер текущего рейса, то получаем его из контекста
-        if abon.context:
+        elif abon.context is not None:
             context = abon.context.split()            
             if len(context):
                 current_race_id = int(context[0])        
@@ -415,12 +428,29 @@ class AvtrgnBot():
         
     def valid_int(self, pattern, text):
         return re.search(pattern, text, flags=re.IGNORECASE) is not None
-    
+
+    @callback_decorator
+    #@int_data_decorator
+    def odometer_confirm_callback(selfself, bot, update):
+        data = update.callback_query.data.split(':')[1]
+        print(data)
+        if int(data) > 0:
+            a = self.abonent(update)
+            a.race.s_milage = data
+            a.state = LOADED
+            a.save()
+
+
     def odometer(self, abon, update):
         """ Process odometer value """
         tid, name = self.get_tid(update)
         if re.search(r'^\d+$', update.message.text.strip(), flags=re.IGNORECASE) is not None:
-            self.bot.sendMessage(tid, r'Введенное показание одометра: <b>'+update.message.text+'</b> км. Всё верно?', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(confirm_keyboard))
+            abon.context = update.message.text # Сохраняем в контекст введенное показание одометра
+            abon.save()
+            odo = update.message.text.strip()
+            kb = confirm_keyboard
+            kb[0][0].callback_data = r'/confirm_odo:' + odo
+            self.bot.sendMessage(tid, r'Введенное показание одометра: <b>'+odo+'</b> км. Всё верно?', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(kb))
         else:
             self.bot.sendMessage(tid, 'Показания одометра введены с ошибкой. Введите правильно:', reply_markup=ForceReply(force_reply=True))    
     
@@ -482,7 +512,9 @@ class AvtrgnBot():
 
     def decimal(self, bot, update):
         a = self.abonent(update)
-        if LOADING in a.state:
+        if PASS in a.state:
+            self.passw(a, update)
+        if ACCEPTED in a.state:
             self.odometer(a, update)
         print('decimal = ', update.message.text)
     
@@ -498,8 +530,9 @@ class AvtrgnBot():
             self.disp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/race_accepted'))
             self.disp.add_handler(CallbackQueryHandler(self.confirmation_load_callback, pattern=r'/confirmation$'))
             self.disp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
-            self.disp.add_handler(CallbackQueryHandler(self.yes_callback, pattern=r'/yes$'))
-            self.disp.add_handler(CallbackQueryHandler(self.no_callback, pattern=r'/no$'))
+            self.disp.add_handler(CallbackQueryHandler(self.odometer_confirm_callback, pattern=r'/confirm_odo'))
+            self.disp.add_handler(CallbackQueryHandler(self.yes_callback, pattern=r'/yes'))
+            self.disp.add_handler(CallbackQueryHandler(self.no_callback, pattern=r'/no'))
             self.disp.add_handler(MessageHandler(Filters.regex(r'^\d+$'), self.decimal))
             self.disp.add_handler(MessageHandler(Filters.text, self.main))
             self.updater.start_polling()
