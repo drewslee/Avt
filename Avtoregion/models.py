@@ -390,6 +390,7 @@ class Abonent(models.Model):
     secret = models.CharField(max_length=8, default='12345678', verbose_name='Секретный ключ')	
     auth_try = models.DecimalField(max_digits=5, decimal_places=0, default=0)
     active = models.BooleanField(default=True)
+    admin = models.BooleanField(default=False)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=25)
     last_seen = models.DateTimeField(null=True, blank=True)
     car = models.ForeignKey(Car, null=True, blank=True)
