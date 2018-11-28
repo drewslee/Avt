@@ -87,6 +87,30 @@ def callback_decorator(method):
     return wrapper
 
     
+def reply_callback_decorator(method):
+    def wrapper(self, bot, update):
+        print('reply decorator')
+        result = method(self, bot, update)
+        if result is not None:
+            if result['delete']:
+                bot.delete_message(chat_id=update.callback_query.message.chat.id,
+                                   message_id=update.callback_query.message.message_id)
+            if result['send']:                      
+                bot.sendMessage(update.callback_query.from_user.id,
+                        result['send'],
+                        reply_markup=result['reply_markup'])            
+    return wrapper
+        
+    
+def confirm_callback_decorator(method):
+    def wrapper(self, bot, update):
+        print('confirm decorator')
+        data = update.callback_query.data.split(':')[1]
+        if int(data) > 0:
+            return method(self, bot, update)
+    return wrapper
+    
+    
 def modal_input_decorator(regex=r'^\d+$', confirm_text='confirm', error_text='error'):
     def decorator(method):
         def decorated(*args, **kwargs):
@@ -154,12 +178,14 @@ class AvtrgnBot():
             abonent.context = None          # Сбрасываем номер автомобиля времени авторизации
         abonent.save()
     
-    def status(self, abonent, state, context=None):
+    def status(self, update, state, context=None):
         #st = [s[0] for s in STATE]
+        abonent = self.abonent(update)
         if context is not None:
             abonent.context = context
         abonent.state = state #st[st.index(abonent.state)-1]
         abonent.save()
+        return abonent
             
     # Обработка начального статуса            
     def start(self, abon, update):
@@ -303,31 +329,26 @@ class AvtrgnBot():
                       race.get_unload_place,
                       reply_markup=InlineKeyboardMarkup(unload_keyboard))
 
-    @callback_decorator
+                      
+    @reply_callback_decorator
     def loading_callback(self, bot, update):
-        a = self.abonent(update)
-        a.state = LOADING
-        a.save()
-        bot.delete_message(chat_id=update.callback_query.message.chat.id,
-                            message_id=update.callback_query.message.message_id)
-        bot.sendMessage(update.callback_query.from_user.id,
-                        'Ваш рейс в состоянии погрузки. Введите показания одометра авто ' + a.race.car.number + ' на момент погрузки:',
-                        reply_markup=ForceReply(force_reply=True))
+        self.status(update, LOADING)
+        return {
+            'delete': True,
+            'send': 'Ваш рейс в состоянии погрузки. Введите показания одометра на момент погрузки:',
+            'reply_markup': ForceReply(force_reply=True)
+        }
 
-    @callback_decorator
+        
+    @reply_callback_decorator
     def unloading_callback(self, bot, update):
-        a = self.abonent(update)
-        a.state = UNLOADING
-        a.save()
-        bot.delete_message(chat_id=update.callback_query.message.chat.id,
-                            message_id=update.callback_query.message.message_id)
-        bot.sendMessage(update.callback_query.from_user.id,
-                        'Ваш рейс в состоянии разгрузки. Введите показания одометра авто ' + a.race.car.number + ' на момент разгрузки:',
-                        reply_markup=ForceReply(force_reply=True))
-                        
-    @callback_decorator
-    def yes_callback(self, bot, update):
-        pass
+        self.status(update, UNLOADING)
+        return {
+            'delete': True,
+            'send': 'Ваш рейс в состоянии выгрузки. Введите показания одометра на момент выгрузки:',
+            'reply_markup': ForceReply(force_reply=True)
+        }
+        
 
     @callback_decorator
     def no_callback(self, bot, update):
@@ -498,24 +519,20 @@ class AvtrgnBot():
     def valid_int(self, pattern, text):
         return re.search(pattern, text, flags=re.IGNORECASE) is not None
 
-    @callback_decorator
+    
+    @reply_callback_decorator    
+    @confirm_callback_decorator
     def confirm_load_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        print('confirm odo ', data)
-        if int(data) > 0:
-            a = self.abonent(update)
-            a.state = LOADED
-            a.context = update.callback_query.id
-            a.save()
-            race = a.race
-            race.s_milage = data
-            race.save()
-            bot.delete_message(chat_id=update.callback_query.message.chat.id,
-                                message_id=update.callback_query.message.message_id)
-            bot.sendMessage(update.callback_query.from_user.id,
-                            'Ваш рейс в состоянии погрузки. Введите загруженный вес: ',
-                            reply_markup=ForceReply(force_reply=True))
-            
+        a = self.status(update, LOADED, update.callback_query.id)
+        race = a.race
+        race.s_milage = int(data)
+        race.save()
+        return {'delete': True, 
+                'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес: ',
+                'reply_markup': ForceReply(force_reply=True) 
+               }
+                    
 
     @modal_input_decorator(confirm_text=u'Введенное показание одометра на погрузке: <b>{0}</b> км. Всё верно?', 
                            error_text=u'Показания одометра на погрузке введены с ошибкой. Введите правильно:')
@@ -523,22 +540,18 @@ class AvtrgnBot():
         return keyboard
 
         
-    @callback_decorator
+    @reply_callback_decorator    
+    @confirm_callback_decorator
     def confirm_unload_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        if int(data) > 0:
-            a = self.abonent(update)
-            a.state = UNLOADED
-            a.context = update.callback_query.id
-            a.save()
-            race = a.race
-            race.e_milage = data
-            race.save()
-            bot.delete_message(chat_id=update.callback_query.message.chat.id,
-                                message_id=update.callback_query.message.message_id)
-            bot.sendMessage(update.callback_query.from_user.id,
-                            'Ваш рейс в состоянии выгрузки. Введите выгруженный вес: ',
-                            reply_markup=ForceReply(force_reply=True))
+        a = self.status(update, UNLOADED, update.callback_query.id)
+        race = a.race
+        race.e_milage = int(data)
+        race.save()
+        return {'delete': True, 
+                'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес: ',
+                'reply_markup': ForceReply(force_reply=True) 
+               }
             
 
     @modal_input_decorator(confirm_text=u'Введенное показание одометра на выгрузке: <b>{0}</b> км. Всё верно?', 
@@ -546,22 +559,18 @@ class AvtrgnBot():
     def query_unload_odometer(self, update=None, keyboard=confirm_keyboard, callback_command=''):
         return keyboard
         
-    @callback_decorator
+        
+    @reply_callback_decorator    
+    @confirm_callback_decorator
     def confirm_load_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        if int(data) > 0:
-            a = self.abonent(update)
-            a.state = RACE
-            a.context = update.callback_query.id
-            a.save()
-            race = a.race
-            race.weight_load = int(data) / 1000
-            race.state = Race.LOAD
-            race.save()
-            bot.delete_message(chat_id=update.callback_query.message.chat.id,
-                                message_id=update.callback_query.message.message_id)
-#            print(update.callback_query.id)
-#            print(bot.answerCallbackQuery(update.callback_query.id, text='Race ' + str(race.id_race) + ' updated.'))
+        a = self.status(update, RACE, update.callback_query.id)
+        race = a.race
+        race.weight_load = int(data) / 1000
+        race.state = Race.LOAD
+        race.save()
+        return {'delete': True, 'send': False}
+
         
     @modal_input_decorator(confirm_text=u'Введенный вес: <b>{0}</b> кг. Всё верно?', 
                            error_text=u'Вес введён с ошибкой. Введите загруженный вес в килограммах:')
@@ -569,23 +578,18 @@ class AvtrgnBot():
         return keyboard
 
 
-    @callback_decorator
+    @confirm_callback_decorator
     def confirm_unload_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        if int(data) > 0:
-            a = self.abonent(update)
-            race = a.race
-            a.state = READY
-            a.context = update.callback_query.id
-            a.race = None
-            a.save()            
-            race.weight_unload = int(data) / 1000
-            race.state = Race.UNLOAD
-            race.save()
-            bot.delete_message(chat_id=update.callback_query.message.chat.id,
-                                message_id=update.callback_query.message.message_id)
-#            print(update.callback_query.id)
-#            print(bot.answerCallbackQuery(update.callback_query.id, text='Race ' + str(race.id_race) + ' updated.'))
+        a = self.status(update, RACE, update.callback_query.id)
+        race = a.race
+        a.race = None
+        a.save()            
+        race.weight_unload = int(data) / 1000
+        race.state = Race.UNLOAD
+        race.save()
+        return {'delete': True, 'send': False}
+        
         
     @modal_input_decorator(confirm_text=u'Введенный вес: <b>{0}</b> кг. Всё верно?', 
                            error_text=u'Вес введён с ошибкой. Введите разгруженный вес в килограммах:')
@@ -642,8 +646,9 @@ class AvtrgnBot():
     @staticmethod
     @receiver(post_save, sender=Race)
     def race_save_notify(sender, instance, created, **kwargs):
-        # get the instance of AvtrgnBot to use bot property ...
-        a = Abonent.objects.get(car_id=int(instance.car_id))
+        """ Notifier of Race model update """
+        # Нужно добавить синхронизацию статусов модели Race и статуса абонента
+        a = Abonent.objects.get(car_id=int(instance.car_id))    # get the instance of AvtrgnBot to use bot property ...
         if created:
             print('created', TELEGRAM.bot.sendMessage(str(a.telegram_id), 'Race ' + str(instance.id_race) + ' created'))
         else:
