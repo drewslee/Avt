@@ -1,4 +1,5 @@
-from datetime import timedelta
+from time import time
+from datetime import datetime, timedelta
 from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings as djangoSettings
@@ -79,6 +80,11 @@ keyboards = {READY: race_accept_keyboard, ACCEPTED: loading_keyboard, RACE: unlo
 # TO DO: Вынести строковые сообщения в константы
 
 TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
+
+
+def expire(seconds=15):
+    return time()+seconds
+
 
 def callback_decorator(method):
     def wrapper(self, bot, update):
@@ -176,8 +182,8 @@ class AvtrgnBot():
         self.disp = self.updater.dispatcher
         self.job_queue = self.updater.job_queue
         self.me = self.bot.getMe()
+            
         
-
     # Обработка начального статуса            
     def start(self, abon, update):
         update.message.reply_text(self.messages['hello'])
@@ -289,14 +295,14 @@ class AvtrgnBot():
     def race_accepted_callback(self, bot, update):
         """ ACCEPT callback processing """    
         r_id = update.callback_query.data.split(':')[1] # Получаем id принимаемого рейса из callback_data
-        a = self.abonent(update)
-        race = a.car.race_set.get(pk=r_id)
-        
         # Сохраняем в абоненте рейс, статус и id запроса
+        a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
+        race = a.car.race_set.get(pk=r_id)
         a.race = race
-        a.context = update.callback_query.id
-        a.state = ACCEPTED
         a.save()
+                
+#        a.context = update.callback_query.id + ':' + str(expire())
+#        a.state = ACCEPTED
         
         # Сохраняем в рейсе дату принятия
         race.race_date = timezone.now()
@@ -356,7 +362,7 @@ class AvtrgnBot():
     # Обработка команды от кнопки "ПОГРУЗКА" и переход в статус "LOADING"        
     @reply_callback_decorator
     def loading_callback(self, bot, update):
-        self.status(update, LOADING)
+        self.status(update, LOADING, update.callback_query.id + ':' + str(expire()))
         return {
             'delete': True,
             'send': 'Ваш рейс в состоянии погрузки. Введите показания одометра на момент погрузки:',
@@ -367,7 +373,7 @@ class AvtrgnBot():
     # Обработка команды от кнопки "ВЫГРУЗКА" и переход в статус "UNLOADING"        
     @reply_callback_decorator
     def unloading_callback(self, bot, update):
-        self.status(update, UNLOADING)
+        self.status(update, UNLOADING, update.callback_query.id + ':' + str(expire()))
         return {
             'delete': True,
             'send': 'Ваш рейс в состоянии выгрузки. Введите показания одометра на момент выгрузки:',
@@ -380,7 +386,7 @@ class AvtrgnBot():
     @confirm_callback_decorator
     def confirm_load_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        a = self.status(update, LOADED, update.callback_query.id)
+        a = self.status(update, LOADED, update.callback_query.id + ':' + str(expire()))
         race = a.race
         race.s_milage = int(data)
         race.save()
@@ -402,7 +408,7 @@ class AvtrgnBot():
     @confirm_callback_decorator
     def confirm_unload_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        a = self.status(update, UNLOADED, update.callback_query.id)
+        a = self.status(update, UNLOADED, update.callback_query.id + ':' + str(expire()))
         race = a.race
         race.e_milage = int(data)
         race.save()
@@ -424,7 +430,7 @@ class AvtrgnBot():
     @confirm_callback_decorator
     def confirm_load_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
-        a = self.status(update, RACE, update.callback_query.id)
+        a = self.status(update, RACE, update.callback_query.id + ':' + str(expire()))
         race = a.race
         race.weight_load = int(data) / 1000
         race.state = Race.LOAD
@@ -445,9 +451,10 @@ class AvtrgnBot():
     def confirm_unload_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]        
         print('data', data)
-        a = self.status(update, READY, update.callback_query.id)
+        a = self.status(update, READY, update.callback_query.id + ':' + str(expire()))
         a.race.weight_unload = int(data) / 1000
         a.race.state = Race.UNLOAD
+        a.race.arrival_time = timezone.now()
         a.race.save()
         print(a.race)
         a.race = None
@@ -533,6 +540,7 @@ class AvtrgnBot():
             all = Race.objects.filter(car_id=abon.car.id_car, 
                                       state=Race.CREATE, 
                                       race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
+            print(all)
             if len(all) > 0:
                 r = all[0]
                 r_id = r.id_race
@@ -612,6 +620,7 @@ class AvtrgnBot():
         
     
     def myrace(self, bot, update):
+        print('myrace')
         abon = self.abonent(update)
         self.future_race(abon, update, send=True)
         self.current_race(bot, update)
@@ -644,7 +653,7 @@ class AvtrgnBot():
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
         a = self.abonent(update)
-        print(a.state)
+        print(a.state, time())
         if a:                    
             if START in a.state:
                 self.start(a, update)
@@ -689,13 +698,27 @@ class AvtrgnBot():
     def race_save_notify(sender, instance, created, **kwargs):
         """ Notifier of Race model update """
         # Нужно добавить синхронизацию статусов модели Race и статуса абонента
-        a = Abonent.objects.get(car_id=int(instance.car_id))    # get the instance of AvtrgnBot to use bot property ...
-        if created:
-            print('created', TELEGRAM.bot.sendMessage(str(a.telegram_id), 'Race ' + str(instance.id_race) + ' created'))
-        else:
-            print('updated', TELEGRAM.bot.answerCallbackQuery(str(a.context), 'Race ' + str(instance.id_race) + ' updated'))
+        abonents = Abonent.objects.filter(car_id=int(instance.car_id))    
+        if len(abonents) > 0:
+            if created:
+                for a in abonents:
+                    print('created', TELEGRAM.bot.sendMessage(str(a.telegram_id), 'Race ' + str(instance.id_race) + ' created'))
+            else:
+                for a in abonents:
+                    print('context', a.context)
+                    if instance.state == Race.UNLOAD and a.race == instance:
+                        # Если рейс выгружен (статус Race.UNLOAD), то отвязываем этот текущий рейс от абонента
+                        a.race = None
+                        a.state = READY
+                    if a.context is not None and len(a.context) > 12:
+                        query_id, exp = a.context.split(':')
+                        expire = float(exp)
+                        a.context = None
+                        if time() < expire:
+                            print('updated', TELEGRAM.bot.answerCallbackQuery(query_id, 'Race ' + str(instance.id_race) + ' updated'))
+                    a.save()
             
-        print('Race ' + str(instance.id_race) + ' updated')
+            
 
     def decimal(self, bot, update):
         """ Decimal input dispatcher """
