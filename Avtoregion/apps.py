@@ -8,11 +8,11 @@ class AvtoregionConfig(AppConfig):
     
     def ready(self):
         from .models import Race
-        from .avtrgnbot import AvtrgnBot
+        #from .avtrgnbot import AvtrgnBot
         
-        bot = AvtrgnBot()
-        bot.start_bot()            
+        #bot = AvtrgnBot()
+        #bot.start_bot()
         
         
         # Registering post_save signal for Race update and sending notification by AvtrgnBot
-        post_save.connect(bot.race_save_notify, sender=Race)
+        #post_save.connect(bot.race_save_notify, sender=Race)
