@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 from django.utils import timezone
 from django.shortcuts import reverse
@@ -208,16 +209,20 @@ class Race(models.Model):
         (HANDLE_ALL, 'Проведен')
     )
     CREATE = 'Создан'
+    ACCEPTED = 'Принят'
     LOAD = 'Загружен'
     UNLOAD = 'Выгружен'
     FINISH = 'Закончен'
+    CHECKED = 'Сверен'
     END = 'Проведен'
     ACCIDENT = 'Авария'
     STATE = (
         (CREATE, 'Создан'),
+        (ACCEPTED, 'Принят'),
         (LOAD, 'Загружен'),
         (UNLOAD, 'Выгружен'),
         (FINISH, 'Закончен'),
+        (CHECKED, 'Сверен'),
         (END, 'Проведен'),
         (ACCIDENT, 'Авария'),
     )
@@ -245,8 +250,8 @@ class Race(models.Model):
         default=ORDER[0], choices=ORDER, max_length=256)
     shipment = models.ForeignKey(Shipment, null=True, blank=True)
     product = models.ForeignKey(Product)
-    s_milage = models.FloatField(default=0)
-    e_milage = models.FloatField(default=0)
+    s_milage = models.DecimalField(default=0, max_digits=8, decimal_places=0)
+    e_milage = models.DecimalField(default=0, max_digits=8, decimal_places=0)
     weight_load = models.FloatField(default=0)
     unit_load = models.ForeignKey(
         Units,
@@ -268,6 +273,8 @@ class Race(models.Model):
     shoulder = models.FloatField(default=0)
     count = models.DecimalField(default=1, max_digits=5, decimal_places=0)
     create_time = models.DateTimeField(auto_now=True)
+    price = models.FloatField(default=0)
+    
 
     class Meta:
         get_latest_by = 'race_date'
@@ -358,3 +365,52 @@ class Race(models.Model):
             return self.car.mediator.name + " " + self.car.mediator.address
         else:
             return const.organization_unit_full + " " + const.address
+
+            
+class Abonent(models.Model):
+    START, AUTH, PASS, READY, RACE, ACCEPTED, LOADING, LOADED, UNLOADING, UNLOADED, BAN = \
+    'start', 'auth', 'pass', 'ready', 'race', 'accepted', 'loading', 'loaded', 'unloading', 'unloaded', 'ban'
+    STATE = (
+        (START, 'Начало'),
+        (AUTH, 'Аутентификация'),
+        (PASS, 'Запрос ключа'),
+        (READY, 'Готов'),
+        (RACE, 'Рейс'),
+        (ACCEPTED, 'Принято'),
+        (LOADING, 'Погрузка'),
+        (LOADED, 'Загружен'),
+        (UNLOADING, 'Разгрузка'),
+        (UNLOADED, 'Разгружен'),
+        (BAN, 'Заблокирован'),
+    )
+#    id_abonent = models.AutoField(primary_key=True)
+    telegram_id = models.DecimalField(primary_key=True,
+        unique=True, max_digits=12, decimal_places=0, max_length=10)
+    telegram_nick = models.CharField(max_length=16, default='NoName', verbose_name='Никнейм')	
+    secret = models.CharField(max_length=8, default='12345678', verbose_name='Секретный ключ')	
+    auth_try = models.DecimalField(max_digits=5, decimal_places=0, default=0)
+    active = models.BooleanField(default=True)
+    admin = models.BooleanField(default=False)
+    state = models.CharField(default=STATE[0], choices=STATE, max_length=25)
+    last_seen = models.DateTimeField(null=True, blank=True)
+    car = models.ForeignKey(Car, null=True, blank=True)
+    race = models.ForeignKey(Race, null=True, blank=True)
+    context = models.CharField(max_length=255, null=True, blank=True)
+    
+    def __str__(self):
+        return '{}:{}'.format(self.telegram_nick, self.telegram_id)
+                                        
+    @property
+    def get_race_id(self):
+        if self.race is not None:
+            return self.race.pk
+        else:
+            return 0 
+            
+    def set_race(self, race_id=None):
+        if race_id is not None:
+            self.race = self.car.race_set.get(pk=race_id)
+            
+    def new_races(self):
+        if self.car is not None:
+            return self.car.race_set.filter(state=Race.CREATE, race_date__gte=timezone.now()-timedelta(days=3))

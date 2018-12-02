@@ -6,6 +6,7 @@ import json
 import shutil
 import tempfile
 import uuid
+import logging
 from zipfile import ZipFile
 from operator import __or__ as OR
 from functools import reduce
