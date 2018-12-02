@@ -79,8 +79,8 @@ keyboards = {READY: race_accept_keyboard, ACCEPTED: loading_keyboard, RACE: unlo
 # AvtrgnBot Телеграм-бот для коммуникации диспетчерской системы с водителями
 # TO DO: Вынести строковые сообщения в константы
 
-TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
-
+#TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
+TELEGRAM = Updater(djangoSettings.TOKEN)
 
 def expire(seconds=15):
     return time()+seconds
