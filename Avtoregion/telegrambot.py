@@ -37,16 +37,6 @@ from .models import Trailer
 from .models import Constants
 from .models import LoadingPlace
 
-
-BOT_REQUEST_KWARGS={
-    'proxy_url': 'socks5://bliwu.tgvpnproxy.me',
-    # Optional, if you need authentication:
-    'urllib3_proxy_kwargs': {
-        'username': 'telegram',
-        'password': 'telegram',
-    }
-}
-
 RACE_DATE_RANGE = 3 # Диапазон дней от текущей даты, за которые рейсы считаются предстоящими
 
 # Bot status list
@@ -80,7 +70,7 @@ keyboards = {READY: race_accept_keyboard, ACCEPTED: loading_keyboard, RACE: unlo
 # AvtrgnBot Телеграм-бот для коммуникации диспетчерской системы с водителями
 # TO DO: Вынести строковые сообщения в константы
 
-TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
+#TELEGRAM = Updater(djangoSettings.TOKEN, request_kwargs=BOT_REQUEST_KWARGS)
 
 
 def expire(seconds=15):
@@ -175,15 +165,7 @@ class AvtrgnBot():
         'tryout' : u'Количество попыток авторизации исчерано.',
         'banned' : u'Вам отказано в доступе.',
         'select' : u'Выберите команду',
-    }
-
-    def __init__(self):
-        self.updater = TELEGRAM
-        self.bot = self.updater.bot
-        self.disp = self.updater.dispatcher
-        self.job_queue = self.updater.job_queue
-        self.me = self.bot.getMe()
-            
+    }            
         
     # Обработка начального статуса            
     def start(self, abon, update):
@@ -703,7 +685,8 @@ class AvtrgnBot():
         if len(abonents) > 0:
             if created:
                 for a in abonents:
-                    print('created', TELEGRAM.bot.sendMessage(str(a.telegram_id), 'Race ' + str(instance.id_race) + ' created'))
+                    pass
+                    # print('created', TELEGRAM.bot.sendMessage(str(a.telegram_id), 'Race ' + str(instance.id_race) + ' created'))
             else:
                 for a in abonents:
                     print('context', a.context)
@@ -716,7 +699,8 @@ class AvtrgnBot():
                         expire = float(exp)
                         a.context = None
                         if time() < expire:
-                            print('updated', TELEGRAM.bot.answerCallbackQuery(query_id, 'Race ' + str(instance.id_race) + ' updated'))
+                            pass
+                            # print('updated', TELEGRAM.bot.answerCallbackQuery(query_id, 'Race ' + str(instance.id_race) + ' updated'))
                     a.save()
             
             
@@ -740,31 +724,35 @@ class AvtrgnBot():
         print('decimal = ', update.message.text)
     
     def start_bot(self):
-        if not self.updater.running:        
-            self.disp.add_handler(CommandHandler('start', self.start_callback))
-            self.disp.add_handler(CommandHandler('secret', self.get_secret_command))
-            self.disp.add_handler(CallbackQueryHandler(self.race_callback, pattern=r'/race$'))
-            self.disp.add_handler(CallbackQueryHandler(self.from_callback, pattern=r'/from'))
-            self.disp.add_handler(CallbackQueryHandler(self.to_callback, pattern=r'/to'))
-            self.disp.add_handler(CallbackQueryHandler(self.loading_callback, pattern=r'/loading'))
-            self.disp.add_handler(CallbackQueryHandler(self.unloading_callback, pattern=r'/unloading'))
-            self.disp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/accepted'))
-            self.disp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
-            self.disp.add_handler(CallbackQueryHandler(self.confirm_load_odometer_callback, pattern=r'/load_odo'))
-            self.disp.add_handler(CallbackQueryHandler(self.confirm_load_weight_callback, pattern=r'/load_weight'))
-            self.disp.add_handler(CallbackQueryHandler(self.confirm_unload_odometer_callback, pattern=r'/unload_odo'))
-            self.disp.add_handler(CallbackQueryHandler(self.confirm_unload_weight_callback, pattern=r'/unload_weight'))
-            self.disp.add_handler(CallbackQueryHandler(self.no_callback, pattern=r'/no'))
-            self.disp.add_handler(MessageHandler(Filters.regex(r'^\d+$'), self.decimal))
-            self.disp.add_handler(MessageHandler(Filters.text, self.main))
-            self.updater.start_polling()
+        dp = DjangoTelegramBot.dispatcher
+        dp.add_handler(CommandHandler('start', self.start_callback))
+        dp.add_handler(CommandHandler('secret', self.get_secret_command))
+        dp.add_handler(CallbackQueryHandler(self.race_callback, pattern=r'/race$'))
+        dp.add_handler(CallbackQueryHandler(self.from_callback, pattern=r'/from'))
+        dp.add_handler(CallbackQueryHandler(self.to_callback, pattern=r'/to'))
+        dp.add_handler(CallbackQueryHandler(self.loading_callback, pattern=r'/loading'))
+        dp.add_handler(CallbackQueryHandler(self.unloading_callback, pattern=r'/unloading'))
+        dp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/accepted'))
+        dp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
+        dp.add_handler(CallbackQueryHandler(self.confirm_load_odometer_callback, pattern=r'/load_odo'))
+        dp.add_handler(CallbackQueryHandler(self.confirm_load_weight_callback, pattern=r'/load_weight'))
+        dp.add_handler(CallbackQueryHandler(self.confirm_unload_odometer_callback, pattern=r'/unload_odo'))
+        dp.add_handler(CallbackQueryHandler(self.confirm_unload_weight_callback, pattern=r'/unload_weight'))
+        dp.add_handler(CallbackQueryHandler(self.no_callback, pattern=r'/no'))
+        dp.add_handler(MessageHandler(Filters.regex(r'^\d+$'), self.decimal))
+        dp.add_handler(MessageHandler(Filters.text, self.main))
         return 'ok'
 
     def __str__(self):
         return '{}:{}'.format(self.me['id'], self.me['username'])
         
         
-if __name__ == '__main__':
-    logging.basicConfig(filename=u'bot.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-    # b = AvtrgnBot()    
-    # b.start_bot()
+logging.basicConfig(filename=u'bot.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def main():
+    logger.info("Loading handlers for telegram bot")
+
+    bot = AvtrgnBot()
+    bot.start_bot()            
+    

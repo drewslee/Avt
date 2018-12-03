@@ -95,11 +95,14 @@ urlpatterns = [
         name='MediatorUpdate'),
     url(r'^Mediator/delete/$', views.MediatorDelete.as_view(), name='MediatorDelete'),
 
+    url(r'^', include('django_telegrambot.urls')),    
+    
     url(r'^Accumulate/$', views.Accumulate.as_view(), name='Acc'),
     url(r'^Accumulate/Excel$', views.save_excel, name='AccExcel'),
     url(r'^Car/accumulate/$', views.CarResponce.as_view(), name='CarAcc'),
     url(r'^Driver/accumulate/$', views.DriverResponce.as_view(), name='DriverAcc'),
     url(r'^.*$', RedirectView.as_view(url=reverse_lazy('Race')), name='index'),
+    
 
 ]
 
