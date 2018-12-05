@@ -5,14 +5,10 @@ from django.dispatch import receiver
 class AvtoregionConfig(AppConfig):
     name = 'Avtoregion'
     verbose_name = 'Авторегион (Диспетчер)'
-    
+
     def ready(self):
         from .models import Race
-        #from .avtrgnbot import AvtrgnBot
-        
-        #bot = AvtrgnBot()
-        #bot.start_bot()
-        
-        
+        from .telegrambot import AvtrgnBot
+
         # Registering post_save signal for Race update and sending notification by AvtrgnBot
-        #post_save.connect(bot.race_save_notify, sender=Race)
+        post_save.connect(AvtrgnBot.race_save_notify, sender=Race)
