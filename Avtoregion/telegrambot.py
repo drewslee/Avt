@@ -90,10 +90,12 @@ def reply_callback_decorator(method):
                 if update.callback_query:
                     update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
                     if result.get('reply_markup') is not None:
-                        print('reply ', result['reply_markup'])                       
                         update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
                 else:
-                    update.message.reply_html(result['send'], reply_markup=result['reply_markup'])    
+                    if result.get('reply_markup') is not None:
+                        update.message.reply_html(result['send'], reply_markup=result['reply_markup'])    
+                    else:
+                        update.message.reply_html(result['send'])                        
 
             if result.get('call') is not None:
                 return result['call'](bot, update)
@@ -161,7 +163,7 @@ class AvtrgnBot():
     # Обработка начального статуса            
     def start(self, abon, update):
         update.message.reply_text(self.messages['hello'])
-        if START == abon.state:
+        if START in abon.state:
             abon.state = AUTH
             abon.save()
             update.message.reply_text(self.messages['auth'], reply_markup=ForceReply(force_reply=True))
@@ -169,7 +171,8 @@ class AvtrgnBot():
             
     # Процедура отправки типового сообщения
     def send(self, uid, m = 'hello', **kwargs):
-            self.bot.sendMessage(uid, self.messages[m])
+        bot = DjangoTelegramBot.getBot()
+        bot.sendMessage(uid, self.messages[m])
 
     # Процедура движения по статусам авторизации
     def move_auth(self, abonent, msg='auth', next_state=AUTH, try_increment=1, reset_auth_car=True):
@@ -178,7 +181,7 @@ class AvtrgnBot():
         abonent.auth_try += try_increment
         abonent.last_seen = timezone.now()
         if reset_auth_car:
-            abonent.context = None          # Сбрасываем номер автомобиля времени авторизации
+            abonent.context = None          # Сбрасываем контекст
         abonent.save()
 
         
@@ -508,6 +511,7 @@ class AvtrgnBot():
     @reply_callback_decorator      
     def current_race(self, bot, update):
         """ Sending info about current race """
+        r = None
         abon = self.abonent(update)
         if abon.race_id is None:
             # Если рейс не привязан, значит выбираем все рейсы для авто в статусе "Создан" 
@@ -521,29 +525,33 @@ class AvtrgnBot():
                 r_id = r.id_race
         else:
             r = abon.race
-            
-        text = u'Текущий рейс для: ' + abon.car.number + u'\n'
-        text += u'<pre>___________________________</pre>\n'
-        text += u'<pre>Рейс:\t\t\t' + str(r.id_race) + u'</pre>\n'
-        text += u'<pre>Дата:\t\t\t' + r.race_date.strftime('%d.%m.%Y %H:%M') + u'</pre>\n'
-        text += u'<pre>Водитель:\t' + r.driver.name + u'</pre>\n'                
-        text += u'—————\n'
-        text += u'<pre>Поставщик:\t' + r.supplier.name + u'</pre>\n'
-        text += u'<pre>Откуда:\t' + r.get_load_place + u'</pre>\n'
-        text += u'—————\n'
-        text += u'<pre>Покупатель:\t' + r.customer.name + u'</pre>\n'                
-        text += u'<pre>Куда:\t' + r.get_unload_place + u'</pre>\n'
-        text += u'—————\n'
-        text += u'<pre>Груз:\t' + r.product.name + u'</pre>\n'                
-        text += u'<pre>Цена рейса:\t' + str(r.price) + u'</pre>\n'                
-        kb = self.get_keyboard(abon)
-        kb[0][0].callback_data += ':' + str(r.id_race)
+        
+        kb = None
+        result = {'delete': True}
+        if r is not None:
+            text = u'Текущий рейс для: ' + abon.car.number + u'\n'
+            text += u'<pre>___________________________</pre>\n'
+            text += u'<pre>Рейс:\t\t\t' + str(r.id_race) + u'</pre>\n'
+            text += u'<pre>Дата:\t\t\t' + r.race_date.strftime('%d.%m.%Y %H:%M') + u'</pre>\n'
+            text += u'<pre>Водитель:\t' + r.driver.name + u'</pre>\n'                
+            text += u'—————\n'
+            text += u'<pre>Поставщик:\t' + r.supplier.name + u'</pre>\n'
+            text += u'<pre>Откуда:\t' + r.get_load_place + u'</pre>\n'
+            text += u'—————\n'
+            text += u'<pre>Покупатель:\t' + r.customer.name + u'</pre>\n'                
+            text += u'<pre>Куда:\t' + r.get_unload_place + u'</pre>\n'
+            text += u'—————\n'
+            text += u'<pre>Груз:\t' + r.product.name + u'</pre>\n'                
+            text += u'<pre>Цена рейса:\t' + str(r.price) + u'</pre>\n'                
+            kb = self.get_keyboard(abon)
+            kb[0][0].callback_data += ':' + str(r.id_race)
+            result.update({'reply_markup': InlineKeyboardMarkup(kb)})
+        else:
+            text = u'Текущие рейсы для ' + abon.car.number + ' отсутствуют.\n'
 
-        return {
-            'delete': True,
-            'send': text,
-            'reply_markup': InlineKeyboardMarkup(kb)            
-        }
+        result.update({'send': text})    
+        print(result)
+        return result
         
         
     def future_race(self, bot, update, send=False):
