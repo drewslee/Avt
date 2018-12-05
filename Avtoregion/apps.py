@@ -10,9 +10,5 @@ class AvtoregionConfig(AppConfig):
         from .models import Race
         from .telegrambot import AvtrgnBot
         
-        #bot = AvtrgnBot()
-        #bot.start_bot()            
-        
-        
         # Registering post_save signal for Race update and sending notification by AvtrgnBot
-        #post_save.connect(bot.race_save_notify, sender=Race)
+        post_save.connect(AvtrgnBot.race_save_notify, sender=Race)
