@@ -83,13 +83,13 @@ def callback_decorator(method):
     
 def reply_callback_decorator(method):
     def wrapper(self, bot, update):
-        print('reply decorator')
         result = method(self, bot, update)
         if result is not None:            
             if result.get('send') is not None and result['send']:                      
                 if update.callback_query:
                     update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
                     if result.get('reply_markup') is not None:
+                        logger.info('Reply markup = {}'.format(result['reply_markup']))
                         update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
                 else:
                     if result.get('reply_markup') is not None:
@@ -105,7 +105,6 @@ def reply_callback_decorator(method):
     
 def confirm_callback_decorator(method):
     def wrapper(self, bot, update):
-        print('confirm decorator')
         data = update.callback_query.data.split(':')[1]
         if int(data) > 0:
             return method(self, bot, update)
@@ -123,10 +122,8 @@ def modal_input_decorator(regex=r'^\d+$', confirm_text='confirm', error_text='er
                 upd = update.callback_query
                 
             keyboard = method(*args, **kwargs)
-            print('callback data', keyboard[0][0].callback_data)
             keyboard[0][0].callback_data = kwargs['callback_command'] + ':' + update.message.text.strip()
-            print(keyboard[0][0].callback_data)
-            print(keyboard[0][1].callback_data)
+            logger.info('Modal callback data = {}'.format(keyboard[0][0].callback_data))
             
             if re.search(regex, upd.message.text.strip(), flags=re.IGNORECASE) is not None:
                 bot.sendMessage(upd.message.chat_id, confirm_text.format(upd.message.text.strip()), 
@@ -198,7 +195,7 @@ class AvtrgnBot():
                 try:
                     c = Car.objects.get(number__istartswith=number)
                 except Car.DoesNotExist:
-                    print('car does not exist')
+                    logger.info('Car number {} does not exist'.format(str(number)))
                     pass 
                 else:
                     auth_fail = False
@@ -266,6 +263,7 @@ class AvtrgnBot():
     def race_accepted_callback(self, bot, update):
         """ ACCEPT callback processing """    
         r_id = update.callback_query.data.split(':')[1] # Получаем id принимаемого рейса из callback_data
+        logger.info('Accepting: Callback race ID = {}'.format(r_id))
         # Сохраняем в абоненте рейс, статус и id запроса
         a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
         race = a.car.race_set.get(pk=r_id)
@@ -424,13 +422,12 @@ class AvtrgnBot():
     @confirm_callback_decorator
     def confirm_unload_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]        
-        print('data', data)
         a = self.status(update, READY, update.callback_query.id + ':' + str(expire()))
         a.race.weight_unload = int(data) / 1000
         a.race.state = Race.UNLOAD
         a.race.arrival_time = timezone.now()
+        a.race.shoulder = a.race.e_milage - a.race.s_milage
         a.race.save()
-        print(a.race)
         race_id = a.race.id_race
         a.race = None
         a.save()            
@@ -519,7 +516,6 @@ class AvtrgnBot():
             all = Race.objects.filter(car_id=abon.car.id_car, 
                                       state=Race.CREATE, 
                                       race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
-            print(all)
             if len(all) > 0:
                 r = all[0]
                 r_id = r.id_race
@@ -550,13 +546,11 @@ class AvtrgnBot():
             text = u'Текущие рейсы для ' + abon.car.number + ' отсутствуют.\n'
 
         result.update({'send': text})    
-        print(result)
         return result
         
         
     def future_race(self, bot, update, send=False):
         """ Get future and current race for the abonent """ 
-        print('future')
         abon = self.abonent(update)
         current_race_id = 0
         current_race = None
@@ -606,7 +600,6 @@ class AvtrgnBot():
         
     
     def myrace(self, bot, update):
-        print('myrace')
         self.future_race(bot, update, send=True)
         self.current_race(bot, update)
                             
@@ -638,7 +631,7 @@ class AvtrgnBot():
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
         a = self.abonent(update)
-        print(a.state, time())
+        logger.info('Abonent state = {} at time = {}'.format(a.state, time()))
         if a:                    
             if START in a.state:
                 self.start(a, update)
@@ -688,10 +681,14 @@ class AvtrgnBot():
         if len(abonents) > 0:
             if created:
                 for a in abonents:
-                    print('created', bot.sendMessage(str(a.telegram_id), 'Вам назначен новый рейс №' + str(instance.id_race) + '. Приступайте к следующему рейсу после завершения текущего.'))
+                    result = bot.sendMessage(
+                                str(a.telegram_id), 
+                                'Вам назначен новый рейс №' + str(instance.id_race) + 
+                                '. Приступайте к следующему рейсу после завершения текущего.')
+                    logger.info('NOTIFY: Race created for abonent = {} result = {}'.format(str(a.telegram_id), result))
             else:
                 for a in abonents:
-                    print('context', a.context)
+                    logger.info('NOTIFY: Context = {}'.format(a.context))
                     if instance.state == Race.UNLOAD and a.race == instance:
                         # Если рейс выгружен (статус Race.UNLOAD), то отвязываем этот текущий рейс от абонента
                         a.race = None
@@ -701,7 +698,8 @@ class AvtrgnBot():
                         expire = float(exp)
                         a.context = None
                         if time() < expire:
-                            print('updated', bot.answerCallbackQuery(query_id, 'Рейс №' + str(instance.id_race) + ' обновлён.'))
+                            result = bot.answerCallbackQuery(query_id, 'Рейс №' + str(instance.id_race) + ' обновлён.')
+                            logger.info('NOTIFY: Race updated, result = {}'.format(result))
                     a.save()
             
             
@@ -712,16 +710,12 @@ class AvtrgnBot():
         if PASS == a.state:
             self.passw(a, update)
         if LOADING == a.state:
-            print('decimal loading')
             self.query_load_odometer(bot, update, callback_command=r'/load_odo')
         if LOADED == a.state:
-            print('decimal loaded')
             self.query_load_weight(bot, update, callback_command=r'/load_weight')
         if UNLOADING == a.state:
-            print('decimal unloading')
             self.query_unload_odometer(bot, update, callback_command=r'/unload_odo')
         if UNLOADED == a.state:
-            print('decimal unloaded')
             self.query_unload_weight(bot, update, callback_command=r'/unload_weight')
             
     
