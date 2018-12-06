@@ -14,3 +14,4 @@ django-debug-toolbar==1.9.1
 django-envconf==0.3.5
 python-telegram-bot==11.1.0
 PySocks=1.6.8
+django-telegrambot=1.0.1
