@@ -87,10 +87,16 @@ def reply_callback_decorator(method):
         if result is not None:
             if result.get('send') is not None and result['send']:
                 if update.callback_query:
-                    update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
                     if result.get('reply_markup') is not None:
                         logger.info('Reply markup = {}'.format(result['reply_markup']))
-                        update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
+                        if result['reply_markup'].force_reply:
+                            #update.callback_query.edit_message_reply_markup(reply_markup=ForceReply(result['reply_markup']))
+                            update.callback_query.message.delete()
+                            bot.sendMessage(update.callback_query.message.chat_id, result['send'],
+                                            parse_mode='HTML', reply_markup=ForceReply(force_reply=True))
+                        else:
+                            update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
+                            update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
                 else:
                     if result.get('reply_markup') is not None:
                         update.message.reply_html(result['send'], reply_markup=result['reply_markup'])    
@@ -359,7 +365,7 @@ class AvtrgnBot():
         race.save()
         return {
             'delete': True,
-            'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес: ',
+            'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес в килограммах: ',
             'reply_markup': ForceReply(force_reply=True)
         }
 
@@ -382,7 +388,7 @@ class AvtrgnBot():
         race.save()
         return {
             'delete': True,
-            'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес: ',
+            'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес в килограммах: ',
             'reply_markup': ForceReply(force_reply=True)
         }
 
@@ -544,6 +550,7 @@ class AvtrgnBot():
             kb[0][0].callback_data = r'/accepted:' + str(r.id_race)
             result.update({'reply_markup': InlineKeyboardMarkup(kb)})
         else:
+            result.update({'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)})
             text = u'Текущие рейсы для ' + abon.car.number + ' отсутствуют.\n'
 
         result.update({'send': text})    
@@ -719,11 +726,14 @@ class AvtrgnBot():
         if UNLOADED == a.state:
             self.query_unload_weight(bot, update, callback_command=r'/unload_weight')
 
+    def test(self, bot, update):
+        update.message.reply_photo(photo=open(djangoSettings.STATIC_ROOT + '/img/scania.jpg', 'rb'))
 
     def start_bot(self):
         dp = DjangoTelegramBot.dispatcher
         dp.add_handler(CommandHandler('start', self.start_callback))
         dp.add_handler(CommandHandler('secret', self.get_secret_command))
+        dp.add_handler(CommandHandler('test', self.test))
         dp.add_handler(CallbackQueryHandler(self.race_callback, pattern=r'/race$'))
         dp.add_handler(CallbackQueryHandler(self.from_callback, pattern=r'/from'))
         dp.add_handler(CallbackQueryHandler(self.to_callback, pattern=r'/to'))
