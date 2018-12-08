@@ -89,14 +89,20 @@ def reply_callback_decorator(method):
                 if update.callback_query:
                     if result.get('reply_markup') is not None:
                         logger.info('Reply markup = {}'.format(result['reply_markup']))
-                        if result['reply_markup'].force_reply:
+                        if type(result['reply_markup']) is ForceReply or \
+                           type(result['reply_markup']) is ReplyKeyboardMarkup:
                             #update.callback_query.edit_message_reply_markup(reply_markup=ForceReply(result['reply_markup']))
-                            update.callback_query.message.delete()
+                            if result['delete']:
+                                update.callback_query.message.delete()
                             bot.sendMessage(update.callback_query.message.chat_id, result['send'],
-                                            parse_mode='HTML', reply_markup=ForceReply(force_reply=True))
+                                            parse_mode='HTML', reply_markup=result['reply_markup'])
                         else:
-                            update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
-                            update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
+                            if result['delete']:
+                                update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
+                                update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
+                            else:
+                                bot.sendMessage(update.callback_query.message.chat_id, result['send'],
+                                                parse_mode='HTML', reply_markup=result['reply_markup'])
                 else:
                     if result.get('reply_markup') is not None:
                         update.message.reply_html(result['send'], reply_markup=result['reply_markup'])    
@@ -439,9 +445,9 @@ class AvtrgnBot():
         a.race = None
         a.save()
         return {
-            'delete': False,
+            'delete': True,
             'send': 'Рейс №{} завершён. Приступайте к следующему.'.format(str(race_id)),
-            'call': self.ready
+            'call': self.complete
         }
 
 
@@ -451,6 +457,14 @@ class AvtrgnBot():
     def query_unload_weight(self, bot, update, keyboard=confirm_keyboard, callback_command=''):
         return keyboard
 
+
+    @reply_callback_decorator
+    def complete(self, bot, update):
+        return {
+            'delete': True,
+            'send': u'Ваш текущий рейс завершен.\n',
+            'reply_markup': ReplyKeyboardMarkup(main_keyboard)
+        }
 
     # Отправка данных по текущему рейсу
     @callback_decorator
@@ -689,10 +703,15 @@ class AvtrgnBot():
         if len(abonents) > 0:
             if created:
                 for a in abonents:
+                    kb = None
+                    if a.race_id is None and a.state == READY:
+                        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text='Приступить',
+                                                                         callback_data=r'/accepted:'+str(instance.id_race))]],
+                                                                         parse_mode='HTML')
                     result = bot.sendMessage(
                                 str(a.telegram_id), 
-                                'Вам назначен новый рейс №' + str(instance.id_race) + 
-                                '. Приступайте к следующему рейсу после завершения текущего.')
+                                u'Вам назначен новый рейс №' + str(instance.id_race) +
+                                u'.\n Приступайте к следующему рейсу после завершения текущего.',  reply_markup=kb)
                     logger.info('NOTIFY: Race created for abonent = {} result = {}'.format(str(a.telegram_id), result))
             else:
                 for a in abonents:
