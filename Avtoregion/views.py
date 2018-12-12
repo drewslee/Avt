@@ -768,11 +768,12 @@ def ooxml_render(race_id, prefname, template_name, tmp_name):
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
     buf = render_to_string(template_name, {'race': race, 'const': const})
+    print(buf)
     filename = prefname + '_' + str(race_id) + '_' + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S'))
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpf_name = os.path.join(tmpdir, tmp_name)
         shutil.copytree(os.path.join(static_root, tmp_name), tmpf_name)
-        with open(os.path.join(tmpf_name, 'xl', 'sharedStrings.xml', ), 'w', newline='\r\n') as f:
+        with open(os.path.join(tmpf_name, 'xl', 'sharedStrings.xml', ), 'w', newline='\r\n', encoding='utf8') as f:
             f.write(buf)
         shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', tmpf_name, '.')
     os.rename(os.path.join(static_root, 'temp', filename + '.zip'),
@@ -828,7 +829,7 @@ class PackingView(JSONRequestResponseMixin, View):
         ids = self.request_json.get("id_list")
         if ids:
             for i in ids:
-                url, filename = ooxml_render(i, 'packing', 'sharedStrings2.xml', 'packing')
+                url, filename = ooxml_render(i, 'packing', 'sharedStrings3.xml', 'packing')
                 files['urls'].append(url)
                 files['filenames'].append(filename)
                 files['paths'].append(finders.find(url))
