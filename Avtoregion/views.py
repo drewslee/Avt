@@ -57,6 +57,7 @@ from .models import Supplier
 from .models import Trailer
 from .models import Constants
 from .models import LoadingPlace
+from .models import Abonent
 
 
 class LoginViewMix(LoginView):
@@ -249,6 +250,17 @@ class DriverViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
         kwargs['form'] = DriverForm()
         return kwargs
 
+        
+class AbonentViewList(LoginRequiredMixin, ListView):
+    model = Abonent
+    template_name = 'abonent.html'
+    context_object_name = 'qAbonent'
+
+    def get_context_data(self, object_list=None, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        #kwargs['form'] = ProductForm()
+        return kwargs
+        
 
 class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Product
@@ -760,7 +772,7 @@ def ooxml_render(race_id, prefname, template_name, tmp_name):
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpf_name = os.path.join(tmpdir, tmp_name)
         shutil.copytree(os.path.join(static_root, tmp_name), tmpf_name)
-        with open(os.path.join(tmpf_name, 'xl', 'sharedStrings.xml', ), 'w', newline='\r\n') as f:
+        with open(os.path.join(tmpf_name, 'xl', 'sharedStrings.xml', ), 'w', newline='\r\n', encoding='utf8') as f:
             f.write(buf)
         shutil.make_archive(os.path.join(static_root, 'temp', filename), 'zip', tmpf_name, '.')
     os.rename(os.path.join(static_root, 'temp', filename + '.zip'),
@@ -816,7 +828,7 @@ class PackingView(JSONRequestResponseMixin, View):
         ids = self.request_json.get("id_list")
         if ids:
             for i in ids:
-                url, filename = ooxml_render(i, 'packing', 'sharedStrings2.xml', 'packing')
+                url, filename = ooxml_render(i, 'packing', 'sharedStrings3.xml', 'packing')
                 files['urls'].append(url)
                 files['filenames'].append(filename)
                 files['paths'].append(finders.find(url))

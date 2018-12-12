@@ -4,6 +4,7 @@ $(function ()
     var $race_table = $('#race_table');
     var $car_table = $('#car_table');
     var $driver_table = $('#driver_table');
+    var $abonent_table = $('#abonent_table');
     var $customer_table = $('#customer_table');
     var $supplier_table = $('#supplier_table');
     var $product_table = $('#product_table');
@@ -49,6 +50,19 @@ $(function ()
         $('#delete_driver input[name= "pk"]')[0].setAttribute('value', row.id);
     });
 
+    $abonent_table.bootstrapTable({
+        showColumns: true,
+        locale: 'ru-RU',
+        pagination: true,
+        showPaginationSwitch: true,
+        cookie: true,
+        cookieIdTable: 'AbonentCookId',
+        onColumnSearch: function ()
+        {
+            $abonent_table.bootstrapTable("resetSearch");
+        }
+    });
+	
     $customer_table.bootstrapTable({
         showColumns: true,
         locale: 'ru-RU',
@@ -202,6 +216,15 @@ $(function ()
                 return {
                     css: {
                         "background-color": "BlanchedAlmond",
+                        "color": "black"
+                    }
+                }
+            }
+            if (row.state.trim() === "Принят")
+            {
+                return {
+                    css: {
+                        "background-color": "Aquamarine",
                         "color": "black"
                     }
                 }

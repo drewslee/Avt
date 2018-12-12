@@ -87,10 +87,22 @@ def reply_callback_decorator(method):
         if result is not None:
             if result.get('send') is not None and result['send']:
                 if update.callback_query:
-                    update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
                     if result.get('reply_markup') is not None:
                         logger.info('Reply markup = {}'.format(result['reply_markup']))
-                        update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
+                        if type(result['reply_markup']) is ForceReply or \
+                           type(result['reply_markup']) is ReplyKeyboardMarkup:
+                            #update.callback_query.edit_message_reply_markup(reply_markup=ForceReply(result['reply_markup']))
+                            if result['delete']:
+                                update.callback_query.message.delete()
+                            bot.sendMessage(update.callback_query.message.chat_id, result['send'],
+                                            parse_mode='HTML', reply_markup=result['reply_markup'])
+                        else:
+                            if result['delete']:
+                                update.callback_query.message.edit_text(result['send'], parse_mode='HTML')
+                                update.callback_query.message.edit_reply_markup(reply_markup=result['reply_markup'])
+                            else:
+                                bot.sendMessage(update.callback_query.message.chat_id, result['send'],
+                                                parse_mode='HTML', reply_markup=result['reply_markup'])
                 else:
                     if result.get('reply_markup') is not None:
                         update.message.reply_html(result['send'], reply_markup=result['reply_markup'])    
@@ -264,9 +276,10 @@ class AvtrgnBot():
         """ ACCEPT callback processing """
         r_id = update.callback_query.data.split(':')[1] # Получаем id принимаемого рейса из callback_data
         logger.info('Accepting: Callback race ID = {}'.format(r_id))
+        a = self.abonent(update)
+        race = a.car.race_set.get(pk=r_id)
         # Сохраняем в абоненте рейс, статус и id запроса
         a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
-        race = a.car.race_set.get(pk=r_id)
         a.race = race
         a.save()
 
@@ -291,7 +304,7 @@ class AvtrgnBot():
         """ ACCEPTED state processing """
         abon = self.abonent(update)
         kb = keyboards[abon.state]
-        kb[0][0].callback_data += ':' + str(abon.race_id)
+        kb[0][0].callback_data = r'/loading:' + str(abon.race_id)
 #        text  = u'<pre>┏━━━━━━━━━━━━━━━━┓</pre>\n'
         text = self.race_info(abon)
         text += u'<pre>Направляйтесь к месту погрузки</pre>\n'
@@ -312,7 +325,7 @@ class AvtrgnBot():
         """ RACE state processing """
         abon = self.abonent(update)
         kb = keyboards[abon.state]
-        kb[0][0].callback_data += ':' + str(abon.race_id)
+        kb[0][0].callback_data = r'/unloading:' + str(abon.race_id)
         text = self.race_info(abon)
         text += u'<pre>Направляйтесь к месту выгрузки</pre>\n'
         text += u'<pre>──────────────────────────────</pre>\n'
@@ -358,7 +371,7 @@ class AvtrgnBot():
         race.save()
         return {
             'delete': True,
-            'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес: ',
+            'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес в килограммах: ',
             'reply_markup': ForceReply(force_reply=True)
         }
 
@@ -381,7 +394,7 @@ class AvtrgnBot():
         race.save()
         return {
             'delete': True,
-            'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес: ',
+            'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес в килограммах: ',
             'reply_markup': ForceReply(force_reply=True)
         }
 
@@ -432,9 +445,9 @@ class AvtrgnBot():
         a.race = None
         a.save()
         return {
-            'delete': False,
+            'delete': True,
             'send': 'Рейс №{} завершён. Приступайте к следующему.'.format(str(race_id)),
-            'call': self.ready
+            'call': self.complete
         }
 
 
@@ -444,6 +457,14 @@ class AvtrgnBot():
     def query_unload_weight(self, bot, update, keyboard=confirm_keyboard, callback_command=''):
         return keyboard
 
+
+    @reply_callback_decorator
+    def complete(self, bot, update):
+        return {
+            'delete': True,
+            'send': u'Ваш текущий рейс завершен.\nНажмите кнопку "Мои рейсы", чтобы узнать о предстоящих новых рейсах.\n',
+            'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+        }
 
     # Отправка данных по текущему рейсу
     @callback_decorator
@@ -540,9 +561,10 @@ class AvtrgnBot():
             text += u'<pre>Груз:\t' + r.product.name + u'</pre>\n'                
             text += u'<pre>Цена рейса:\t' + str(r.price) + u'</pre>\n'                
             kb = self.get_keyboard(abon)
-            kb[0][0].callback_data += ':' + str(r.id_race)
+            kb[0][0].callback_data = r'/accepted:' + str(r.id_race)
             result.update({'reply_markup': InlineKeyboardMarkup(kb)})
         else:
+            result.update({'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)})
             text = u'Текущие рейсы для ' + abon.car.number + ' отсутствуют.\n'
 
         result.update({'send': text})    
@@ -631,7 +653,7 @@ class AvtrgnBot():
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
         a = self.abonent(update)
-        logger.info('Abonent state = {} at time = {}'.format(a.state, time()))
+        logger.info('Abonent {} state = {} at time = {}'.format(str(a), a.state, time()))
         if a:                    
             if START in a.state:
                 self.start(a, update)
@@ -681,26 +703,32 @@ class AvtrgnBot():
         if len(abonents) > 0:
             if created:
                 for a in abonents:
+                    kb = None
+                    if a.race_id is None and a.state == READY:
+                        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text='Приступить',
+                                                                         callback_data=r'/accepted:'+str(instance.id_race))]],
+                                                                         parse_mode='HTML')
                     result = bot.sendMessage(
                                 str(a.telegram_id), 
-                                'Вам назначен новый рейс №' + str(instance.id_race) + 
-                                '. Приступайте к следующему рейсу после завершения текущего.')
+                                u'Вам назначен новый рейс №' + str(instance.id_race) +
+                                u'.\n Приступайте к следующему рейсу после завершения текущего.',  reply_markup=kb)
                     logger.info('NOTIFY: Race created for abonent = {} result = {}'.format(str(a.telegram_id), result))
             else:
-                for a in abonents:
-                    logger.info('NOTIFY: Context = {}'.format(a.context))
-                    if instance.state == Race.UNLOAD and a.race == instance:
-                        # Если рейс выгружен (статус Race.UNLOAD), то отвязываем этот текущий рейс от абонента
-                        a.race = None
-                        a.state = READY
-                    if a.context is not None and len(a.context) > 12:
-                        query_id, exp = a.context.split(':')
-                        expire = float(exp)
-                        a.context = None
-                        if time() < expire:
-                            result = bot.answerCallbackQuery(query_id, 'Рейс №' + str(instance.id_race) + ' обновлён.')
-                            logger.info('NOTIFY: Race updated, result = {}'.format(result))
-                    a.save()
+                if instance.state == Race.CREATE:
+                    for a in abonents:
+                        logger.info('NOTIFY: To Abonent = {} Context = {}'.format(str(a), a.context))
+                        if instance.state == Race.UNLOAD and a.race == instance:
+                            # Если рейс выгружен (статус Race.UNLOAD), то отвязываем этот текущий рейс от абонента
+                            a.race = None
+                            a.state = READY
+                        if a.context is not None and len(a.context) > 12:
+                            query_id, exp = a.context.split(':')
+                            expire = float(exp)
+                            a.context = None
+                            if time() < expire:
+                                result = bot.answerCallbackQuery(query_id, 'Рейс №' + str(instance.id_race) + ' обновлён.')
+                                logger.info('NOTIFY: Race updated, result = {}'.format(result))
+                        a.save()
 
 
 

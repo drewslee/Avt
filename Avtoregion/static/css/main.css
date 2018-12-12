@@ -37,6 +37,10 @@
     border-top-left-radius: 10px;
 }
 
+#abonent_table th:first-child {
+    border-top-left-radius: 10px;
+}
+
 #mediator_table th:first-child {
     border-top-left-radius: 10px;
 }
