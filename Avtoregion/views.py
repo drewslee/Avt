@@ -768,7 +768,6 @@ def ooxml_render(race_id, prefname, template_name, tmp_name):
     const = Constants.objects.get(id=1)
     race = Race.objects.get(id_race=int(race_id))
     buf = render_to_string(template_name, {'race': race, 'const': const})
-    print(buf)
     filename = prefname + '_' + str(race_id) + '_' + (timezone.datetime.now().strftime('%y_%m_%d_%H_%M_%S'))
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpf_name = os.path.join(tmpdir, tmp_name)
