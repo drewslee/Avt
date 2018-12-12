@@ -277,9 +277,10 @@ class AvtrgnBot():
         """ ACCEPT callback processing """
         r_id = update.callback_query.data.split(':')[1] # Получаем id принимаемого рейса из callback_data
         logger.info('Accepting: Callback race ID = {}'.format(r_id))
+        a = self.abonent(update)
+        race = a.car.race_set.get(pk=r_id)
         # Сохраняем в абоненте рейс, статус и id запроса
         a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
-        race = a.car.race_set.get(pk=r_id)
         a.race = race
         a.save()
 
@@ -462,8 +463,8 @@ class AvtrgnBot():
     def complete(self, bot, update):
         return {
             'delete': True,
-            'send': u'Ваш текущий рейс завершен.\n',
-            'reply_markup': ReplyKeyboardMarkup(main_keyboard)
+            'send': u'Ваш текущий рейс завершен.\nНажмите кнопку "Мои рейсы", чтобы узнать о предстоящих новых рейсах.\n',
+            'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
         }
 
     # Отправка данных по текущему рейсу
@@ -653,7 +654,7 @@ class AvtrgnBot():
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
         a = self.abonent(update)
-        logger.info('Abonent state = {} at time = {}'.format(a.state, time()))
+        logger.info('Abonent {} state = {} at time = {}'.format(str(a), a.state, time()))
         if a:                    
             if START in a.state:
                 self.start(a, update)
@@ -714,20 +715,21 @@ class AvtrgnBot():
                                 u'.\n Приступайте к следующему рейсу после завершения текущего.',  reply_markup=kb)
                     logger.info('NOTIFY: Race created for abonent = {} result = {}'.format(str(a.telegram_id), result))
             else:
-                for a in abonents:
-                    logger.info('NOTIFY: Context = {}'.format(a.context))
-                    if instance.state == Race.UNLOAD and a.race == instance:
-                        # Если рейс выгружен (статус Race.UNLOAD), то отвязываем этот текущий рейс от абонента
-                        a.race = None
-                        a.state = READY
-                    if a.context is not None and len(a.context) > 12:
-                        query_id, exp = a.context.split(':')
-                        expire = float(exp)
-                        a.context = None
-                        if time() < expire:
-                            result = bot.answerCallbackQuery(query_id, 'Рейс №' + str(instance.id_race) + ' обновлён.')
-                            logger.info('NOTIFY: Race updated, result = {}'.format(result))
-                    a.save()
+                if instance.state == Race.CREATE:
+                    for a in abonents:
+                        logger.info('NOTIFY: To Abonent = {} Context = {}'.format(str(a), a.context))
+                        if instance.state == Race.UNLOAD and a.race == instance:
+                            # Если рейс выгружен (статус Race.UNLOAD), то отвязываем этот текущий рейс от абонента
+                            a.race = None
+                            a.state = READY
+                        if a.context is not None and len(a.context) > 12:
+                            query_id, exp = a.context.split(':')
+                            expire = float(exp)
+                            a.context = None
+                            if time() < expire:
+                                result = bot.answerCallbackQuery(query_id, 'Рейс №' + str(instance.id_race) + ' обновлён.')
+                                logger.info('NOTIFY: Race updated, result = {}'.format(result))
+                        a.save()
 
 
 

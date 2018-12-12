@@ -57,6 +57,7 @@ from .models import Supplier
 from .models import Trailer
 from .models import Constants
 from .models import LoadingPlace
+from .models import Abonent
 
 
 class LoginViewMix(LoginView):
@@ -249,6 +250,17 @@ class DriverViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
         kwargs['form'] = DriverForm()
         return kwargs
 
+        
+class AbonentViewList(LoginRequiredMixin, ListView):
+    model = Abonent
+    template_name = 'abonent.html'
+    context_object_name = 'qAbonent'
+
+    def get_context_data(self, object_list=None, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        #kwargs['form'] = ProductForm()
+        return kwargs
+        
 
 class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Product

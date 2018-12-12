@@ -61,6 +61,8 @@ urlpatterns = [
         name='DriverUpdate'),
     url(r'^Driver/delete/$', views.DriverDelete.as_view(), name='DriverDelete'),
 
+    url(r'^Abonent/$', views.AbonentViewList.as_view(), name='AbonentList'),    
+    
     url(r'^Supplier/$', views.SupplierViewList.as_view(), name='SupplierList'),
     url(r'^Supplier/add/$', views.SupplierAdd.as_view(), name='SupplierAdd'),
     url(r'^Supplier/(?P<pk>\d+)/update/$', views.SupplierUpdate.as_view(template_name='Avtoregion/update_form.html'),
