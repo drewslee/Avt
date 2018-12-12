@@ -1,0 +1,72 @@
+{% extends "index.html" %}
+{% load bootstrap3 %}
+{% block content %}
+
+	<form id="delete_abonent" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
+    <div class="container-fluid">
+            <div class="table-responsive">
+                <div class="clearfix"></div>
+                <div id="toolbar_abonent" class="btn-toolbar" role="toolbar">
+                    <div class="btn-group">
+	                    <a href="{% url 'Race' %}" class="btn btn-default" title="Текущие рейсы">
+		                    <i class="glyphicon glyphicon-blackboard"></i></a>
+	                    <a id="dropdownMenu1" type="button" class="btn btn-default dropdown-toggle" aria-haspopup="true"
+	                       aria-expanded="true" data-toggle="dropdown">
+		                    <i class="glyphicon glyphicon-book"></i>
+	                    </a>
+	                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+		                    <li><a href="{% url 'CarList' %}">Машины</a></li>
+		                    <li><a href="{% url 'DriverList' %}">Водители</a></li>
+		                    <li><a href="{% url 'AbonentList' %}">Абоненты</a></li>
+		                    <li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
+		                    <li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
+		                    <li><a href="{% url 'ProductList' %}">Груз</a></li>
+		                    <li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
+		                    <li><a href="{% url 'MediatorList' %}">Посредники</a></li>
+		                    <li><a href="{% url 'UnitList' %}">Единицы измерения</a></li>
+		                    <li><a href="{% url 'Constants' %}">Константы</a></li>
+		                    <li role="separator" class="divider"></li>
+		                    <li><a href="{% url 'Acc' %}">Реестр</a></li>
+		                    <li><a href="{% url 'CarAcc' %}">Реестр по машине</a></li>
+		                    <li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
+	                    </ul>
+                        <button class="btn btn-default" title="Экспорт в эксель"
+                                onclick="$('#abonent_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+                            <i class="glyphicon glyphicon-export"></i>
+                        </button>
+                    </div>
+                </div>
+                <table id="abonent_table" data-toolbar="#toolbar_abonent" data-search="true" data-click-to-select="true"
+                       data-id-field="id" data-single-select="true"
+                       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+                    <thead>
+                        <th data-field="checkbox" data-checkbox="true"></th>
+                        <th data-field="telegram_id" data-visible="true">id</th>
+                        <th data-field="telegram_nick">Имя</th>
+                        <th data-field="state">Статус</th>
+                        <th data-field="car">Машина</th>
+                        <th data-field="race">Рейс</th>
+                    </thead>
+                    <tbody>
+                    {% if qAbonent %}
+                    {% for q in qAbonent %}
+                        <tr>
+                            <td></td>
+                            <td>{{ q.pk }}</td>
+                            <td>{{ q.telegram_nick }}</td>
+                            <td>{{ q.state }}</td>
+                            <td>{{ q.car|default_if_none:'Не назначена' }}</td>
+                            <td>{{ q.race|default_if_none:'Не назначен' }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+{% endblock %}
