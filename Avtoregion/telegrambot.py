@@ -642,12 +642,22 @@ class AvtrgnBot():
             a.secret = BaseUserManager.make_random_password(self, length=8, allowed_chars='0123456789')
             a.last_seen = timezone.now()
             a.save()
+            self.admin_notify(a)
         return a
 
-    def valid_int(self, pattern, text):
-        return re.search(pattern, text, flags=re.IGNORECASE) is not None
-
-
+        
+    def admin_notify(self, abonent):
+        """ Notify administrators the new abonent connected """
+        admins = Abonent.objects.filter(admin=True)
+        bot = DjangoTelegramBot.getBot()
+        if len(admins) > 0:
+            for a in admins:
+                result = bot.sendMessage(
+                    str(a.telegram_id),
+                    u'=== ADMIN NOTIFY ===\n<Новый абонент подключен>\n{}/secret:{}'.format(str(abonent), str(abonent.secret))
+                )
+                logger.info('NOTIFY: Abonent created = {} result = {}'.format(str(abonent), result))
+    
 
 
     def main(self, bot, update):
@@ -730,6 +740,7 @@ class AvtrgnBot():
                                 logger.info('NOTIFY: Race updated, result = {}'.format(result))
                         a.save()
 
+        
 
 
     def decimal(self, bot, update):

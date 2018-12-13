@@ -5,4 +5,7 @@
 __pycache__/
 migrations/
 *.log
+*.exe
+.rnd
+todo.txt
 temp/

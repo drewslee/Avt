@@ -47,6 +47,7 @@
                     <thead>
                         <th data-field="checkbox" data-checkbox="true"></th>
                         <th data-field="telegram_id" data-visible="true">id</th>
+                        <th data-field="admin">Админ</th>
                         <th data-field="telegram_nick">Имя</th>
                         <th data-field="state">Статус</th>
                         <th data-field="car">Машина</th>
@@ -58,6 +59,7 @@
                         <tr>
                             <td></td>
                             <td>{{ q.pk }}</td>
+							<td>{% if q.admin %}Да{% endif %}</td>
                             <td>{{ q.telegram_nick }}</td>
                             <td>{{ q.state }}</td>
                             <td>{{ q.car|default_if_none:'Не назначена' }}</td>
