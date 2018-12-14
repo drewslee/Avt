@@ -49,6 +49,7 @@
                         <th data-field="telegram_id" data-visible="true">id</th>
                         <th data-field="admin">Админ</th>
                         <th data-field="telegram_nick">Имя</th>
+                        <th data-field="last_seen">Дата</th>
                         <th data-field="state">Статус</th>
                         <th data-field="car">Машина</th>
                         <th data-field="race">Рейс</th>
@@ -61,6 +62,7 @@
                             <td>{{ q.pk }}</td>
 							<td>{% if q.admin %}Да{% endif %}</td>
                             <td>{{ q.telegram_nick }}</td>
+                            <td>{{ q.last_seen }}</td>
                             <td>{{ q.state }}</td>
                             <td>{{ q.car|default_if_none:'Не назначена' }}</td>
                             <td>{{ q.race|default_if_none:'Не назначен' }}</td>

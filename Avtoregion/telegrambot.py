@@ -163,7 +163,7 @@ class AvtrgnBot():
         'pass'  : u'Теперь пришлите секретный ключ для подтверждения полномочий. Если он вам неизвестен, обратитесь к диспетчеру.',
         'errauth' : u'Неверный номер автомобиля. Пробуйте ещё.',
         'errpass' : u'Неверный секретный ключ. Попробуйте ещё.',
-        'authok' : u'Вы авторизованы.',
+        'authok' : u'Вы авторизованы.\n-----\nИспользуйте кнопки с командами внизу для получения информации о рейсах.',
         'tryout' : u'Количество попыток авторизации исчерано.',
         'banned' : u'Вам отказано в доступе.',
         'select' : u'Выберите команду',
@@ -181,7 +181,7 @@ class AvtrgnBot():
     # Процедура отправки типового сообщения
     def send(self, uid, m = 'hello', **kwargs):
         bot = DjangoTelegramBot.getBot()
-        bot.sendMessage(uid, self.messages[m])
+        bot.sendMessage(uid, self.messages[m], reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
 
     # Процедура движения по статусам авторизации
     def move_auth(self, abonent, msg='auth', next_state=AUTH, try_increment=1, reset_auth_car=True):
@@ -260,7 +260,7 @@ class AvtrgnBot():
     # Обработка начальной команды /start
     def start_callback(self, bot, update):
         update.message.reply_text('Авторегион: бот-диспетчер на связи',
-                                  reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
+                                  reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
         self.main(bot, update)
 
 
@@ -291,13 +291,6 @@ class AvtrgnBot():
         self.accepted(bot, update)
 
 
-    def race_info(self, abon):
-        text = u''
-        text += u'<pre>Рейс: {} | Статус: {} </pre>\n'.format(str(abon.race_id), abon.race.state)
-        text += u'<pre>──────────────────────────────</pre>\n'
-        return text
-
-
     # Обработка текущего статуса "ACCEPTED"
     @reply_callback_decorator
     def accepted(self, bot, update):
@@ -306,12 +299,13 @@ class AvtrgnBot():
         kb = keyboards[abon.state]
         kb[0][0].callback_data = r'/loading:' + str(abon.race_id)
 #        text  = u'<pre>┏━━━━━━━━━━━━━━━━┓</pre>\n'
-        text = self.race_info(abon)
-        text += u'<pre>Направляйтесь к месту погрузки</pre>\n'
-        text += u'<pre>──────────────────────────────</pre>\n'
-        text += u'<pre>' + abon.race.supplier.name + '</pre>\n'
-        text += u'<pre>──────────────────────────────</pre>\n'
-        text += u'<pre>' + abon.race.get_load_place + '</pre>\n'
+        text = self.race_info(abon.race)
+        text += u'\n---\n'
+        text += u'Направляйтесь к месту погрузки\n'
+        #text += u'---\n'
+        #text += u'<pre>' + abon.race.supplier.name + '</pre>\n'
+        #text += u'<pre>──────────────────────────────</pre>\n'
+        #text += u'<pre>' + abon.race.get_load_place + '</pre>\n'
         return {
             'delete': True,
             'send': text,
@@ -326,11 +320,13 @@ class AvtrgnBot():
         abon = self.abonent(update)
         kb = keyboards[abon.state]
         kb[0][0].callback_data = r'/unloading:' + str(abon.race_id)
-        text = self.race_info(abon)
-        text += u'<pre>Направляйтесь к месту выгрузки</pre>\n'
-        text += u'<pre>──────────────────────────────</pre>\n'
-        text += u'<pre>' + abon.race.customer.name + '</pre>\n'
-        text += u'<pre>' + abon.race.get_unload_place + '</pre>\n'
+        #text = self.race_info(abon)
+        text = self.race_info(abon.race)
+        text += u'\n---\n'
+        text += u'Направляйтесь к месту выгрузки\n'
+        #text += u'---\n'
+        #text += u'<pre>' + abon.race.customer.name + '</pre>\n'
+        #text += u'<pre>' + abon.race.get_unload_place + '</pre>\n'
         return {
             'delete': True,
             'send': text,
@@ -546,20 +542,9 @@ class AvtrgnBot():
         kb = None
         result = {'delete': True}
         if r is not None:
-            text = u'Текущий рейс для: ' + abon.car.number + u'\n'
-            text += u'<pre>___________________________</pre>\n'
-            text += u'<pre>Рейс:\t\t\t' + str(r.id_race) + u'</pre>\n'
-            text += u'<pre>Дата:\t\t\t' + r.race_date.strftime('%d.%m.%Y %H:%M') + u'</pre>\n'
-            text += u'<pre>Водитель:\t' + r.driver.name + u'</pre>\n'                
-            text += u'—————\n'
-            text += u'<pre>Поставщик:\t' + r.supplier.name + u'</pre>\n'
-            text += u'<pre>Откуда:\t' + r.get_load_place + u'</pre>\n'
-            text += u'—————\n'
-            text += u'<pre>Покупатель:\t' + r.customer.name + u'</pre>\n'                
-            text += u'<pre>Куда:\t' + r.get_unload_place + u'</pre>\n'
-            text += u'—————\n'
-            text += u'<pre>Груз:\t' + r.product.name + u'</pre>\n'                
-            text += u'<pre>Цена рейса:\t' + str(r.price) + u'</pre>\n'                
+            text = u'Текущий рейс для: ' + abon.car.number
+            text += u'\n---\n'
+            text += self.race_info(r)
             kb = self.get_keyboard(abon)
             kb[0][0].callback_data = r'/accepted:' + str(r.id_race)
             result.update({'reply_markup': InlineKeyboardMarkup(kb)})
@@ -702,6 +687,27 @@ class AvtrgnBot():
                     update.message.reply_text(ab.telegram_nick + ':' + ab.secret)
 
 
+    @staticmethod
+    def race_info(race):
+        text = u''
+        text += u'<b>Рейс:</b> <pre>№ {} / {}</pre>\n'.format(str(race.id_race), race.race_date.strftime('%d.%m.%Y %H:%M'))
+        text += u'<b>Водитель:</b> <pre>{}</pre>\n'.format(race.driver.name)
+        text += u'<b>Место погрузки:</b>\n'
+        text += u'<pre>{}</pre>\n<pre>{}</pre>\n'.format(race.supplier.name, race.get_load_place)
+        text += u'<b>Место выгрузки:</b>\n'
+        text += u'<pre>{}</pre>\n<pre>{}</pre>\n'.format(race.customer.name, race.get_unload_place)
+        text += u'<b>Груз:</b> <pre>{}</pre>\n<b>Цена:</b> <pre>{} руб.</pre>\n'.format(race.product.name, str(race.price))
+        text += u'<b>Статус:</b> <pre>{}</pre>'.format(race.state)
+        if race.s_milage > 0:
+            text += u'<b>Одометр на погрузке:</b> <pre>{} км</pre>'.format(str(race.s_milage))
+        if race.weight_load > 0:
+            text += u'<b>Загружено:</b> <pre>{} т.</pre>'.format(str(race.weight_load))
+        if race.e_milage > 0:
+            text += u'<b>Одометр на выгрузке:</b> <pre>{} км</pre>'.format(str(race.e_milage))
+        if race.weight_unload > 0:
+            text += u'<b>Выгружено:</b> <pre>{} т.</pre>'.format(str(race.weight_unload))
+        return text
+                    
 
     @staticmethod
     @receiver(post_save, sender=Race)
@@ -713,15 +719,13 @@ class AvtrgnBot():
         if len(abonents) > 0:
             if created:
                 for a in abonents:
-                    kb = None
-                    if a.race_id is None and a.state == READY:
-                        kb = InlineKeyboardMarkup([[InlineKeyboardButton(text='Приступить',
-                                                                         callback_data=r'/accepted:'+str(instance.id_race))]],
-                                                                         parse_mode='HTML')
                     result = bot.sendMessage(
                                 str(a.telegram_id), 
-                                u'Вам назначен новый рейс №' + str(instance.id_race) +
-                                u'.\n Приступайте к следующему рейсу после завершения текущего.',  reply_markup=kb)
+                                u'Вам назначен новый рейс.\n---\n' +
+                                AvtrgnBot.race_info(instance) +
+                                u'\n---\nЧтобы приступить отправьте команду <b>"Мои рейсы"</b>.', 
+                                parse_mode='HTML',
+                                reply_markup=ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
                     logger.info('NOTIFY: Race created for abonent = {} result = {}'.format(str(a.telegram_id), result))
             else:
                 if instance.state == Race.CREATE:
