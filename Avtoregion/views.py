@@ -828,7 +828,7 @@ class PackingView(JSONRequestResponseMixin, View):
         ids = self.request_json.get("id_list")
         if ids:
             for i in ids:
-                url, filename = ooxml_render(i, 'packing', 'sharedStrings3.xml', 'packing')
+                url, filename = ooxml_render(i, 'packing', 'sharedStrings2.xml', 'packing')
                 files['urls'].append(url)
                 files['filenames'].append(filename)
                 files['paths'].append(finders.find(url))

@@ -697,15 +697,15 @@ class AvtrgnBot():
         text += u'<b>Место выгрузки:</b>\n'
         text += u'<pre>{}</pre>\n<pre>{}</pre>\n'.format(race.customer.name, race.get_unload_place)
         text += u'<b>Груз:</b> <pre>{}</pre>\n<b>Цена:</b> <pre>{} руб.</pre>\n'.format(race.product.name, str(race.price))
-        text += u'<b>Статус:</b> <pre>{}</pre>'.format(race.state)
+        text += u'<b>Статус:</b> <pre>{}</pre>\n'.format(race.state)
         if race.s_milage > 0:
-            text += u'<b>Одометр на погрузке:</b> <pre>{} км</pre>'.format(str(race.s_milage))
+            text += u'<b>Одометр на погрузке:</b> <pre>{} км</pre>\n'.format(str(race.s_milage))
         if race.weight_load > 0:
-            text += u'<b>Загружено:</b> <pre>{} т.</pre>'.format(str(race.weight_load))
+            text += u'<b>Загружено:</b> <pre>{} т.</pre>\n'.format(str(race.weight_load))
         if race.e_milage > 0:
-            text += u'<b>Одометр на выгрузке:</b> <pre>{} км</pre>'.format(str(race.e_milage))
+            text += u'<b>Одометр на выгрузке:</b> <pre>{} км</pre>\n'.format(str(race.e_milage))
         if race.weight_unload > 0:
-            text += u'<b>Выгружено:</b> <pre>{} т.</pre>'.format(str(race.weight_unload))
+            text += u'<b>Выгружено:</b> <pre>{} т.</pre>\n'.format(str(race.weight_unload))
         return text
                     
 
