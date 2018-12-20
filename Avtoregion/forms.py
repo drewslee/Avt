@@ -117,6 +117,22 @@ class DriverForm(ModelForm):
                   'driver_card': 'Удостоверение'}
 
 
+class AbonentForm(ModelForm):
+    class Meta:
+        model = Abonent
+        fields = ['telegram_id', 'telegram_nick', 'active', 'driver', 'car', 'state']
+        labels = {'telegram_id': 'Идентификатор', 'telegram_nick': 'Имя', 'active': 'Включен', 'state': 'Статус'}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['telegram_id'].disabled = True
+        self.fields['telegram_nick'].disabled = True
+        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False)
+        self.fields['driver'].label = 'Водитель'
+        self.fields['car'].queryset = Car.objects.filter(has_deleted=False)
+        self.fields['car'].label = 'Машина'
+        
+                  
 class RaceForm(ModelForm):
     race_date = DateTimeField(initial=timezone.now,
                               label='Дата выезда:',
@@ -165,7 +181,7 @@ class RaceForm(ModelForm):
         self.fields['customer'].label = 'Клиент'
         self.fields['product'].queryset = Product.objects.filter(has_deleted=False)
         self.fields['product'].label = 'Груз'
-        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False)
+        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False).order_by('name')
         self.fields['driver'].label = 'Водитель'
         self.fields['car'].queryset = Car.objects.filter(has_deleted=False)
         self.fields['car'].label = 'Машина'
@@ -207,5 +223,5 @@ class RaceUpdateForm(RaceForm):
         self.fields['supplier'].queryset = Supplier.objects.all()
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['product'].queryset = Product.objects.all()
-        self.fields['driver'].queryset = Driver.objects.all()
+        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False).order_by('name')
         self.fields['car'].queryset = Car.objects.all()

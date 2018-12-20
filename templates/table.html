@@ -7,25 +7,7 @@
 				<div class="btn-group">
 					<a href="{% url 'Race' %}" class="btn btn-default" title="Текущие рейсы">
 						<i class="glyphicon glyphicon-blackboard"></i></a>
-					<a id="dropdownMenu1" type="button" class="btn btn-default dropdown-toggle" aria-haspopup="true"
-					   aria-expanded="true" data-toggle="dropdown">
-						<i class="glyphicon glyphicon-book"></i>
-					</a>
-					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-						<li><a href="{% url 'CarList' %}">Машины</a></li>
-						<li><a href="{% url 'DriverList' %}">Водители</a></li>
-						<li><a href="{% url 'SupplierList' %}">Поставщики</a></li>
-						<li><a href="{% url 'CustomerList' %}">Клиенты</a></li>
-						<li><a href="{% url 'ProductList' %}">Груз</a></li>
-						<li><a href="{% url 'TrailerList' %}">Прицепы</a></li>
-						<li><a href="{% url 'MediatorList' %}">Посредники</a></li>
-						<li><a href="{% url 'UnitList' %}">Единицы измерения</a></li>
-						<li><a href="{% url 'Constants' %}">Константы</a></li>
-						<li role="separator" class="divider"></li>
-						<li><a href="{% url 'Acc' %}">Реестр</a></li>
-						<li><a href="{% url 'CarAcc' %}">Реестр по машине</a></li>
-						<li><a href="{% url 'DriverAcc' %}">Реестр по водителю</a></li>
-					</ul>
+					{% include "dropdownmenu.html" %}
 					<a id="change_race" type="button" href="" class="btn btn-default"
 					   title="Изменить рейс"><i
 							class="glyphicon glyphicon-edit"></i></a>

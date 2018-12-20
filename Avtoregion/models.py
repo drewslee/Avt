@@ -393,8 +393,9 @@ class Abonent(models.Model):
     admin = models.BooleanField(default=False)
     state = models.CharField(default=STATE[0], choices=STATE, max_length=25)
     last_seen = models.DateTimeField(null=True, blank=True)
-    car = models.ForeignKey(Car, null=True, blank=True)
-    race = models.ForeignKey(Race, null=True, blank=True)
+    driver = models.ForeignKey(Driver, null=True, blank=True, on_delete=models.SET_NULL)
+    car = models.ForeignKey(Car, null=True, blank=True, on_delete=models.SET_NULL)
+    race = models.ForeignKey(Race, null=True, blank=True, on_delete=models.SET_NULL)
     context = models.CharField(max_length=255, null=True, blank=True)
     
     def __str__(self):

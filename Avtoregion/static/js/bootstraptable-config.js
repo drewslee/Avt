@@ -19,6 +19,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'CarCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Car/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $car_table.bootstrapTable("resetSearch");
@@ -38,6 +41,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'DriverCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Driver/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $driver_table.bootstrapTable("resetSearch");
@@ -57,10 +63,18 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'AbonentCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Abonent/' + row.telegram_id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $abonent_table.bootstrapTable("resetSearch");
         }
+    });
+
+    $abonent_table.on('check.bs.table', function (event, row, $element)
+    {
+        $('#change_abonent')[0].setAttribute('href', row.telegram_id + '/update/');
     });
 	
     $customer_table.bootstrapTable({
@@ -70,6 +84,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'CustomerCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Customer/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $customer_table.bootstrapTable("resetSearch");
@@ -95,6 +112,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'SupplierCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Supplier/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $supplier_table.bootstrapTable("resetSearch");
@@ -120,6 +140,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'ProductCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Product/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $product_table.bootstrapTable("resetSearch");
@@ -139,6 +162,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'TrailerCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Trailer/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $trailer_table.bootstrapTable("resetSearch");
@@ -158,6 +184,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'MediatorCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Mediator/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $mediator_table.bootstrapTable("resetSearch");
@@ -177,6 +206,9 @@ $(function ()
         showPaginationSwitch: true,
         cookie: true,
         cookieIdTable: 'UnitCookId',
+        onDblClickRow: function (row, $element, field) {
+            window.location.href = '/Unit/' + row.id + '/update/' ;
+        },
         onColumnSearch: function ()
         {
             $units_table.bootstrapTable("resetSearch");

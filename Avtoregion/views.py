@@ -45,6 +45,7 @@ from .forms import TrailerForm
 from .forms import ConstantForm
 from .forms import UnitsForm
 from .forms import LoadForm
+from .forms import AbonentForm
 from .models import Car
 from .models import Customer
 from .models import Driver
@@ -556,6 +557,13 @@ class CustomerDelete(PermissionRequiredMixin, DeleteViewMixin, DeleteView):
     permission_required = ('Avtoregion.delete_customer',)
 
 
+class AbonentUpdate(PermissionRequiredMixin, UpdateView):
+    model = Abonent
+    success_url = reverse_lazy('AbonentList')
+    form_class = AbonentForm
+    permission_required = ('Avtoregion.change_abonent',)
+
+    
 class Accumulate(JSONRequestResponseMixin, View):
     def dispatch_method(self, value):
         method_name = 'get_query_' + str(value)
@@ -692,7 +700,7 @@ class CarResponce(View):
 
 class DriverResponce(View):
     def get(self, *args, **kwargs):
-        qset = Driver.objects.all()
+        qset = Driver.objects.all().order_by('name')
         return render(request=self.request, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
 
     def post(self, *args, **kwargs):
