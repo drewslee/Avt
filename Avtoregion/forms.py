@@ -127,7 +127,7 @@ class AbonentForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['telegram_id'].disabled = True
         self.fields['telegram_nick'].disabled = True
-        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False)
+        self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False).order_by('name')
         self.fields['driver'].label = 'Водитель'
         self.fields['car'].queryset = Car.objects.filter(has_deleted=False)
         self.fields['car'].label = 'Машина'
