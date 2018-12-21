@@ -40,8 +40,9 @@ from .models import LoadingPlace
 RACE_DATE_RANGE = 3 # Диапазон дней от текущей даты, за которые рейсы считаются предстоящими
 
 # Bot status list
-START, AUTH, PASS, READY, RACE, ACCEPTED, LOADING, LOADED, UNLOADING, UNLOADED, BAN = \
-'start', 'auth', 'pass', 'ready', 'race', 'accepted', 'loading', 'loaded', 'unloading', 'unloaded', 'ban'
+STATES = 'start', 'auth', 'pass', 'ready', 'accepted', 'loading', 'loaded', 'race', 'unloading', 'unloaded', 'ban'
+START, AUTH, PASS, READY, ACCEPTED, LOADING, LOADED, RACE, UNLOADING, UNLOADED, BAN = STATES
+
 STATE = (
     (START, 'Начало'),
     (AUTH, 'Аутентификация'),
@@ -250,6 +251,11 @@ class AvtrgnBot():
     def status(self, update, state, context=None):
         #st = [s[0] for s in STATE]
         abonent = self.abonent(update)
+        # Проверка соответствия статуса для перехода текущему статусу, переход возможет только вперед
+        print(STATES[STATES.index(state)-1])
+        if abonent.state != STATES[STATES.index(state)-1] and abonent.state != state and not (state == READY and abonent.state == UNLOADED):
+            print('invalid state abonent.state = ', abonent.state, ' state to set = ', state)
+            return None
         if context is not None:
             abonent.context = context
         abonent.state = state #st[st.index(abonent.state)-1]
@@ -275,20 +281,23 @@ class AvtrgnBot():
     def race_accepted_callback(self, bot, update):
         """ ACCEPT callback processing """
         r_id = update.callback_query.data.split(':')[1] # Получаем id принимаемого рейса из callback_data
-        logger.info('Accepting: Callback race ID = {}'.format(r_id))
         a = self.abonent(update)
-        race = a.car.race_set.get(pk=r_id)
+        race = a.driver.race_set.get(pk=r_id)
         # Сохраняем в абоненте рейс, статус и id запроса
-        a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
-        a.race = race
-        a.save()
+        if race.state == Race.CREATE:
+            logger.info('Accepting: Callback race ID = {}'.format(r_id))
+            a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
+            if a is not None:
+                a.race = race
+                a.car = race.car
+                a.save()
 
-        # Сохраняем в рейсе дату принятия
-        race.race_date = timezone.now()
-        race.state = Race.ACCEPTED
-        race.save()
+                # Сохраняем в рейсе дату принятия
+                race.race_date = timezone.now()
+                race.state = Race.ACCEPTED
+                race.save()
 
-        self.accepted(bot, update)
+                self.accepted(bot, update)
 
 
     # Обработка текущего статуса "ACCEPTED"
@@ -301,7 +310,7 @@ class AvtrgnBot():
 #        text  = u'<pre>┏━━━━━━━━━━━━━━━━┓</pre>\n'
         text = self.race_info(abon.race)
         text += u'\n---\n'
-        text += u'Направляйтесь к месту погрузки\n'
+        text += u'Направляйтесь к месту погрузки.\nПо прибытию на место и завершения погрузки нажмите соответствующую кнопку и введите данные одометра и загруженный вес.\n'
         #text += u'---\n'
         #text += u'<pre>' + abon.race.supplier.name + '</pre>\n'
         #text += u'<pre>──────────────────────────────</pre>\n'
@@ -323,7 +332,7 @@ class AvtrgnBot():
         #text = self.race_info(abon)
         text = self.race_info(abon.race)
         text += u'\n---\n'
-        text += u'Направляйтесь к месту выгрузки\n'
+        text += u'Направляйтесь к месту выгрузки.\nПо прибытию на место и завершения выгрузки нажмите соответствующую кнопку и введите данные одометра и выгруженный вес.\n'
         #text += u'---\n'
         #text += u'<pre>' + abon.race.customer.name + '</pre>\n'
         #text += u'<pre>' + abon.race.get_unload_place + '</pre>\n'
@@ -337,23 +346,23 @@ class AvtrgnBot():
     # Обработка команды от кнопки "ПОГРУЗКА" и переход в статус "LOADING"
     @reply_callback_decorator
     def loading_callback(self, bot, update):
-        self.status(update, LOADING, update.callback_query.id + ':' + str(expire()))
-        return {
-            'delete': True,
-            'send': 'Ваш рейс в состоянии погрузки. Введите показания одометра на момент погрузки:',
-            'reply_markup': ForceReply(force_reply=True)
-        }
+        if self.status(update, LOADING, update.callback_query.id + ':' + str(expire())):
+            return {
+                'delete': True,
+                'send': 'Ваш рейс в состоянии погрузки. Введите показания одометра на момент погрузки:',
+                'reply_markup': ForceReply(force_reply=True)
+            }
 
 
     # Обработка команды от кнопки "ВЫГРУЗКА" и переход в статус "UNLOADING"
     @reply_callback_decorator
     def unloading_callback(self, bot, update):
-        self.status(update, UNLOADING, update.callback_query.id + ':' + str(expire()))
-        return {
-            'delete': True,
-            'send': 'Ваш рейс в состоянии выгрузки. Введите показания одометра на момент выгрузки:',
-            'reply_markup': ForceReply(force_reply=True)
-        }
+        if self.status(update, UNLOADING, update.callback_query.id + ':' + str(expire())):
+            return {
+                'delete': True,
+                'send': 'Ваш рейс в состоянии выгрузки. Введите показания одометра на момент выгрузки:',
+                'reply_markup': ForceReply(force_reply=True)
+            }
 
 
     # Обработка команды от кнопки "Да" подтверждения ввода одометра на ПОГРУЗКЕ
@@ -362,14 +371,15 @@ class AvtrgnBot():
     def confirm_load_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
         a = self.status(update, LOADED, update.callback_query.id + ':' + str(expire()))
-        race = a.race
-        race.s_milage = int(data)
-        race.save()
-        return {
-            'delete': True,
-            'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес в килограммах: ',
-            'reply_markup': ForceReply(force_reply=True)
-        }
+        if a is not None:        
+            race = a.race
+            race.s_milage = int(data)
+            race.save()
+            return {
+                'delete': True,
+                'send': 'Ваш рейс в состоянии погрузки. Введите загруженный вес в килограммах: ',
+                'reply_markup': ForceReply(force_reply=True)
+            }
 
 
     # Запрос ввода данных одометра на ПОГРУЗКЕ
@@ -385,14 +395,15 @@ class AvtrgnBot():
     def confirm_unload_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
         a = self.status(update, UNLOADED, update.callback_query.id + ':' + str(expire()))
-        race = a.race
-        race.e_milage = int(data)
-        race.save()
-        return {
-            'delete': True,
-            'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес в килограммах: ',
-            'reply_markup': ForceReply(force_reply=True)
-        }
+        if a is not None:
+            race = a.race
+            race.e_milage = int(data)
+            race.save()
+            return {
+                'delete': True,
+                'send': 'Ваш рейс в состоянии выгрузки. Введите выгруженный вес в килограммах: ',
+                'reply_markup': ForceReply(force_reply=True)
+            }
 
 
     # Запрос ввода данных одометра на ВЫГРУЗКЕ
@@ -408,15 +419,16 @@ class AvtrgnBot():
     def confirm_load_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
         a = self.status(update, RACE, update.callback_query.id + ':' + str(expire()))
-        race = a.race
-        race.weight_load = int(data) / 1000
-        race.state = Race.LOAD
-        race.save()
-        return {
-            'delete': True,
-            'send': False,
-            'call': self.race # call - вызов следующего обработчика
-        }
+        if a is not None:
+            race = a.race
+            race.weight_load = int(data) / 1000
+            race.state = Race.LOAD
+            race.save()
+            return {
+                'delete': True,
+                'send': False,
+                'call': self.race # call - вызов следующего обработчика
+            }
 
 
     # Запрос ввода данных загруженного веса на ПОГРУЗКЕ
@@ -432,19 +444,20 @@ class AvtrgnBot():
     def confirm_unload_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]        
         a = self.status(update, READY, update.callback_query.id + ':' + str(expire()))
-        a.race.weight_unload = int(data) / 1000
-        a.race.state = Race.UNLOAD
-        a.race.arrival_time = timezone.now()
-        a.race.shoulder = a.race.e_milage - a.race.s_milage
-        a.race.save()
-        race_id = a.race.id_race
-        a.race = None
-        a.save()
-        return {
-            'delete': True,
-            'send': 'Рейс №{} завершён. Приступайте к следующему.'.format(str(race_id)),
-            'call': self.complete
-        }
+        if a is not None:
+            a.race.weight_unload = int(data) / 1000
+            a.race.state = Race.UNLOAD
+            a.race.arrival_time = timezone.now()
+            a.race.shoulder = a.race.e_milage - a.race.s_milage
+            a.race.save()
+            race_id = a.race.id_race
+            a.race = None
+            a.save()
+            return {
+                'delete': True,
+                'send': 'Рейс №{} завершён. Приступайте к следующему.'.format(str(race_id)),
+                'call': self.complete
+            }
 
 
     # Запрос ввода данных выгруженного веса на ВЫГРУЗКЕ
@@ -526,11 +539,15 @@ class AvtrgnBot():
     def current_race(self, bot, update):
         """ Sending info about current race """
         r = None
+        text = u''
         abon = self.abonent(update)
-        if abon.race_id is None:
+        if abon.driver_id is None:
+            # Если водитель не привязан к абоненту, то диспетчеру нужно сделать такую привязку
+            text += u'Водитель не определён. Обратитесь к диспетчеру для сопоставления с данными водителя.\n\n'
+        elif abon.race_id is None:
             # Если рейс не привязан, значит выбираем все рейсы для авто в статусе "Создан"
             # и не позднее RACE_DATE_RANGE от текущей даты
-            all = Race.objects.filter(car_id=abon.car.id_car,
+            all = Race.objects.filter(driver_id=abon.driver.id_driver,
                                       state=Race.CREATE,
                                       race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
             if len(all) > 0:
@@ -542,15 +559,14 @@ class AvtrgnBot():
         kb = None
         result = {'delete': True}
         if r is not None:
-            text = u'Текущий рейс для: ' + abon.car.number
-            text += u'\n---\n'
+            text += u'ВАШ ТЕКУЩИЙ РЕЙС:\n---\n'
             text += self.race_info(r)
             kb = self.get_keyboard(abon)
             kb[0][0].callback_data = r'/accepted:' + str(r.id_race)
             result.update({'reply_markup': InlineKeyboardMarkup(kb)})
         else:
             result.update({'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)})
-            text = u'Текущие рейсы для ' + abon.car.number + ' отсутствуют.\n'
+            text += u'Текущие рейсы отсутствуют.\n'
 
         result.update({'send': text})    
         return result
@@ -561,13 +577,19 @@ class AvtrgnBot():
         abon = self.abonent(update)
         current_race_id = 0
         current_race = None
+        
+        # Если водитель не привязан к абоненту, то выдаём соответствующее сообщение и выходим из функции
+        if abon.driver is None:
+            text = u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.\n\n'
+            bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')            
+            return False
 
         if abon.race is not None:
             current_race_id = abon.race.id_race
             current_race = abon.race
 
         # Выбираем будущие рейсы в статусе "Создан" и с датой начала не ранее X (2/3/7 - сколько нужно) дней от текущего
-        future_races = Race.objects.filter( car_id=abon.car.id_car,
+        future_races = Race.objects.filter( driver_id=abon.driver.id_driver,
                                             state=Race.CREATE,
                                             race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
 
@@ -583,14 +605,14 @@ class AvtrgnBot():
 
         # Если выборка будущих рейсов не пуста, то выводим информацию по предстоящим рейсам
         if len(future_races) != 0 and send:
-            text = u'Предстоящие рейсы для: ' + abon.car.number + u'\n'
+            text = u'Предстоящие рейсы для водителя ' + abon.driver.name + u'\n'
             text += u'<pre>_____________________________________________</pre>\n'
-            text += u'<pre>Номер | Дата             | Водитель</pre>\n'
+            text += u'<pre>Номер | Дата             | Машина</pre>\n'
             text += u'<pre>—————————————————————————————————————————————</pre>\n'
             for r in future_races:
                 text += u'<pre>' + str(r.id_race).rjust(5, ' ')
                 text += u' | ' + r.race_date.strftime('%d.%m.%Y %H:%M')
-                text += u' | ' + r.driver.name + u'</pre>\n'
+                text += u' | ' + r.car.number + u'</pre>\n'
             text += u'<pre>—————————————————————————————————————————————</pre>\n'
             bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')
 
@@ -692,6 +714,7 @@ class AvtrgnBot():
         text = u''
         text += u'<b>Рейс:</b> <pre>№ {} / {}</pre>\n'.format(str(race.id_race), race.race_date.strftime('%d.%m.%Y %H:%M'))
         text += u'<b>Водитель:</b> <pre>{}</pre>\n'.format(race.driver.name)
+        text += u'<b>Машина:</b> <pre>{} {}</pre>\n'.format(race.car.brand, race.car.number)
         text += u'<b>Место погрузки:</b>\n'
         text += u'<pre>{}</pre>\n<pre>{}</pre>\n'.format(race.supplier.name, race.get_load_place)
         text += u'<b>Место выгрузки:</b>\n'
