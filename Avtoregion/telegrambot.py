@@ -487,35 +487,42 @@ class AvtrgnBot():
     @reply_callback_decorator
     def stat_callback(self, bot, update):
         a = self.abonent(update)
-        period = update.callback_query.data.split(':')[1]
-        ms, ys = period.split('.')
-        m, y = int(ms), int(ys)
-        start = timezone.make_aware(datetime(y, m, 1))
-        if int(m) == 12:
-            end = timezone.make_aware(datetime(y+1, 1, 1))
+        if a.driver is not None:
+            period = update.callback_query.data.split(':')[1]
+            ms, ys = period.split('.')
+            m, y = int(ms), int(ys)
+            start = timezone.make_aware(datetime(y, m, 1))
+            if int(m) == 12:
+                end = timezone.make_aware(datetime(y+1, 1, 1))
+            else:
+                end = timezone.make_aware(datetime(y, m+1, 1))
+            stat = u'Статистика за: {}\n'.format(period)
+            stat += u'Водитель: ' + a.driver.name + '\n'
+            query_state = Q(state=Race.UNLOAD)|Q(state=Race.FINISH)|Q(state=Race.CHECKED)|Q(state=Race.END)
+            races = Race.objects.filter(query_state, driver_id=a.driver.id_driver, race_date__range=(start, end)).exclude().order_by('race_date')
+            sum = 0
+            if len(races) == 0:
+                stat += u'<pre>В выбранном периоде нет завершенных рейсов.</pre>\n'
+            else:
+                stat += u'<pre> Рейс | Дата       | Цена</pre>\n'
+                stat += u'<pre>───────────────────────────</pre>\n'
+            for r in races:
+                stat += u'<pre>{}\t|\t{}\t|\t{}</pre>\n'.format(str(r.id_race), r.race_date.strftime('%d.%m.%Y'), str(r.price))
+                sum += r.price
+            else:
+                stat += u'<pre>───────────────────────────</pre>\n'
+                stat += u'<pre>Итого рейсов: {}\nСумма: {} руб.</pre>\n'.format(str(len(races)), str(sum))
+            return {
+                'delete': True,
+                'send': stat,
+                'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+            }
         else:
-            end = timezone.make_aware(datetime(y, m+1, 1))
-        stat = u'Статистика за: {}\n'.format(period)
-        stat += u'Водитель: ' + a.driver.name + '\n'
-        query_state = Q(state=Race.UNLOAD)|Q(state=Race.FINISH)|Q(state=Race.CHECKED)|Q(state=Race.END)
-        races = Race.objects.filter(query_state, driver_id=a.driver.id_driver, race_date__range=(start, end)).exclude().order_by('race_date')
-        sum = 0
-        if len(races) == 0:
-            stat += u'<pre>В выбранном периоде нет завершенных рейсов.</pre>\n'
-        else:
-            stat += u'<pre> Рейс | Дата       | Цена</pre>\n'
-            stat += u'<pre>───────────────────────────</pre>\n'
-        for r in races:
-            stat += u'<pre>{}\t|\t{}\t|\t{}</pre>\n'.format(str(r.id_race), r.race_date.strftime('%d.%m.%Y'), str(r.price))
-            sum += r.price
-        else:
-            stat += u'<pre>───────────────────────────</pre>\n'
-            stat += u'<pre>Итого рейсов: {}\nСумма: {} руб.</pre>\n'.format(str(len(races)), str(sum))
-        return {
-            'delete': True,
-            'send': stat,
-            'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
-        }
+            return {
+                'delete': True,
+                'send': u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.',
+                'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)                
+            }
     
     
     @callback_decorator
@@ -701,19 +708,22 @@ class AvtrgnBot():
     def statistics(self, bot, update):
         """ Send statistics dialog to abonent """
         a = self.abonent(update)
-        months = ('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь')
-        d = datetime.today()
-        month_now = d.month - 1
-        y1, y2 = d.year, d.year
-        if month_now == 0:
-            month_last = 11
-            y1 = d.year - 1
+        if a.driver is not None:
+            months = ('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь')
+            d = datetime.today()
+            month_now = d.month - 1
+            y1, y2 = d.year, d.year
+            if month_now == 0:
+                month_last = 11
+                y1 = d.year - 1
+            else:
+                month_last = month_now - 1
+            kb = InlineKeyboardMarkup([[InlineKeyboardButton(u'За {} {}'.format(months[month_last], y1), callback_data=r'/stat:'+str(month_last+1)+'.'+str(y1)),
+                                        InlineKeyboardButton(u'За {} {}'.format(months[month_now], y2), callback_data=r'/stat:'+str(month_now+1)+'.'+str(y2))]])    
+            update.message.reply_html(u'Выберите период, за который необходима статистика по выполненным рейсам.', reply_markup=kb)
         else:
-            month_last = month_now - 1
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton(u'За {} {}'.format(months[month_last], y1), callback_data=r'/stat:'+str(month_last+1)+'.'+str(y1)),
-                                    InlineKeyboardButton(u'За {} {}'.format(months[month_now], y2), callback_data=r'/stat:'+str(month_now+1)+'.'+str(y2))]])    
-        update.message.reply_html(u'Выберите период, за который необходима статистика по выполненным рейсам.', reply_markup=kb)
-        
+            update.message.reply_html(u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.\n\n')
+            
 
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
