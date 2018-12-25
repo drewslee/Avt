@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings as djangoSettings
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import re
@@ -57,7 +58,7 @@ STATE = (
     (BAN, 'Заблокирован'),
 )
 
-main_keyboard = [['Мои рейсы']]
+main_keyboard = [['Мои рейсы', 'Статистика']]
 race_keyboard = [[InlineKeyboardButton('Откуда', callback_data=r'/from'),
                   InlineKeyboardButton('Куда', callback_data=r'/to')]]
 race_accept_keyboard = [[InlineKeyboardButton('Приступить', callback_data=r'/accepted')]]
@@ -252,9 +253,8 @@ class AvtrgnBot():
         #st = [s[0] for s in STATE]
         abonent = self.abonent(update)
         # Проверка соответствия статуса для перехода текущему статусу, переход возможет только вперед
-        print(STATES[STATES.index(state)-1])
         if abonent.state != STATES[STATES.index(state)-1] and abonent.state != state and not (state == READY and abonent.state == UNLOADED):
-            print('invalid state abonent.state = ', abonent.state, ' state to set = ', state)
+            # print('invalid state abonent.state = ', abonent.state, ' state to set = ', state)
             return None
         if context is not None:
             abonent.context = context
@@ -484,10 +484,43 @@ class AvtrgnBot():
         update.callback_query.edit_message_reply_markup(reply_markup=reply_markup)
 
 
+    @reply_callback_decorator
+    def stat_callback(self, bot, update):
+        a = self.abonent(update)
+        period = update.callback_query.data.split(':')[1]
+        ms, ys = period.split('.')
+        m, y = int(ms), int(ys)
+        start = timezone.make_aware(datetime(y, m, 1))
+        if int(m) == 12:
+            end = timezone.make_aware(datetime(y+1, 1, 1))
+        else:
+            end = timezone.make_aware(datetime(y, m+1, 1))
+        stat = u'Статистика за: {}\n'.format(period)
+        stat += u'Водитель: ' + a.driver.name + '\n'
+        query_state = Q(state=Race.UNLOAD)|Q(state=Race.FINISH)|Q(state=Race.CHECKED)|Q(state=Race.END)
+        races = Race.objects.filter(query_state, driver_id=a.driver.id_driver, race_date__range=(start, end)).exclude().order_by('race_date')
+        sum = 0
+        if len(races) == 0:
+            stat += u'<pre>В выбранном периоде нет завершенных рейсов.</pre>\n'
+        else:
+            stat += u'<pre> Рейс | Дата       | Цена</pre>\n'
+            stat += u'<pre>───────────────────────────</pre>\n'
+        for r in races:
+            stat += u'<pre>{}\t|\t{}\t|\t{}</pre>\n'.format(str(r.id_race), r.race_date.strftime('%d.%m.%Y'), str(r.price))
+            sum += r.price
+        else:
+            stat += u'<pre>───────────────────────────</pre>\n'
+            stat += u'<pre>Итого рейсов: {}\nСумма: {} руб.</pre>\n'.format(str(len(races)), str(sum))
+        return {
+            'delete': True,
+            'send': stat,
+            'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+        }
+    
+    
     @callback_decorator
     def from_callback(self, bot, update):
         pk = update.callback_query.data.split('|')[1]
-        print('pk = ' + pk)
         race = Race.objects.get(pk=pk)
         for lk in load_keyboard[0]:
             lk.callback_data += '|' + pk
@@ -501,7 +534,6 @@ class AvtrgnBot():
     @callback_decorator
     def to_callback(self, bot, update):
         pk = update.callback_query.data.split('|')[1]
-        print('pk = ' + pk)
         race = Race.objects.get(pk=pk)
         bot.sendVenue(update.callback_query.from_user.id,
                       51.6089419, 52.9732831,
@@ -666,38 +698,61 @@ class AvtrgnBot():
                 logger.info('NOTIFY: Abonent created = {} result = {}'.format(str(abonent), result))
     
 
+    def statistics(self, bot, update):
+        """ Send statistics dialog to abonent """
+        a = self.abonent(update)
+        months = ('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь')
+        d = datetime.today()
+        month_now = d.month - 1
+        y1, y2 = d.year, d.year
+        if month_now == 0:
+            month_last = 11
+            y1 = d.year - 1
+        else:
+            month_last = month_now - 1
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton(u'За {} {}'.format(months[month_last], y1), callback_data=r'/stat:'+str(month_last+1)+'.'+str(y1)),
+                                    InlineKeyboardButton(u'За {} {}'.format(months[month_now], y2), callback_data=r'/stat:'+str(month_now+1)+'.'+str(y2))]])    
+        update.message.reply_html(u'Выберите период, за который необходима статистика по выполненным рейсам.', reply_markup=kb)
+        
 
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
         a = self.abonent(update)
         logger.info('Abonent {} state = {} at time = {}'.format(str(a), a.state, time()))
         if a:                    
+            # Обработка статусов авторизации
             if START in a.state:
                 self.start(a, update)
             elif AUTH == a.state:
                 self.auth(a, update)
             elif PASS == a.state:
                 self.passw(a, update)
-            elif READY == a.state:
-                self.carcheck(a, update)
-                self.ready(bot, update)
-            elif ACCEPTED == a.state:
-                self.accepted(bot, update)
-            elif LOADING == a.state:
-                self.query_load_odometer(bot, update, callback_command=r'/load_odo')
-            elif LOADED == a.state:
-                self.query_load_weight(bot, update, callback_command=r'/load_weight')
-            elif RACE == a.state:
-                self.race(bot, update)
-            elif UNLOADING == a.state:
-                self.query_unload_odometer(bot, update, callback_command=r'/unload_odo')
-            elif UNLOADED == a.state:
-                self.query_unload_weight(bot, update, callback_command=r'/unload_weight')
             elif BAN == a.state:
                 pass
-            else:
-                a.state = START             # Сброс статуса на начальный
-                a.save()
+
+            # Обработка команды "Мои рейсы" и рабочих статусов
+            if update.message.text == 'Мои рейсы':
+                if READY == a.state:
+                    self.carcheck(a, update)
+                    self.ready(bot, update)
+                elif ACCEPTED == a.state:
+                    self.accepted(bot, update)
+                elif LOADING == a.state:
+                    self.query_load_odometer(bot, update, callback_command=r'/load_odo')
+                elif LOADED == a.state:
+                    self.query_load_weight(bot, update, callback_command=r'/load_weight')
+                elif RACE == a.state and update.message.text == 'Мои рейсы':
+                    self.race(bot, update)
+                elif UNLOADING == a.state:
+                    self.query_unload_odometer(bot, update, callback_command=r'/unload_odo')
+                elif UNLOADED == a.state:
+                    self.query_unload_weight(bot, update, callback_command=r'/unload_weight')
+#                else:
+#                    a.state = START             # Сброс статуса на начальный
+#                    a.save()
+            # Обработка команды "Статистика" в статусах, отличных от статусов авторизации
+            elif update.message.text == 'Статистика' and a.state not in (START, AUTH, PASS, BAN):
+                self.statistics(bot, update)
 
     def get_secret_command(self, bot, update):
         a = self.abonent(update)
@@ -773,16 +828,17 @@ class AvtrgnBot():
     def decimal(self, bot, update):
         """ Decimal input dispatcher """
         a = self.abonent(update)
-        if PASS == a.state:
-            self.passw(a, update)
-        if LOADING == a.state:
-            self.query_load_odometer(bot, update, callback_command=r'/load_odo')
-        if LOADED == a.state:
-            self.query_load_weight(bot, update, callback_command=r'/load_weight')
-        if UNLOADING == a.state:
-            self.query_unload_odometer(bot, update, callback_command=r'/unload_odo')
-        if UNLOADED == a.state:
-            self.query_unload_weight(bot, update, callback_command=r'/unload_weight')
+        if a:
+            if PASS == a.state:
+                self.passw(a, update)
+            if LOADING == a.state:
+                self.query_load_odometer(bot, update, callback_command=r'/load_odo')
+            if LOADED == a.state:
+                self.query_load_weight(bot, update, callback_command=r'/load_weight')
+            if UNLOADING == a.state:
+                self.query_unload_odometer(bot, update, callback_command=r'/unload_odo')
+            if UNLOADED == a.state:
+                self.query_unload_weight(bot, update, callback_command=r'/unload_weight')
 
 
     def start_bot(self):
@@ -795,6 +851,7 @@ class AvtrgnBot():
         dp.add_handler(CallbackQueryHandler(self.loading_callback, pattern=r'/loading'))
         dp.add_handler(CallbackQueryHandler(self.unloading_callback, pattern=r'/unloading'))
         dp.add_handler(CallbackQueryHandler(self.race_accepted_callback, pattern=r'/accepted'))
+        dp.add_handler(CallbackQueryHandler(self.stat_callback, pattern=r'/stat'))
         dp.add_handler(CallbackQueryHandler(self.close_callback, pattern=r'/close$'))
         dp.add_handler(CallbackQueryHandler(self.confirm_load_odometer_callback, pattern=r'/load_odo'))
         dp.add_handler(CallbackQueryHandler(self.confirm_load_weight_callback, pattern=r'/load_weight'))
