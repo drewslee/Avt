@@ -252,15 +252,16 @@ class AvtrgnBot():
     def status(self, update, state, context=None):
         #st = [s[0] for s in STATE]
         abonent = self.abonent(update)
-        # Проверка соответствия статуса для перехода текущему статусу, переход возможет только вперед
-        if abonent.state != STATES[STATES.index(state)-1] and abonent.state != state and not (state == READY and abonent.state == UNLOADED):
-            # print('invalid state abonent.state = ', abonent.state, ' state to set = ', state)
-            return None
-        if context is not None:
-            abonent.context = context
-        abonent.state = state #st[st.index(abonent.state)-1]
-        abonent.save()
-        return abonent
+        if abonent:
+            # Проверка соответствия статуса для перехода текущему статусу, переход возможет только вперед
+            if abonent.state != STATES[STATES.index(state)-1] and abonent.state != state and not (state == READY and abonent.state == UNLOADED):
+                # print('invalid state abonent.state = ', abonent.state, ' state to set = ', state)
+                return None
+            if context is not None:
+                abonent.context = context
+            abonent.state = state #st[st.index(abonent.state)-1]
+            abonent.save()
+            return abonent
 
 
     # Обработка начальной команды /start
@@ -282,65 +283,68 @@ class AvtrgnBot():
         """ ACCEPT callback processing """
         r_id = update.callback_query.data.split(':')[1] # Получаем id принимаемого рейса из callback_data
         a = self.abonent(update)
-        race = a.driver.race_set.get(pk=r_id)
-        # Сохраняем в абоненте рейс, статус и id запроса
-        if race.state == Race.CREATE:
-            logger.info('Accepting: Callback race ID = {}'.format(r_id))
-            a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
-            if a is not None:
-                a.race = race
-                a.car = race.car
-                a.save()
+        if a:
+            race = a.driver.race_set.get(pk=r_id)
+            # Сохраняем в абоненте рейс, статус и id запроса
+            if race.state == Race.CREATE:
+                logger.info('Accepting: Callback race ID = {}'.format(r_id))
+                a = self.status(update, ACCEPTED, update.callback_query.id + ':' + str(expire()))
+                if a is not None:
+                    a.race = race
+                    a.car = race.car
+                    a.save()
 
-                # Сохраняем в рейсе дату принятия
-                race.race_date = timezone.now()
-                race.state = Race.ACCEPTED
-                race.save()
+                    # Сохраняем в рейсе дату принятия
+                    race.race_date = timezone.now()
+                    race.state = Race.ACCEPTED
+                    race.save()
 
-                self.accepted(bot, update)
+                    self.accepted(bot, update)
 
 
     # Обработка текущего статуса "ACCEPTED"
     @reply_callback_decorator
     def accepted(self, bot, update):
         """ ACCEPTED state processing """
-        abon = self.abonent(update)
-        kb = keyboards[abon.state]
-        kb[0][0].callback_data = r'/loading:' + str(abon.race_id)
-#        text  = u'<pre>┏━━━━━━━━━━━━━━━━┓</pre>\n'
-        text = self.race_info(abon.race)
-        text += u'\n---\n'
-        text += u'Направляйтесь к месту погрузки.\nПо прибытию на место и завершения погрузки нажмите соответствующую кнопку и введите данные одометра и загруженный вес.\n'
-        #text += u'---\n'
-        #text += u'<pre>' + abon.race.supplier.name + '</pre>\n'
-        #text += u'<pre>──────────────────────────────</pre>\n'
-        #text += u'<pre>' + abon.race.get_load_place + '</pre>\n'
-        return {
-            'delete': True,
-            'send': text,
-            'reply_markup': InlineKeyboardMarkup(kb)
-        }
+        a = self.abonent(update)
+        if a:
+            kb = keyboards[a.state]
+            kb[0][0].callback_data = r'/loading:' + str(a.race_id)
+    #        text  = u'<pre>┏━━━━━━━━━━━━━━━━┓</pre>\n'
+            text = self.race_info(a.race)
+            text += u'\n---\n'
+            text += u'Направляйтесь к месту погрузки.\nПо прибытию на место и завершения погрузки нажмите соответствующую кнопку и введите данные одометра и загруженный вес.\n'
+            #text += u'---\n'
+            #text += u'<pre>' + a.race.supplier.name + '</pre>\n'
+            #text += u'<pre>──────────────────────────────</pre>\n'
+            #text += u'<pre>' + a.race.get_load_place + '</pre>\n'
+            return {
+                'delete': True,
+                'send': text,
+                'reply_markup': InlineKeyboardMarkup(kb)
+            }
 
 
     # Обработка текущего статуса "RACE"
     @reply_callback_decorator
     def race(self, bot, update):
         """ RACE state processing """
-        abon = self.abonent(update)
-        kb = keyboards[abon.state]
-        kb[0][0].callback_data = r'/unloading:' + str(abon.race_id)
-        #text = self.race_info(abon)
-        text = self.race_info(abon.race)
-        text += u'\n---\n'
-        text += u'Направляйтесь к месту выгрузки.\nПо прибытию на место и завершения выгрузки нажмите соответствующую кнопку и введите данные одометра и выгруженный вес.\n'
-        #text += u'---\n'
-        #text += u'<pre>' + abon.race.customer.name + '</pre>\n'
-        #text += u'<pre>' + abon.race.get_unload_place + '</pre>\n'
-        return {
-            'delete': True,
-            'send': text,
-            'reply_markup': InlineKeyboardMarkup(kb)
-        }
+        a = self.abonent(update)
+        if a:
+            kb = keyboards[a.state]
+            kb[0][0].callback_data = r'/unloading:' + str(a.race_id)
+            #text = self.race_info(a)
+            text = self.race_info(a.race)
+            text += u'\n---\n'
+            text += u'Направляйтесь к месту выгрузки.\nПо прибытию на место и завершения выгрузки нажмите соответствующую кнопку и введите данные одометра и выгруженный вес.\n'
+            #text += u'---\n'
+            #text += u'<pre>' + a.race.customer.name + '</pre>\n'
+            #text += u'<pre>' + a.race.get_unload_place + '</pre>\n'
+            return {
+                'delete': True,
+                'send': text,
+                'reply_markup': InlineKeyboardMarkup(kb)
+            }
 
 
     # Обработка команды от кнопки "ПОГРУЗКА" и переход в статус "LOADING"
@@ -371,7 +375,7 @@ class AvtrgnBot():
     def confirm_load_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
         a = self.status(update, LOADED, update.callback_query.id + ':' + str(expire()))
-        if a is not None:        
+        if a:        
             race = a.race
             race.s_milage = int(data)
             race.save()
@@ -395,7 +399,7 @@ class AvtrgnBot():
     def confirm_unload_odometer_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
         a = self.status(update, UNLOADED, update.callback_query.id + ':' + str(expire()))
-        if a is not None:
+        if a:
             race = a.race
             race.e_milage = int(data)
             race.save()
@@ -419,7 +423,7 @@ class AvtrgnBot():
     def confirm_load_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]
         a = self.status(update, RACE, update.callback_query.id + ':' + str(expire()))
-        if a is not None:
+        if a:
             race = a.race
             race.weight_load = int(data) / 1000
             race.state = Race.LOAD
@@ -444,7 +448,7 @@ class AvtrgnBot():
     def confirm_unload_weight_callback(self, bot, update):
         data = update.callback_query.data.split(':')[1]        
         a = self.status(update, READY, update.callback_query.id + ':' + str(expire()))
-        if a is not None:
+        if a:
             a.race.weight_unload = int(data) / 1000
             a.race.state = Race.UNLOAD
             a.race.arrival_time = timezone.now()
@@ -487,42 +491,43 @@ class AvtrgnBot():
     @reply_callback_decorator
     def stat_callback(self, bot, update):
         a = self.abonent(update)
-        if a.driver is not None:
-            period = update.callback_query.data.split(':')[1]
-            ms, ys = period.split('.')
-            m, y = int(ms), int(ys)
-            start = timezone.make_aware(datetime(y, m, 1))
-            if int(m) == 12:
-                end = timezone.make_aware(datetime(y+1, 1, 1))
+        if a:
+            if a.driver:
+                period = update.callback_query.data.split(':')[1]
+                ms, ys = period.split('.')
+                m, y = int(ms), int(ys)
+                start = timezone.make_aware(datetime(y, m, 1))
+                if int(m) == 12:
+                    end = timezone.make_aware(datetime(y+1, 1, 1))
+                else:
+                    end = timezone.make_aware(datetime(y, m+1, 1))
+                stat = u'Статистика за: {}\n'.format(period)
+                stat += u'Водитель: ' + a.driver.name + '\n'
+                query_state = Q(state=Race.UNLOAD)|Q(state=Race.FINISH)|Q(state=Race.CHECKED)|Q(state=Race.END)
+                races = Race.objects.filter(query_state, driver_id=a.driver.id_driver, race_date__range=(start, end)).exclude().order_by('race_date')
+                sum = 0
+                if len(races) == 0:
+                    stat += u'<pre>В выбранном периоде нет завершенных рейсов.</pre>\n'
+                else:
+                    stat += u'<pre> Рейс | Дата       | Цена</pre>\n'
+                    stat += u'<pre>───────────────────────────</pre>\n'
+                for r in races:
+                    stat += u'<pre>{}\t|\t{}\t|\t{}</pre>\n'.format(str(r.id_race), r.race_date.strftime('%d.%m.%Y'), str(r.price))
+                    sum += r.price
+                else:
+                    stat += u'<pre>───────────────────────────</pre>\n'
+                    stat += u'<pre>Итого рейсов: {}\nСумма: {} руб.</pre>\n'.format(str(len(races)), str(sum))
+                return {
+                    'delete': True,
+                    'send': stat,
+                    'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
+                }
             else:
-                end = timezone.make_aware(datetime(y, m+1, 1))
-            stat = u'Статистика за: {}\n'.format(period)
-            stat += u'Водитель: ' + a.driver.name + '\n'
-            query_state = Q(state=Race.UNLOAD)|Q(state=Race.FINISH)|Q(state=Race.CHECKED)|Q(state=Race.END)
-            races = Race.objects.filter(query_state, driver_id=a.driver.id_driver, race_date__range=(start, end)).exclude().order_by('race_date')
-            sum = 0
-            if len(races) == 0:
-                stat += u'<pre>В выбранном периоде нет завершенных рейсов.</pre>\n'
-            else:
-                stat += u'<pre> Рейс | Дата       | Цена</pre>\n'
-                stat += u'<pre>───────────────────────────</pre>\n'
-            for r in races:
-                stat += u'<pre>{}\t|\t{}\t|\t{}</pre>\n'.format(str(r.id_race), r.race_date.strftime('%d.%m.%Y'), str(r.price))
-                sum += r.price
-            else:
-                stat += u'<pre>───────────────────────────</pre>\n'
-                stat += u'<pre>Итого рейсов: {}\nСумма: {} руб.</pre>\n'.format(str(len(races)), str(sum))
-            return {
-                'delete': True,
-                'send': stat,
-                'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)
-            }
-        else:
-            return {
-                'delete': True,
-                'send': u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.',
-                'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)                
-            }
+                return {
+                    'delete': True,
+                    'send': u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.',
+                    'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)                
+                }
     
     
     @callback_decorator
@@ -552,17 +557,17 @@ class AvtrgnBot():
     @callback_decorator
     def no_callback(self, bot, update):
         a = self.abonent(update)
-
-        if LOADING == a.state:
-            self.loading_callback(bot, update)
-        if LOADED == a.state:
-            update.callback_query.data = '/load_odo:' + str(a.race.s_milage)
-            self.confirm_load_odometer_callback(bot, update)
-        if UNLOADING == a.state:
-            self.unloading_callback(bot, update)
-        if UNLOADED == a.state:
-            update.callback_query.data = '/unload_odo:' + str(a.race.e_milage)
-            self.confirm_unload_odometer_callback(bot, update)
+        if a:
+            if LOADING == a.state:
+                self.loading_callback(bot, update)
+            if LOADED == a.state:
+                update.callback_query.data = '/load_odo:' + str(a.race.s_milage)
+                self.confirm_load_odometer_callback(bot, update)
+            if UNLOADING == a.state:
+                self.unloading_callback(bot, update)
+            if UNLOADED == a.state:
+                update.callback_query.data = '/unload_odo:' + str(a.race.e_milage)
+                self.confirm_unload_odometer_callback(bot, update)
 
 
     @callback_decorator
@@ -580,91 +585,93 @@ class AvtrgnBot():
         r = None
         text = u''
         abon = self.abonent(update)
-        if abon.driver_id is None:
-            # Если водитель не привязан к абоненту, то диспетчеру нужно сделать такую привязку
-            text += u'Водитель не определён. Обратитесь к диспетчеру для сопоставления с данными водителя.\n\n'
-        elif abon.race_id is None:
-            # Если рейс не привязан, значит выбираем все рейсы для авто в статусе "Создан"
-            # и не позднее RACE_DATE_RANGE от текущей даты
-            all = Race.objects.filter(driver_id=abon.driver.id_driver,
-                                      state=Race.CREATE,
-                                      race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
-            if len(all) > 0:
-                r = all[0]
-                r_id = r.id_race
-        else:
-            r = abon.race
-        
-        kb = None
-        result = {'delete': True}
-        if r is not None:
-            text += u'ВАШ ТЕКУЩИЙ РЕЙС:\n---\n'
-            text += self.race_info(r)
-            kb = self.get_keyboard(abon)
-            kb[0][0].callback_data = r'/accepted:' + str(r.id_race)
-            result.update({'reply_markup': InlineKeyboardMarkup(kb)})
-        else:
-            result.update({'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)})
-            text += u'Текущие рейсы отсутствуют.\n'
+        if abon:
+            if abon.driver_id is None:
+                # Если водитель не привязан к абоненту, то диспетчеру нужно сделать такую привязку
+                text += u'Водитель не определён. Обратитесь к диспетчеру для сопоставления с данными водителя.\n\n'
+            elif abon.race_id is None:
+                # Если рейс не привязан, значит выбираем все рейсы для авто в статусе "Создан"
+                # и не позднее RACE_DATE_RANGE от текущей даты
+                all = Race.objects.filter(driver_id=abon.driver.id_driver,
+                                          state=Race.CREATE,
+                                          race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
+                if len(all) > 0:
+                    r = all[0]
+                    r_id = r.id_race
+            else:
+                r = abon.race
+            
+            kb = None
+            result = {'delete': True}
+            if r is not None:
+                text += u'ВАШ ТЕКУЩИЙ РЕЙС:\n---\n'
+                text += self.race_info(r)
+                kb = self.get_keyboard(abon)
+                kb[0][0].callback_data = r'/accepted:' + str(r.id_race)
+                result.update({'reply_markup': InlineKeyboardMarkup(kb)})
+            else:
+                result.update({'reply_markup': ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True)})
+                text += u'Текущие рейсы отсутствуют.\n'
 
-        result.update({'send': text})    
-        return result
+            result.update({'send': text})    
+            return result
         
         
     def future_race(self, bot, update, send=False):
         """ Get future and current race for the abonent """ 
         abon = self.abonent(update)
-        current_race_id = 0
-        current_race = None
-        
-        # Если водитель не привязан к абоненту, то выдаём соответствующее сообщение и выходим из функции
-        if abon.driver is None:
-            text = u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.\n\n'
-            bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')            
-            return False
+        if abon:
+            current_race_id = 0
+            current_race = None
+            
+            # Если водитель не привязан к абоненту, то выдаём соответствующее сообщение и выходим из функции
+            if abon.driver is None:
+                text = u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.\n\n'
+                bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')            
+                return False
 
-        if abon.race is not None:
-            current_race_id = abon.race.id_race
-            current_race = abon.race
+            if abon.race is not None:
+                current_race_id = abon.race.id_race
+                current_race = abon.race
 
-        # Выбираем будущие рейсы в статусе "Создан" и с датой начала не ранее X (2/3/7 - сколько нужно) дней от текущего
-        future_races = Race.objects.filter( driver_id=abon.driver.id_driver,
-                                            state=Race.CREATE,
-                                            race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
+            # Выбираем будущие рейсы в статусе "Создан" и с датой начала не ранее X (2/3/7 - сколько нужно) дней от текущего
+            future_races = Race.objects.filter( driver_id=abon.driver.id_driver,
+                                                state=Race.CREATE,
+                                                race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
 
-        # Если текущий рейс из контекста, то удаляем его из выборки будущих рейсов
-        if current_race_id:
-            future_races = future_races.exclude(id_race=current_race_id)
-        # Иначе, если в контексте не содержится номера текущего рейса,
-        # то берём самый ближайший из выборки будущих и так же удаляем его из выборки будущих
-        elif len(future_races):
-            current_race = future_races[0]
-            current_race_id = current_race.id_race
-            future_races = future_races[1:]
+            # Если текущий рейс из контекста, то удаляем его из выборки будущих рейсов
+            if current_race_id:
+                future_races = future_races.exclude(id_race=current_race_id)
+            # Иначе, если в контексте не содержится номера текущего рейса,
+            # то берём самый ближайший из выборки будущих и так же удаляем его из выборки будущих
+            elif len(future_races):
+                current_race = future_races[0]
+                current_race_id = current_race.id_race
+                future_races = future_races[1:]
 
-        # Если выборка будущих рейсов не пуста, то выводим информацию по предстоящим рейсам
-        if len(future_races) != 0 and send:
-            text = u'Предстоящие рейсы для водителя ' + abon.driver.name + u'\n'
-            text += u'<pre>_____________________________________________</pre>\n'
-            text += u'<pre>Номер | Дата             | Машина</pre>\n'
-            text += u'<pre>—————————————————————————————————————————————</pre>\n'
-            for r in future_races:
-                text += u'<pre>' + str(r.id_race).rjust(5, ' ')
-                text += u' | ' + r.race_date.strftime('%d.%m.%Y %H:%M')
-                text += u' | ' + r.car.number + u'</pre>\n'
-            text += u'<pre>—————————————————————————————————————————————</pre>\n'
-            bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')
+            # Если выборка будущих рейсов не пуста, то выводим информацию по предстоящим рейсам
+            if len(future_races) != 0 and send:
+                text = u'Предстоящие рейсы для водителя ' + abon.driver.name + u'\n'
+                text += u'<pre>_____________________________________________</pre>\n'
+                text += u'<pre>Номер | Дата             | Машина</pre>\n'
+                text += u'<pre>—————————————————————————————————————————————</pre>\n'
+                for r in future_races:
+                    text += u'<pre>' + str(r.id_race).rjust(5, ' ')
+                    text += u' | ' + r.race_date.strftime('%d.%m.%Y %H:%M')
+                    text += u' | ' + r.car.number + u'</pre>\n'
+                text += u'<pre>—————————————————————————————————————————————</pre>\n'
+                bot.sendMessage(str(abon.telegram_id), text, parse_mode='HTML')
 
-        if current_race is None and current_race_id != 0:
-            current_race = Race.objects.get(pk=current_race_id)
+            if current_race is None and current_race_id != 0:
+                current_race = Race.objects.get(pk=current_race_id)
 
-        if current_race_id != 0:
-            # Сохраняем номер текущего рейса в контекст
-            if abon.context is None:
-                abon.context = str(current_race_id)
-                abon.save()
-        else:
-            bot.sendMessage(str(abon.telegram_id), u'У вас нет назначенных рейсов.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
+            if current_race_id != 0:
+                # Сохраняем номер текущего рейса в контекст
+                if abon.context is None:
+                    abon.context = str(current_race_id)
+                    abon.save()
+            else:
+                bot.sendMessage(str(abon.telegram_id), u'У вас нет назначенных рейсов.', reply_markup = ReplyKeyboardMarkup(main_keyboard, resize_keyboard=True))
 
 
     def myrace(self, bot, update):
@@ -689,7 +696,14 @@ class AvtrgnBot():
             a.last_seen = timezone.now()
             a.save()
             self.admin_notify(a)
-        return a
+        else:
+            a.last_seen = timezone.now()
+            a.save()
+            
+        if a.active:
+            return a
+        else:
+            return None
 
         
     def admin_notify(self, abonent):
@@ -708,28 +722,30 @@ class AvtrgnBot():
     def statistics(self, bot, update):
         """ Send statistics dialog to abonent """
         a = self.abonent(update)
-        if a.driver is not None:
-            months = ('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь')
-            d = datetime.today()
-            month_now = d.month - 1
-            y1, y2 = d.year, d.year
-            if month_now == 0:
-                month_last = 11
-                y1 = d.year - 1
+        if a:
+            if a.driver:
+                months = ('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь')
+                d = datetime.today()
+                month_now = d.month - 1
+                y1, y2 = d.year, d.year
+                if month_now == 0:
+                    month_last = 11
+                    y1 = d.year - 1
+                else:
+                    month_last = month_now - 1
+                kb = InlineKeyboardMarkup([[InlineKeyboardButton(u'За {} {}'.format(months[month_last], y1), callback_data=r'/stat:'+str(month_last+1)+'.'+str(y1)),
+                                            InlineKeyboardButton(u'За {} {}'.format(months[month_now], y2), callback_data=r'/stat:'+str(month_now+1)+'.'+str(y2))]])    
+                update.message.reply_html(u'Выберите период, за который необходима статистика по выполненным рейсам.', reply_markup=kb)
             else:
-                month_last = month_now - 1
-            kb = InlineKeyboardMarkup([[InlineKeyboardButton(u'За {} {}'.format(months[month_last], y1), callback_data=r'/stat:'+str(month_last+1)+'.'+str(y1)),
-                                        InlineKeyboardButton(u'За {} {}'.format(months[month_now], y2), callback_data=r'/stat:'+str(month_now+1)+'.'+str(y2))]])    
-            update.message.reply_html(u'Выберите период, за который необходима статистика по выполненным рейсам.', reply_markup=kb)
-        else:
-            update.message.reply_html(u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.\n\n')
+                update.message.reply_html(u'Ваш профиль не связан с водителем. Обратитесь к диспетчеру.\n\n')
             
 
     def main(self, bot, update):
         """ Main dispatcher of text messages from abonent """
         a = self.abonent(update)
-        logger.info('Abonent {} state = {} at time = {}'.format(str(a), a.state, time()))
         if a:                    
+            logger.info('Abonent {} state = {} at time = {}'.format(str(a), a.state, time()))
+            
             # Обработка статусов авторизации
             if START in a.state:
                 self.start(a, update)
@@ -766,7 +782,7 @@ class AvtrgnBot():
 
     def get_secret_command(self, bot, update):
         a = self.abonent(update)
-        if a.admin:
+        if a and a.admin:
             data = update.message.text.split(' ')
             abn = Abonent.objects.filter(telegram_nick__iexact=data[1])
             if abn.count() > 0:
