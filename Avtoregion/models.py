@@ -179,7 +179,7 @@ class Car(models.Model):
     has_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s' % self.number
+        return u'%s' % self.number
 
     def get_absolute_url(self):
         return reverse('CarList', kwargs={'pk': self.pk})
@@ -415,3 +415,19 @@ class Abonent(models.Model):
     def new_races(self):
         if self.car is not None:
             return self.car.race_set.filter(state=Race.CREATE, race_date__gte=timezone.now()-timedelta(days=3))
+
+            
+class Log(models.Model):
+    id_log = models.AutoField(primary_key=True)
+    datetime = models.DateTimeField(default=timezone.now, verbose_name='Дата-Время')
+    abonent = models.CharField(max_length=64, null=True, blank=True, verbose_name='Абонент')	
+    driver = models.CharField(max_length=50, null=True, blank=True, verbose_name='Водитель')	
+    method = models.CharField(max_length=64, null=True, blank=True, verbose_name='Метод')	
+    state = models.CharField(max_length=32, null=True, blank=True, verbose_name='Статус')
+    car = models.CharField(max_length=16, null=True, blank=True, verbose_name='Машина')
+    race = models.DecimalField(max_digits=9, decimal_places=0, default=0, null=True, blank=True, verbose_name='Рейс')
+    cdata = models.CharField(max_length=64, null=True, blank=True, verbose_name='Отклик')
+    message = models.TextField(max_length=2048, null=True, blank=True, verbose_name='Сообщение')
+	
+    def __str__(self):
+        return '{} [{}] [{}] [{}] [{}] [{}] [{}] [{}] [{}]'.format(self.id_log, self.datetime.strftime('%d.%m.%Y %H:%M'), self.abonent, self.driver, self.method, self.state, self.car, self.race, self.cdata)
