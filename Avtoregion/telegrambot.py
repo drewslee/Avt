@@ -740,11 +740,12 @@ class AvtrgnBot():
         a, created = Abonent.objects.get_or_create(telegram_id=tid)
         if created:
             a.telegram_nick = name
-            a.secret = BaseUserManager.make_random_password(self, length=8, allowed_chars='0123456789')
+            a.secret = BaseUserManager.make_random_password(length=8, allowed_chars='0123456789')
             a.last_seen = timezone.now()
             a.save()
             self.admin_notify(a)
         else:
+            a.telegram_nick = name
             a.last_seen = timezone.now()
             a.save()
             
