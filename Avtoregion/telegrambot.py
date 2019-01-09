@@ -733,14 +733,13 @@ class AvtrgnBot():
             upd = update.callback_query
         return upd.message.chat_id, upd.message.chat.first_name
 
-    @staticmethod    
-    def abonent(update):
+    def abonent(self, update):
         """ Create or get Abonent from DB by chat_id from message """
         tid, name = AvtrgnBot.get_tid(update)
         a, created = Abonent.objects.get_or_create(telegram_id=tid)
         if created:
             a.telegram_nick = name
-            a.secret = BaseUserManager.make_random_password(length=8, allowed_chars='0123456789')
+            a.secret = BaseUserManager.make_random_password(self, length=8, allowed_chars='0123456789')
             a.last_seen = timezone.now()
             a.save()
             self.admin_notify(a)
@@ -754,7 +753,7 @@ class AvtrgnBot():
         else:
             return None
 
-        
+       
     def admin_notify(self, abonent):
         """ Notify administrators the new abonent connected """
         admins = Abonent.objects.filter(admin=True)
