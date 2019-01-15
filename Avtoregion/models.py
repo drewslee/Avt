@@ -273,8 +273,7 @@ class Race(models.Model):
     shoulder = models.FloatField(default=0)
     count = models.DecimalField(default=1, max_digits=5, decimal_places=0)
     create_time = models.DateTimeField(auto_now=True)
-    price = models.FloatField(default=0)
-    
+    price = models.FloatField(default=0)    
 
     class Meta:
         get_latest_by = 'race_date'

@@ -851,6 +851,8 @@ class AvtrgnBot():
         text += u'<b>Место выгрузки:</b>\n'
         text += u'<pre>{}</pre>\n<pre>{}</pre>\n'.format(race.customer.name, race.get_unload_place)
         text += u'<b>Груз:</b> <pre>{}</pre>\n<b>Цена:</b> <pre>{} руб.</pre>\n'.format(race.product.name, str(race.price))
+        if race.comm is not None:
+            text += u'<b>* Примечание:</b> <pre>{}</pre> <b>*</b>\n'.format(race.comm)            
         text += u'<b>Статус:</b> <pre>{}</pre>\n'.format(race.state)
         if race.s_milage > 0:
             text += u'<b>Одометр на погрузке:</b> <pre>{} км</pre>\n'.format(str(race.s_milage))
