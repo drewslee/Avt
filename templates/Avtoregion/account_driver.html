@@ -21,6 +21,7 @@
                 <th>Конец трека</th>
                 <th>Загружено</th>
                 <th>Выгружено</th>
+                <th>Цена рейса</th>
                 <th>Состояние</th>
                 </thead>
                 <tbody>
@@ -61,6 +62,9 @@
                         </td>
                         <td>
                             {{ q.weight_unload }}{{ q.unit_unload.short_name }}
+                        </td>
+                        <td>
+                            {{ q.price }}
                         </td>
                         <td>
                             {{ q.state }}
