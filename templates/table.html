@@ -51,8 +51,11 @@
 				<th data-field="checkbox" data-checkbox="true"></th>
 				<th data-field="id" data-visible="false"></th>
 				<th data-field="number">#</th>
-				<th data-field="race_date">Выезд</th>
-				<th data-field="arrival_time">Приезд</th>
+			{% if type_prod == 'customer' %}
+				<th data-field="arrival_time">Дата</th>
+			{% else %}
+				<th data-field="race_date">Дата</th>
+			{% endif %}
 				<th data-field="car">Номер машины</th>
 				<th data-field="driver">Водитель</th>
 				<th data-field="weight">Вес</th>
@@ -67,7 +70,6 @@
 				<td></td>
 				<td></td>
 				<td>Всего загружено:</td>
-				<td></td>
 				<td></td>
 				<td></td>
 				<td></td>
@@ -93,8 +95,11 @@
 						<td></td>
 						<td>{{ q.pk }}</td>
 						<td>{{ forloop.counter }}</td>
-						<td>{{ q.race_date|date:"d.m.y" }}</td>
+					{% if type_prod == 'customer' %}
 						<td>{{ q.arrival_time|date:"d.m.y" }}</td>
+					{% else %}
+						<td>{{ q.race_date|date:"d.m.y" }}</td>
+					{% endif %}					
 						<td>{{ q.car }}</td>
 						<td>{{ q.driver.name }}</td>
 						{% if q_weight.weight_load__sum %}

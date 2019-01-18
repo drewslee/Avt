@@ -27,6 +27,9 @@ class Supplier(models.Model):
         verbose_name='ИНН')
     has_deleted = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('name',)
+    
     def __str__(self):
         return '%s' % self.name
 
@@ -86,6 +89,9 @@ class Customer(models.Model):
         verbose_name='ИНН')
     has_deleted = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('name',)
+    
     def __str__(self):
         return '%s' % self.name
 
@@ -109,6 +115,9 @@ class Mediator(models.Model):
         verbose_name='ИНН')
     has_deleted = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('name',)
+    
     def __str__(self):
         return '%s' % self.name
 
@@ -133,7 +142,10 @@ class Driver(models.Model):
         decimal_places=0, max_digits=10, blank=True, default=0)
     date_med = models.DateField(blank=True)
     has_deleted = models.BooleanField(default=False)
-
+    
+    class Meta:
+        ordering = ('name',)
+    
     def __str__(self):
         return '%s' % self.name
 
@@ -149,13 +161,16 @@ class Trailer(models.Model):
         max_digits=10, decimal_places=0, max_length=5, blank=True, default=0)
     has_deleted = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('number',)
+    
     def __str__(self):
         return '%s' % self.number
 
     def get_absolute_url(self):
         return reverse('TrailerList', kwargs={'pk': self.pk})
 
-
+        
 class Car(models.Model):
     id_car = models.AutoField(primary_key=True)
     number = models.CharField(
@@ -277,7 +292,7 @@ class Race(models.Model):
 
     class Meta:
         get_latest_by = 'race_date'
-        ordering = ('race_date',)
+        ordering = ('race_date','arrival_time')
 
     def __str__(self):
         return '%s' % self.id_race

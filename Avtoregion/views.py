@@ -687,7 +687,7 @@ class Accumulate(JSONRequestResponseMixin, View):
 
 class CarResponce(View):
     def get(self, *args, **kwargs):
-        qset = Car.objects.all()
+        qset = sorted(Car.objects.all(), key=lambda n: (int(n.number[2:5])))
         return render(request=self.request, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
 
     def post(self, *args, **kwargs):
@@ -714,13 +714,13 @@ class DriverResponce(View):
 def save_excel(request):
     filename = 'name'
     json_data = json.loads(request.body.decode('utf-8'))
-    json_data = ast.literal_eval(json_data)
+    json_data = ast.literal_eval(json_data)    
     org = json_data.pop('org')
     start_date = json_data.pop('start_date')
     end_date = json_data.pop('end_date')
     response = HttpResponse(content_type='vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename={}.xlsx'.format(filename)
-
+    
     wb = xlsxwriter.Workbook(response, {'in_memory': True})
     ws = wb.add_worksheet(name='List1')
     format = wb.add_format({
@@ -767,7 +767,7 @@ def save_excel(request):
         ws.merge_range('A{}:E{}'.format(row + 1, row + 1), 'ИТОГО:', format)
         ws.write_formula(row, 5, '=SUM(F5:F{})'.format(row), format)
         ws.write_string(row + 2, 0, 'Исполнительный директор ООО "Авторегион"     ___________/Денисов А.Н./')
-
+    
     return response
 
 
