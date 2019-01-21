@@ -445,3 +445,69 @@ class Log(models.Model):
 	
     def __str__(self):
         return '{} [{}] [{}] [{}] [{}] [{}] [{}] [{}] [{}]'.format(self.id_log, self.datetime.strftime('%d.%m.%Y %H:%M'), self.abonent, self.driver, self.method, self.state, self.car, self.race, self.cdata)
+
+        
+class PartType(models.Model):
+    id_parttype = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, verbose_name='Наименование')
+    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
+    
+    def __str__(self):
+        return '{}. {}'.format(str(self.id_parttype), self.name)
+        
+        
+class PartProperty(models.Model):        
+    id_partproperty = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=64, verbose_name='Свойство')
+    parttype = models.ForeignKey(PartType, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
+    
+    
+class Part(models.Model):            
+    id_part = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, verbose_name='Наименование')
+    parttype = models.ForeignKey(PartType, null=True, on_delete=models.SET_NULL)
+    updated = models.DateTimeField(auto_now=True)
+    serial = models.CharField(max_length=128, null=True, blank=True, verbose_name='Серийный номер')
+    extid = models.CharField(max_length=64, null=True, blank=True, verbose_name='Серийный номер')
+    count = models.DecimalField(max_digits=8, decimal_places=0, default=0)
+    
+    def __str__(self):
+        return '{}. {}'.format(str(self.id_part), self.name)
+    
+    
+class PartParam(models.Model):
+    id_partparam = models.AutoField(primary_key=True)
+    property = models.ForeignKey(PartProperty, null=True, on_delete=models.SET_NULL)
+    part = models.ForeignKey(Part, null=True, on_delete=models.SET_NULL)
+    value = models.CharField(max_length=256, null=True, blank=True, verbose_name='Значение свойства')
+    
+    def __str__(self):
+        return '[{}]: {} = {}'.format(self.part.name, self.property.name, self.value)
+
+      
+class MoveType(models.Model):
+    INC, DEC = '+', '-'
+    OPERATION = ((INC, '+'), (DEC, '-'))
+    id_movetype = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=128, verbose_name='Тип перемещения')
+    operator = models.CharField(default=OPERATION[0], choices=OPERATION, max_length=1, verbose_name='Операция')
+    
+    def __str__(self):
+        return '[{}]: {}'.format(self.operator, self.name)
+    
+    
+class Movement(models.Model):
+    id_movement = models.AutoField(primary_key=True)
+    datetime = models.DateTimeField(auto_now=True, verbose_name='Дата-Время')
+    amount = models.DecimalField(max_digits=8, decimal_places=0, default=0, verbose_name='Количество')
+    movetype = models.ForeignKey(MoveType, null=True, on_delete=models.SET_NULL)
+    part = models.ForeignKey(Part, null=True, on_delete=models.SET_NULL)
+    car = models.ForeignKey(Car, null=True, on_delete=models.SET_NULL)
+    driver = models.ForeignKey(Driver, null=True, on_delete=models.SET_NULL)
+    
+    def __str__(self):
+        return '[{}]: {}{} {} -> {} ({})'.format(self.datetime.strftime('%d.%m.%Y %H:%M'), self.movetype.operator, self.amount, self.part.name, self.car.number, self.driver.name)
+    
