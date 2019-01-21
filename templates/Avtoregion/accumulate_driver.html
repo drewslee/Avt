@@ -16,6 +16,18 @@
 
             });
             $(".icon-select").chosenIcon({});
+			$("#allDriversCheck").on('click', function(e) {
+				if ($("#allDriversCheck").is(':checked')) {
+					$('select[name="driver"]').prop('disabled', true).trigger("chosen:updated");
+				} else {
+					$('select[name="driver"]').prop('disabled', false).trigger("chosen:updated");
+				}
+				
+			});
+			$(".btn-cancel").on('click', function(e) {
+				window.location.href = '/Race/';
+				return false;
+			});
         });
     </script>
     <div class="container">
@@ -35,8 +47,17 @@
                     {% endfor %}
                 </select>
               </div>
+              <div class="form-group">
+				<div class="checkbox">
+					<label class="form-check-label" for="allDriversCheck">
+						<input type="checkbox" name="all_drivers" class="form-check-input checkbox" id="allDriversCheck">
+						По всем водителям
+					</label>
+				</div>
+              </div>
                 {% buttons %}
                     <button class="btn btn-sm btn-success"> {% bootstrap_icon "star" %}Сформировать</button>
+                    <button class="btn btn-sm btn-cancel"> {% bootstrap_icon "cancel" %}Отмена</button>
                 {% endbuttons %}
             </form>
       </div>

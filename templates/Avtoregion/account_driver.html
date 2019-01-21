@@ -10,6 +10,7 @@
             <table id="tab" class="table table-hover table-condensed">
                 <thead>
                 <th>#</th>
+                <th>Водитель</th>
                 <th>Дата</th>
                 <th>Номер машины</th>
                 <th>Тип дохода</th>
@@ -29,6 +30,9 @@
                     <tr>
                         <td>
 	                        {{ forloop.counter }}
+                        </td>
+                        <td>
+                            {{ q.driver }}
                         </td>
                         <td>
                             {{ q.race_date }}

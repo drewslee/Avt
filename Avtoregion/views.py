@@ -705,8 +705,12 @@ class DriverResponce(View):
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
-        q_resp = Race.objects.filter(driver__name__exact=self.request.POST.get('driver'),
-                                     race_date__range=[start_date, end_date]).order_by('race_date')
+        all_drivers = self.request.POST.get('all_drivers', False)
+        if all_drivers == 'on':
+            q_resp = Race.objects.filter(race_date__range=[start_date, end_date]).order_by('driver', 'race_date')
+        else:
+            q_resp = Race.objects.filter(driver__name__exact=self.request.POST.get('driver'),
+                                        race_date__range=[start_date, end_date]).order_by('race_date')
         return render(request=self.request, template_name='Avtoregion/account_driver.html',
                       context={'q_resp': q_resp})
 
