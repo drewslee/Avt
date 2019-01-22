@@ -80,6 +80,7 @@
                 <th data-field="unloaded">Выгружено</th>
                 <th data-field="shoulder" data-visible="false">Плечо</th>
                 <th data-field="count" data-visible="false">Кол-во рейсов</th>
+                <th data-field="price" data-visible="true">Цена</th>
                 <th data-field="state" data-cell-style="CellStyle">Состояние</th>
             </tr>
             </thead>
@@ -107,6 +108,7 @@
                         <td>{{ q.weight_unload }}{{ q.unit_unload.short_name }}</td>
 												<td>{{ q.shoulder}}</td>
                         <td>{{ q.count }}</td>
+                        <td>{{ q.price }}</td>
                         <td>{{ q.state }}</td>
                     </tr>
                 {% endfor %}
