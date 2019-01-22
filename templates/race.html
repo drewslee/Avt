@@ -59,6 +59,7 @@
                 <th data-field="checkbox" data-checkbox="true"></th>
 	              <th data-field="id" data-visible="false"></th>
                 <th data-field="number">#</th>
+                <th data-field="race_id">Код</th>
                 <th data-field="date" data-filter-control="input">Дата</th>
                 <th data-tableexport-value="Машина" data-field="car" data-sortable="true" data-filter-control="select">
                     Машина
@@ -91,6 +92,7 @@
                         <td></td>
 	                      <td>{{ q.pk }}</td>
                         <td>{{ forloop.counter }}</td>
+                        <td>{{ q.pk }}</td>
                         <td>{{ q.race_date }}</td>
                         <td>{{ q.car }}</td>
                         <td>{{ q.driver }}</td>
