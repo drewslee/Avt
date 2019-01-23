@@ -227,4 +227,6 @@ class RaceUpdateForm(RaceForm):
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['product'].queryset = Product.objects.all()
         self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False).order_by('name')
-        self.fields['car'].queryset = Car.objects.all()
+        self.fields['car'].queryset = Car.objects.filter(has_deleted=False).annotate(
+            num=ExpressionWrapper(Substr(F('number'),3,3), output_field=DecimalField())).order_by('num')
+        #Car.objects.all()
