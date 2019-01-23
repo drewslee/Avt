@@ -19,6 +19,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.db.models import Sum
+from django.db.models import ExpressionWrapper, F, DecimalField, CharField
+from django.db.models.functions import Substr
 from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.staticfiles import finders
@@ -217,6 +219,10 @@ class CarViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
         kwargs = super().get_context_data(**kwargs)
         kwargs['form'] = CarForm()
         return kwargs
+
+    def get_queryset(self):
+        return super().get_queryset().annotate(
+            num=ExpressionWrapper(Substr(F('number'),3,3), output_field=DecimalField())).order_by('num')
 
 
 class TrailerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
