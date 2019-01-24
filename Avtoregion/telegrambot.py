@@ -155,6 +155,14 @@ def modal_input_decorator(regex=r'^\d+$', confirm_text='confirm', error_text='er
         return decorated
     return decorator
 
+method_list = { 'race_accepted_callback': 'Рейс принят', 
+                'loading_callback': 'Погрузка',
+                'confirm_load_odometer_callback': 'Одометр на погрузке',
+                'confirm_load_weight_callback': 'Загружен',
+                'confirm_unload_odometer_callback': 'Одометр на выгрузке',
+                'confirm_unload_weight_callback': 'Выгружен',
+                'unloading_callback': 'Выгрузка'}    
+    
 def log_decorator(method):
     @wraps(method)
     def wrapper(self, bot, update, *args, **kwargs):
@@ -168,7 +176,24 @@ def log_decorator(method):
         for a in abonents:
             log = Log(abonent=a, driver=a.driver, method=method.__name__, state=a.state, car=a.car, race=a.race_id, cdata=cdata, message=str(upd.message.text))
             log.save()
-        return method(self, bot, update, *args, **kwargs)
+
+        # Calling wrapped method        
+        result = method(self, bot, update, *args, **kwargs)
+        
+        # Sending admin notify for status change
+        if method.__name__ in method_list:
+            admins = Abonent.objects.filter(admin=True)
+            #bot = DjangoTelegramBot.getBot()
+            ab = abonents[0]
+            cd = cdata.split(':')[1]
+            if len(admins) > 0:
+                for a in admins:
+                    result = bot.sendMessage(
+                        str(a.telegram_id),
+                        u'***\n#{}\n{} ({}):\n{} [{}]'.format(str(ab.race_id), ab.driver, ab.car, method_list[method.__name__], str(cd))
+                    )
+                    
+        return result
     return wrapper
     
     
