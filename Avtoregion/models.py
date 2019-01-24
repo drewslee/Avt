@@ -193,6 +193,9 @@ class Car(models.Model):
     mediator = models.ForeignKey(Mediator, blank=True, null=True)
     has_deleted = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ('number',)
+        
     def __str__(self):
         return u'%s' % self.number
 
