@@ -4,8 +4,9 @@
 {% block content %}
     <div class="container-fluid">
         <div class="table-responsive">
-            <table id="tab" class="table table-hover table-condensed">
+            <table id="tab" class="table table-hover table-condensed" data-id-field="id" data-classes="table table-hover table-small-font table-condensed table-no-bordered">
                 <thead>
+				<th data-field="id">Рейс</th>
                 <th>#</th>
                 <th>Дата</th>
                 <th>Номер машины</th>
@@ -29,7 +30,8 @@
                 </thead>
                 <tbody>
                 {% for q in q_resp %}
-                    <tr>
+                    <tr id="{{ q.pk }}">
+	                    <td>{{ q.pk }}</td>
 	                    <td>
 		                    {{ forloop.counter }}
 	                    </td>
@@ -97,4 +99,22 @@
 	        </button>
         </div>
     </div>
+	<script type="application/javascript">
+		$(function ()
+		{
+			var $account = $('#tab');
+			$account.bootstrapTable({
+				showColumns: true,
+				locale: 'ru-RU',
+				pagination: false,
+				showPaginationSwitch: false,
+				cookie: true,
+				cookieIdTable: 'AccumulateCarCookId',
+				onDblClickRow: function (row, $element, field) {
+					window.location.href = '/Race/update/' + row.id + '/';
+				}
+			});
+		})
+</script>
+	
 {% endblock %}
