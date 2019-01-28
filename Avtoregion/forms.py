@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+from django.db.models import ExpressionWrapper, F, DecimalField, CharField
+from django.db.models.functions import Substr
 from django.forms import ModelForm, CharField, TextInput, PasswordInput
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.forms.widgets import SelectDateWidget, DateTimeInput
@@ -183,7 +185,8 @@ class RaceForm(ModelForm):
         self.fields['product'].label = 'Груз'
         self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False).order_by('name')
         self.fields['driver'].label = 'Водитель'
-        self.fields['car'].queryset = Car.objects.filter(has_deleted=False)
+        self.fields['car'].queryset = Car.objects.filter(has_deleted=False).annotate(
+            num=ExpressionWrapper(Substr(F('number'),3,3), output_field=DecimalField())).order_by('num')
         self.fields['car'].label = 'Машина'
 
         self.fields['place_load'].queryset = LoadingPlace.objects.none()
@@ -224,4 +227,6 @@ class RaceUpdateForm(RaceForm):
         self.fields['customer'].queryset = Customer.objects.all()
         self.fields['product'].queryset = Product.objects.all()
         self.fields['driver'].queryset = Driver.objects.filter(has_deleted=False).order_by('name')
-        self.fields['car'].queryset = Car.objects.all()
+        self.fields['car'].queryset = Car.objects.filter(has_deleted=False).annotate(
+            num=ExpressionWrapper(Substr(F('number'),3,3), output_field=DecimalField())).order_by('num')
+        #Car.objects.all()

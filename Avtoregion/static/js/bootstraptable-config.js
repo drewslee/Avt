@@ -69,7 +69,26 @@ $(function ()
         onColumnSearch: function ()
         {
             $abonent_table.bootstrapTable("resetSearch");
-        }
+        },
+        rowStyle: function (row, index)
+        {
+            if ((row.state.trim() === "Рейс" || 
+				 row.state.trim() === "Принято" || 
+				 row.state.trim() === "Погрузка" || 
+				 row.state.trim() === "Загружен" || 
+				 row.state.trim() === "Разгрузка" || 
+				 row.state.trim() === "Разгружен") && 
+			   (row.race.trim() === "Не назначен"))
+            {
+                return {
+                    css: {
+                        "background-color": "Tomato",
+                        "color": "white"
+                    }
+                }
+            }
+            return row
+        }		
     });
 
     $abonent_table.on('check.bs.table', function (event, row, $element)
