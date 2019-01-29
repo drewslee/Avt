@@ -1,59 +1,24 @@
+body {
+  font-size: .875rem;
+}
 .table table {
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
+//    border-top-right-radius: 20px;
+//    border-top-left-radius: 20px;
+//    border-bottom-right-radius: 20px;
+//    border-bottom-left-radius: 20px;
     border-collapse: collapse;
     border-spacing: 0;
 }
 
+/*
 .table th {
-    background: #3c3c3c;
+    background: #6c757d;
     color: white;
     text-shadow: 0 1px 1px #2D2020;
 }
 
+
 .table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#race_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#car_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#supplier_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#customer_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#driver_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#abonent_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#mediator_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#trailer_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#product_table th:first-child {
-    border-top-left-radius: 10px;
-}
-
-#units_table th:first-child {
     border-top-left-radius: 10px;
 }
 
@@ -72,6 +37,7 @@
 .table tr td:last-child {
     border-right: none;
 }
+*/
 
 .table-borderless > tbody > tr > td,
 .table-borderless > tbody > tr > th,
@@ -125,4 +91,14 @@
     -moz-transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     transform: rotate(180deg);
+}
+
+.table-sm .form-control:not(textarea) {
+	height: calc(1.4125rem + 2px);
+	padding: 0 3px;
+	font-size: 100%;
+}
+
+.no-filter-control {
+    height: 28px;
 }

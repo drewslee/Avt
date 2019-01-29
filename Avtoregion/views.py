@@ -118,7 +118,7 @@ class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
 
 class RaceViewList(LoginRequiredMixin, ListView):
     model = Race
-    template_name = 'race.html'
+    template_name = 'race4.html'
     context_object_name = 'qRace'
 
     def get_queryset(self):
