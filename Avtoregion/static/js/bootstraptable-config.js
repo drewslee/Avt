@@ -250,7 +250,7 @@ $(function ()
         onDblClickRow: function (row, $element, field) {
             window.location.href = '/Race/update/' + row.id + '/' ;
         },
-        rowStyle: function (row, index)
+/*        rowStyle: function (row, index)
         {
             if (row.state.trim() === "Авария")
             {
@@ -317,7 +317,7 @@ $(function ()
                 }
             }
             return row
-        },
+        }, */
         onColumnSearch: function ()
         {
             $('#race_table').bootstrapTable("resetSearch");
@@ -326,5 +326,5 @@ $(function ()
         {
             return '<span class="glyphicon glyphicon glyphicon-repeat glyphicon-animate"></span>'
         }
-    });
+    });	
 });

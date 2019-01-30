@@ -1,0 +1,21 @@
+{% extends "index4.html" %}
+{% load bootstrap4 %}
+{% load icons %}
+{% block content %}
+	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+		<h1 class="h2">Изменение объекта #{{ form.instance.pk }}</h1>
+	</div>
+    <div class="container table-responsive">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                {% bootstrap_field field %}
+            {% endfor %}
+            {% buttons %}
+                <button class="btn btn-success"> {% icon "star" %}Обновить</button>
+	            <button href="{{ request.path_info }}" class="btn btn-outline-secondary">{% icon "left-arrow" %}Отмена</button>
+            {% endbuttons %}
+            <input type="hidden" name="previous" value="{{ request.META.HTTP_REFERER }}">
+        </form>
+    </div>
+{% endblock %}

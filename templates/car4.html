@@ -1,0 +1,98 @@
+{% extends "index4.html" %}
+{% load bootstrap4 %}
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+	<h1 class="h2">Справочник машин</h1>
+{% if perms.Avtoregion.change_car %}
+	<div class="btn-toolbar mb-2 mb-md-0" id="toolbar_car">
+	  <div class="btn-group mr-2">
+		<button id="add_car" data-toggle="modal" type="button" class="btn btn-secondary btn-sm"
+				title="Добавить" data-target="#add_car_modal">
+			<i class="fas fa-calendar-plus"></i>
+		</button>
+		<a id="change_car" href="" class="btn btn-secondary btn-sm"
+		   title="Изменить">
+			<i class="fas fa-edit"></i>
+		</a>
+		<button form="delete_car" type="submit" class="btn btn-secondary btn-sm delete-confirmation"
+				title="Удалить">
+			<i class="fas fa-trash-alt"></i>
+		</button>
+	  </div>	
+	  <div class="btn-group mr-2">
+		<button class="btn btn-secondary btn-sm" title="Экспорт в эксель"
+				onclick="$('#car_table').tableExport({type: 'excel', fileName: 'Таблица',
+						ignoreColumn: ['checkbox','id']});">
+			<i class="fas fa-file-excel"></i>
+		</button>	  
+	  </div>
+	</div>
+  </div>
+  
+	<form id="delete_car" action="delete/" method="post">
+		{% csrf_token %}
+		<input class="hidden" type="hidden" name="pk" value="">
+	</form>
+
+	<div class="container-fluid">
+		<div class="table-responsive">
+			<div class="clearfix"></div>
+			{% if qCar %}
+				<table id="car_table" data-toolbar="#toolbar_car" data-search="true" data-click-to-select="true"
+				       data-id-field="id" data-single-select="true"
+				       data-classes="table table-hover table-small-font table-condensed table-no-bordered"
+					   data-buttons-class="sm">
+					<thead>
+					<tr>
+						<th data-field="checkbox" data-checkbox="true"></th>
+						<th data-field="id" data-visible="false">id</th>
+						<th data-field="number">Номер</th>
+						<th data-field="pts">ПТС</th>
+						<th data-field="trailer">Номер прицепа</th>
+						<th data-field="mediator">Посредник</th>
+					</tr>
+					</thead>
+					<tbody>
+					{% for q in qCar %}
+						<tr>
+							<td></td>
+							<td>{{ q.pk }}</td>
+							<td>{{ q.number }}</td>
+							<td>{{ q.pts|default_if_none:'Не заполнен' }}</td>
+							<td>{{ q.trailer|default_if_none:'Нету' }}</td>
+							<td>{{ q.mediator|default_if_none:'Нету' }}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="add_car_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить машину</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add/" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% else %}
+	</div>
+    <div class="container-fluid">
+	Недостаточно прав для работы в модуле "Машины"
+	</div>
+{% endif %}
+{% endblock %}

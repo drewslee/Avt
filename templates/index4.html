@@ -35,7 +35,7 @@
 	{% include 'messages.html' %}
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><i class="fab fa-aviato" style="font-size: 200%"></i>&nbsp;Авторегион</a>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Поиск" aria-label="Search">
+      <input class="form-control form-control-dark w-100" id="global_search" type="text" placeholder="Поиск" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i>&nbsp;Выход</a>
@@ -53,41 +53,119 @@
                   <span data-feather="home"></span>
                   Dashboard 
                 </a>
-              </li>
+              </li>			  
+			  {% if perms.Avtoregion.change_race %}
+			  {% url 'Race' as race_url %}
               <li class="nav-item">
-                <a class="nav-link active" href="{% url 'Race' %}">
-				  <i class="fas fa-shipping-fast"></i>
-                  Рейсы <span class="sr-only">(current)</span>
+                <a class="nav-link {% if request.path == race_url %}active{% endif%}" href="{% url 'Race' %}">
+				  <i class="feather fas fa-shipping-fast"></i>
+                  Рейсы 
                 </a>
               </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_car %}
+			  {% url 'CarList' as car_url %}
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="shopping-cart"></span>
-                  Products
+                <a class="nav-link {% if request.path == car_url %}active{% endif%}" href="{% url 'CarList' %}">
+				  <i class="feather fas fa-truck"></i>
+                  Машины 
                 </a>
               </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_trailer %}
+			  {% url 'TrailerList' as trailer_url %}
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {% if request.path == trailer_url %}active{% endif%}" href="{% url 'TrailerList' %}">
+				  <i class="feather fas fa-truck-loading"></i>
+                  Прицепы
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_driver %}
+			  {% url 'DriverList' as driver_url %}
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == driver_url %}active{% endif%}" href="{% url 'DriverList' %}">
                   <span data-feather="users"></span>
-                  Customers
+                  Водители
                 </a>
               </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_abonent %}
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="bar-chart-2"></span>
-                  Reports
+                <a class="nav-link" href="{% url 'AbonentList' %}">
+				  <i class="feather fas fa-user-astronaut"></i>
+                  Абоненты
                 </a>
               </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_supplier %}
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{% url 'SupplierList' %}">
                   <span data-feather="layers"></span>
-                  Integrations
+                  Поставщики
                 </a>
               </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_cutomer %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'CustomerList' %}">
+                  <span data-feather="layers"></span>
+                  Клиенты
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_mediator %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'MediatorList' %}">
+                  <span data-feather="layers"></span>
+                  Посредники
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_product %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'ProductList' %}">
+                  <span data-feather="package"></span>
+                  Груз
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_part %}
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+				  <i class="feather fas fa-cogs"></i>
+                  Детали
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_movement %}
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+				  <i class="feather fas fa-warehouse"></i>
+                  Склад запчастей
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_units %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'UnitList' %}">
+				  <i class="feather fas fa-pencil-ruler"></i>
+                  Единицы измерения
+                </a>
+              </li>
+			  {% endif %}
+			  {% if perms.Avtoregion.change_constants %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'Constants' %}">
+                  <span data-feather="sliders"></span>
+                  Константы
+                </a>
+              </li>
+			  {% endif %}
             </ul>
 
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>Saved reports</span>
+              <span>Отчеты</span>
               <a class="d-flex align-items-center text-muted" href="#">
                 <span data-feather="plus-circle"></span>
               </a>
@@ -96,32 +174,28 @@
               <li class="nav-item">
                 <a class="nav-link" href="#">
                   <span data-feather="file-text"></span>
-                  Current month
+                  Реестр по рейсам
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">
                   <span data-feather="file-text"></span>
-                  Last quarter
+                  Реестр по машине
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">
                   <span data-feather="file-text"></span>
-                  Social engagement
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <span data-feather="file-text"></span>
-                  Year-end sale
+                  Реестр по водителю
                 </a>
               </li>
             </ul>
           </div>
         </nav>
 
-  	    {% block content %}
+		<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">			
+			{% block content %}
+		</main>		
       </div>
     </div>
 	{% endblock %}

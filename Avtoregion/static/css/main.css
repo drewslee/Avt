@@ -102,3 +102,6 @@ body {
 .no-filter-control {
     height: 28px;
 }
+.bootstrap-table .form-control {
+	visibility: hidden;
+}

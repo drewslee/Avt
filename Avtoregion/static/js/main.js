@@ -440,6 +440,16 @@ $(function ()
     });
 
     $('.dropdown-toggle').dropdown();
+	
+	
+	$('#global_search').keyup(function(){
+		$('.bootstrap-table .table').bootstrapTable("resetSearch", $(this).val());
+	});
+	
+	$('#global_search')[0].value = $('.bootstrap-table .table')[0].value;
+	$('#global_search').keyup();
+/*	$('.bootstrap-table .table').bootstrapTable("resetSearch", ""); */
+		
 });
 
 

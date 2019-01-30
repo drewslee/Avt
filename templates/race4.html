@@ -1,10 +1,10 @@
 {% extends "index4.html" %}
 {% load staticfiles %}
 {% block content %}
-<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 	<h1 class="h2">Текущие рейсы</h1>
-	<div class="btn-toolbar mb-2 mb-md-0">
+{% if perms.Avtoregion.change_race %}
+	<div class="btn-toolbar mb-2 mb-md-0" id="race_toolbar">
 	  <div class="btn-group mr-2">
 		<a id="add_race" href="{% url 'RaceCreate' %}"
 		   class="btn btn-secondary btn-sm" title="Добавить рейс">
@@ -12,12 +12,12 @@
 		<button id="change_race" href="" class="btn btn-secondary btn-sm"
 		   title="Изменить рейс">
 		   <i class="fas fa-edit"></i></button>
-		<button id="delete_race" data-url="{% url 'RaceDelete' %}" class="btn btn-secondary btn-sm"
-		   title="Удалить рейс">
-		   <i class="fas fa-trash-alt"></i></button>
 		<button id="update_state_from_race" data-url="{% url 'RaceUpdateAjax' %}"  class="btn btn-secondary btn-sm"
 		   title="Обновить статус">
 		   <i class="fas fa-bookmark"></i></button>
+		<button id="delete_race" data-url="{% url 'RaceDelete' %}" class="btn btn-secondary btn-sm"
+		   title="Удалить рейс">
+		   <i class="fas fa-trash-alt"></i></button>
 	  </div>
 	  <div class="btn-group mr-2">
 			<button id="packing_list" type="submit" class="btn btn-secondary btn-sm"
@@ -45,9 +45,10 @@
 	  
 	</div>
   </div>
+  
     <div class="container-fluid">
-        <table id="race_table" data-toolbar="#toolbar" data-id-field="id" data-filter-show-clear="true"
-               data-toggle="table" data-search="false" data-filter-control="true" data-buttons-align="right"
+        <table id="race_table" data-toolbar="#race_toolbar" data-id-field="id" data-filter-show-clear="true"
+               data-toggle="table" data-search="true" data-filter-control="true" data-buttons-align="right"
                data-click-to-select="false" data-side-pagination="client" data-search-align="right"
                data-show-toggle="true"
                data-classes="table table-sm table-hover table-small-font table-condensed table-no-bordered input-group-sm"
@@ -55,16 +56,15 @@
             <thead class="small">
             <tr>
                 <th data-field="checkbox" data-checkbox="true"></th>
-	              <th data-field="id" data-visible="false"></th>
+                <th data-field="id" data-visible="true">Код</th>
                 <th data-field="number">#</th>
-                <th data-field="race_id">Код</th>
+                <th data-field="state" data-formatter="stateFormatter">Статус</th>
                 <th data-field="date" data-filter-control="input">Дата</th>
                 <th data-tableexport-value="Машина" data-field="car" data-sortable="true" data-filter-control="select">
                     Машина
                 </th>
                 <th data-tableexport-value="Водитель" data-field="driver" data-sortable="true"
-                    data-filter-control="select">Водитель
-                </th>
+                    data-filter-control="select">Водитель</th>
                 <th data-field="operation">Операция</th>
                 <th data-field="supplier" data-sortable="true" data-filter-control="select">Поставщик</th>
                 <th data-field="customer" data-sortable="true" data-filter-control="select">Клиент</th>
@@ -79,8 +79,7 @@
                 <th data-field="unloaded">Выгружено</th>
                 <th data-field="shoulder" data-visible="false">Плечо</th>
                 <th data-field="count" data-visible="false">Кол-во рейсов</th>
-                <th data-field="price" data-visible="true">Цена</th>
-                <th data-field="state" data-cell-style="CellStyle">Состояние</th>
+                <th data-field="price" data-visible="true" data-cell-style="CellStyle">Цена</th>
             </tr>
             </thead>
             <tbody>
@@ -90,8 +89,8 @@
                         <td></td>
                         <td>{{ q.pk }}</td>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ q.pk }}</td>
-                        <td>{{ q.race_date }}</td>
+                        <td>{{ q.state }}</td>
+                        <td>{{ q.race_date|date:"d.m.Y H:i" }}</td>
                         <td>{{ q.car }}</td>
                         <td>{{ q.driver }}</td>
                         <td>{{ q.type_ship }}</td>
@@ -109,13 +108,33 @@
 												<td>{{ q.shoulder}}</td>
                         <td>{{ q.count }}</td>
                         <td>{{ q.price }}</td>
-                        <td>{{ q.state }}</td>
                     </tr>
                 {% endfor %}
             {% endif %}
             </tbody>
         </table>
     </div>
+	<script>
+		function stateFormatter(value, row) {
+			var icons = {
+				"Создан": "far fa-file", 
+				"Принят": "fas fa-file",
+				"Загружен": "fas fa-file-download",
+				"Выгружен": "fas fa-file-upload",
+				"Закончен": "fas fa-clipboard-list",
+				"Проведен": "fas fa-clipboard-check",
+				"Авария": "fas fa-exclamation-circle"	}
+			var colors = {
+				"Создан": "darkslategray", 
+				"Принят": "yellowgreen",
+				"Загружен": "deepskyblue",
+				"Выгружен": "Teal",
+				"Закончен": "MediumSeaGreen",
+				"Проведен": "Orange",
+				"Авария": "Tomato"	}
+			return '<i class="' + icons[value] + '" alt="' + value + '" title="' + value + '" style="font-size: 180%; color: ' + colors[value] + '"></i> '
+		}	
+	</script>
 
 
     <div id="ModalUpdate" class="modal fade">
@@ -211,7 +230,11 @@
 
         </div>
     </div>
-    </div>
-</main>		
+{% else %}
+	</div>
+    <div class="container-fluid">
+	Недостаточно прав для работы в модуле "Рейсы"
+	</div>
+{% endif %}
+  </div>
 {% endblock %}
-

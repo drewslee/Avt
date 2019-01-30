@@ -1,0 +1,86 @@
+{% extends "index.html" %}
+{% load bootstrap3 %}
+{% block content %}
+
+	<form id="delete_trailer" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
+	<div class="container-fluid">
+	<div class="table-responsive">
+		<div class="clearfix"></div>
+		<div id="toolbar_trailer" class="btn-toolbar" role="toolbar">
+			<div class="btn-group">
+				<a href="{% url 'Race' %}" class="btn btn-default" title="Текущие рейсы">
+					<i class="glyphicon glyphicon-blackboard"></i></a>
+				{% include "dropdownmenu.html" %}
+				<button id="add_trailer" data-toggle="modal" type="button" class="btn btn-default"
+				        title="Добавить" data-target="#add_trailer_modal">
+					<i class="glyphicon glyphicon-plus-sign"></i>
+				</button>
+				<a id="change_trailer" href="" class="btn btn-default"
+				   title="Изменить">
+					<i class="glyphicon glyphicon-edit"></i>
+				</a>
+
+				<button form="delete_trailer" type="submit" class="btn btn-default delete-confirmation" title="Удалить">
+					<i class="glyphicon glyphicon-floppy-remove"></i>
+				</button>
+
+				<button class="btn btn-default" title="Экспорт в эксель"
+				        onclick="$('#trailer_table').tableExport({type: 'excel', fileName: 'Таблица',
+                                    ignoreColumn: ['checkbox','id']});">
+					<i class="glyphicon glyphicon-export"></i>
+				</button>
+
+			</div>
+		</div>
+		<table id="trailer_table" data-toolbar="#toolbar_trailer" data-search="true" data-click-to-select="true"
+		       data-id-field="id" data-single-select="true"
+		       data-classes="table table-hover table-small-font table-condensed table-no-bordered">
+			<thead>
+			<th data-field="checkbox" data-checkbox="true"></th>
+			<th data-field="id" data-visible="false">id</th>
+			<th data-field="number">Номер прицепа</th>
+			<th data-field="brand_trailer">Марка</th>
+			<th data-field="garage_number_trailer">Гаражный номер</th>
+			</thead>
+			<tbody>
+			{% if qTrailer %}
+				{% for q in qTrailer %}
+					<tr>
+						<td></td>
+						<td>{{ q.pk }}</td>
+						<td>{{ q.number }}</td>
+						<td>{{ q.brand_trailer }}</td>
+						<td>{{ q.garage_number_trailer }}</td>
+					</tr>
+				{% endfor %}
+			{% endif %}
+			</tbody>
+		</table>
+	</div>
+	</div>
+
+	<div class="container">
+		<div id="add_trailer_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить </p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add/" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

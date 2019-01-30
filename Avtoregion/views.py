@@ -92,7 +92,7 @@ class AliveListViewMixin:
 
 class ConstantsViewList(PermissionRequiredMixin, FormMixin, ListView):
     model = Constants
-    template_name = 'Avtoregion/update_form.html'
+    template_name = 'Avtoregion/update_form4.html'
     permission_required = ('Avtoregion.change_constants',)
     context_object_name = 'qConstants'
 
@@ -161,7 +161,7 @@ class RaceViewList(LoginRequiredMixin, ListView):
 class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
     model = Race
     form_class = RaceForm
-    template_name = 'Avtoregion/race_form.html'
+    template_name = 'Avtoregion/race_form4.html'
     success_url = reverse_lazy('RaceCreate')
     permission_required = ('Avtoregion.add_race',)
 
@@ -169,7 +169,7 @@ class RaceCreate(SuccessMessageMixin, PermissionRequiredMixin, CreateView):
 class RaceUpdate(SuccessMessageMixin, PermissionRequiredMixin, UpdateView):
     model = Race
     form_class = RaceUpdateForm
-    template_name = 'Avtoregion/race_update_form.html'
+    template_name = 'Avtoregion/race_update_form4.html'
     success_message = "Рейс обновлён успешно"
     permission_required = ('Avtoregion.change_race',)
 
@@ -212,7 +212,7 @@ class RaceDelete(PermissionRequiredMixin, JSONRequestResponseMixin, View):
 
 class CarViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Car
-    template_name = 'car.html'
+    template_name = 'car4.html'
     context_object_name = 'qCar'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -227,7 +227,7 @@ class CarViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class TrailerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Trailer
-    template_name = 'trailer.html'
+    template_name = 'trailer4.html'
     context_object_name = 'qTrailer'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -238,7 +238,7 @@ class TrailerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class UnitsViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Units
-    template_name = 'units.html'
+    template_name = 'units4.html'
     context_object_name = 'qUnits'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -249,7 +249,7 @@ class UnitsViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class DriverViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Driver
-    template_name = 'driver.html'
+    template_name = 'driver4.html'
     context_object_name = 'qDriver'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -260,7 +260,7 @@ class DriverViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
         
 class AbonentViewList(LoginRequiredMixin, ListView):
     model = Abonent
-    template_name = 'abonent.html'
+    template_name = 'abonent4.html'
     context_object_name = 'qAbonent'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -271,7 +271,7 @@ class AbonentViewList(LoginRequiredMixin, ListView):
 
 class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Product
-    template_name = 'product.html'
+    template_name = 'product4.html'
     context_object_name = 'qProduct'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -282,7 +282,7 @@ class ProductViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class CustomerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Customer
-    template_name = 'customer.html'
+    template_name = 'customer4.html'
     context_object_name = 'qCustomer'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -293,7 +293,7 @@ class CustomerViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class SupplierViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Supplier
-    template_name = 'supplier.html'
+    template_name = 'supplier4.html'
     context_object_name = 'qSupplier'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -304,7 +304,7 @@ class SupplierViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
 
 class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
     model = Shipment
-    template_name = 'shipment.html'
+    template_name = 'shipment4.html'
 
     def get(self, *args, **kwargs):
         context = {}
@@ -317,7 +317,7 @@ class ShipmentViewList(LoginRequiredMixin, AliveListViewMixin, View):
 
 class LoadPlaceViewList(LoginRequiredMixin, AliveListViewMixin, View):
     model = LoadingPlace
-    template_name = 'loadplace.html'
+    template_name = 'loadplace4.html'
 
     def get(self, *args, **kwargs):
         context = {}
@@ -330,7 +330,7 @@ class LoadPlaceViewList(LoginRequiredMixin, AliveListViewMixin, View):
 
 class MediatorViewList(LoginRequiredMixin, AliveListViewMixin, ListView):
     model = Mediator
-    template_name = 'mediator.html'
+    template_name = 'mediator4.html'
     context_object_name = 'qMediator'
 
     def get_context_data(self, object_list=None, **kwargs):
@@ -585,7 +585,7 @@ class Accumulate(JSONRequestResponseMixin, View):
         context = {'q_sup': q_sup, 'q_cus': q_cus, 'q_med': q_med, 'q_prod': q_prod,
                    'race_type': (Race.TYPE[0][0], Race.TYPE[1][0]),
                    'state': state, 'select_state': select_state}
-        return render(request=self.request, template_name='Avtoregion/account.html', context=context)
+        return render(request=self.request, template_name='Avtoregion/account4.html', context=context)
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request_json.get('daterange'))
@@ -604,7 +604,7 @@ class Accumulate(JSONRequestResponseMixin, View):
             except AttributeError:
                 print('Method not exist!')
 
-        table = render_to_string(template_name='table.html',
+        table = render_to_string(template_name='table4.html',
                                  context={'q_resp': q_resp, 'q_weight': q_weight, 'type_prod': name_type,
                                           'start_date': start_date, 'end_date': end_date - timedelta(days=1)
                                           })
@@ -694,20 +694,20 @@ class Accumulate(JSONRequestResponseMixin, View):
 class CarResponce(View):
     def get(self, *args, **kwargs):
         qset = sorted(Car.objects.all(), key=lambda n: (int(n.number[2:5])))
-        return render(request=self.request, template_name='Avtoregion/accumulate_car.html', context={'qset': qset})
+        return render(request=self.request, template_name='Avtoregion/accumulate_car4.html', context={'qset': qset})
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
         q_resp = Race.objects.filter(car__number__exact=self.request.POST.get('car'),
                                      race_date__range=[start_date, end_date]).order_by('race_date')
-        return render(request=self.request, template_name='Avtoregion/account_car.html',
+        return render(request=self.request, template_name='Avtoregion/account_car4.html',
                       context={'q_resp': q_resp})
 
 
 class DriverResponce(View):
     def get(self, *args, **kwargs):
         qset = Driver.objects.all().order_by('name')
-        return render(request=self.request, template_name='Avtoregion/accumulate_driver.html', context={'qset': qset})
+        return render(request=self.request, template_name='Avtoregion/accumulate_driver4.html', context={'qset': qset})
 
     def post(self, *args, **kwargs):
         start_date, end_date = datestr_to_dateaware(self.request.POST['daterange'])
@@ -717,7 +717,7 @@ class DriverResponce(View):
         else:
             q_resp = Race.objects.filter(driver__name__exact=self.request.POST.get('driver'),
                                         race_date__range=[start_date, end_date]).order_by('race_date')
-        return render(request=self.request, template_name='Avtoregion/account_driver.html',
+        return render(request=self.request, template_name='Avtoregion/account_driver4.html',
                       context={'q_resp': q_resp})
 
 
@@ -857,7 +857,7 @@ class PackingView(JSONRequestResponseMixin, View):
         with ZipFile(zipfilename, 'w') as myzip:
             for path in files['paths']:
                 myzip.write(path, os.path.basename(path))
-        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': files['urls'],
+        templated = render_to_string(template_name='Avtoregion/result_list4.html', context={'urls': files['urls'],
                                                                                            'filenames': files[
                                                                                                'filenames'],
                                                                                            'zipfilename': urlzipfile,
@@ -883,7 +883,7 @@ class WayView(JSONRequestResponseMixin, View):
         with ZipFile(zipfilename, 'w') as myzip:
             for path in files['paths']:
                 myzip.write(path, os.path.basename(path))
-        templated = render_to_string(template_name='Avtoregion/result_list.html', context={'urls': files['urls'],
+        templated = render_to_string(template_name='Avtoregion/result_list4.html', context={'urls': files['urls'],
                                                                                            'filenames': files[
                                                                                                'filenames'],
                                                                                            'zipfilename': urlzipfile,

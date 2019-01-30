@@ -1,0 +1,92 @@
+{% extends "index4.html" %}
+{% load bootstrap4 %}
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+	<h1 class="h2">Справочник водителей</h1>
+{% if perms.Avtoregion.change_driver %}
+	<div class="btn-toolbar mb-2 mb-md-0" id="toolbar_driver">
+	  <div class="btn-group mr-2">
+		<button id="add_driver" data-toggle="modal" type="button" class="btn btn-secondary btn-sm"
+				title="Добавить" data-target="#add_driver_modal">
+			<i class="fas fa-calendar-plus"></i>
+		</button>
+		<a id="change_driver" href="" class="btn btn-secondary btn-sm"
+		   title="Изменить">
+			<i class="fas fa-edit"></i>
+		</a>
+		<button form="delete_driver" type="submit" class="btn btn-secondary btn-sm delete-confirmation" title="Удалить">
+			<i class="fas fa-trash-alt"></i>
+		</button>
+	  </div>	
+	  <div class="btn-group mr-2">
+		<button class="btn btn-secondary btn-sm" title="Экспорт в эксель"
+				onclick="$('#driver_table').tableExport({type: 'excel', fileName: 'Таблица',
+					ignoreColumn: ['checkbox','id']});">
+			<i class="fas fa-file-excel"></i>
+		</button>
+	  </div>
+	</div>
+  </div>
+  
+	<form id="delete_driver" action="delete/" method="post" class="">
+		{% csrf_token %}
+		<input type="hidden" name="pk" value="">
+	</form>
+
+    <div class="container-fluid">
+            <div class="table-responsive">
+                <div class="clearfix"></div>
+                <table id="driver_table" data-toolbar="#toolbar_driver" data-search="true" data-click-to-select="true"
+                       data-id-field="id" data-single-select="true"
+                       data-classes="table table-hover table-small-font table-condensed table-no-bordered"
+					   data-buttons-class="sm" data-search-text="тест">
+                    <thead>
+                        <th data-field="checkbox" data-checkbox="true"></th>
+                        <th data-field="id" data-visible="false">id</th>
+                        <th data-field="name">ФИО Водителя</th>
+                        <th data-field="personnel_number">Табельный номер</th>
+                        <th data-field="driver_card">Удостоверение</th>
+                    </thead>
+                    <tbody>
+                    {% if qDriver %}
+                    {% for q in qDriver %}
+                        <tr>
+                            <td></td>
+                            <td>{{ q.pk }}</td>
+                            <td>{{ q.name }}</td>
+                            <td>{{ q.personnel_number|default_if_none:'Не назначен' }}</td>
+                            <td>{{ q.driver_card|default_if_none:'Не назначен' }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+	<div class="container">
+		<div id="add_driver_modal" class="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<b><p class="text-center">Добавить водителя</p></b>
+					</div>
+					<div class="modal-body">
+						<form action="add/" method="post" class="modal-form" role="form">
+							{% csrf_token %}
+							{% for field in form %}
+								{% bootstrap_field field %}
+							{% endfor %}
+							<button class="btn btn-success">Добавить</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% else %}
+	</div>
+    <div class="container-fluid">
+	Недостаточно прав для работы в модуле "Машины"
+	</div>
+{% endif %}
+{% endblock %}
