@@ -12,6 +12,9 @@
 		<button id="change_race" href="" class="btn btn-secondary btn-sm"
 		   title="Изменить рейс">
 		   <i class="fas fa-edit"></i></button>
+		<button id="copy_race" data-url="{% url 'RaceCopyAjax' %}" class="btn btn-secondary btn-sm"
+		   title="Копировать рейс">
+		   <i class="fas fa-copy"></i></button>
 		<button id="update_state_from_race" data-url="{% url 'RaceUpdateAjax' %}"  class="btn btn-secondary btn-sm"
 		   title="Обновить статус">
 		   <i class="fas fa-bookmark"></i></button>
@@ -47,17 +50,17 @@
   </div>
   
     <div class="container-fluid">
-        <table id="race_table" data-toolbar="#race_toolbar" data-id-field="id" data-filter-show-clear="true"
+        <table id="race_table" class="data-table" data-toolbar="#race_toolbar" data-id-field="id" data-filter-show-clear="false"
                data-toggle="table" data-search="true" data-filter-control="true" data-buttons-align="right"
                data-click-to-select="false" data-side-pagination="client" data-search-align="right"
                data-show-toggle="true"
                data-classes="table table-sm table-hover table-small-font table-condensed table-no-bordered input-group-sm"
-			   data-buttons-class="sm">
+			   data-buttons-class="secondary btn-sm">
             <thead class="small">
             <tr>
                 <th data-field="checkbox" data-checkbox="true"></th>
                 <th data-field="id" data-visible="true">Код</th>
-                <th data-field="number">#</th>
+                <!-- <th data-field="number">#</th> //-->
                 <th data-field="state" data-formatter="stateFormatter">Статус</th>
                 <th data-field="date" data-filter-control="input">Дата</th>
                 <th data-tableexport-value="Машина" data-field="car" data-sortable="true" data-filter-control="select">
@@ -88,7 +91,7 @@
                     <tr id="{{ q.pk }}">
                         <td></td>
                         <td>{{ q.pk }}</td>
-                        <td>{{ forloop.counter }}</td>
+                        <!-- <td>{{ forloop.counter }}</td> //-->
                         <td>{{ q.state }}</td>
                         <td>{{ q.race_date|date:"d.m.Y H:i" }}</td>
                         <td>{{ q.car }}</td>
@@ -141,14 +144,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+					<h1 class="h2"><i class="fas fa-exclamation text-primary"></i>&nbsp;Подтверждение</h1>				
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Подтверждение</h4>
                 </div>
                 <div id="modal-body-state" class="modal-body">
                     <p>Вы хотите обновить все выбранные статусы?</p>
-                    <p class="text-warning">
-                        <small>Подумайте, перед обновлением ;).</small>
-                    </p>
+                    <b class="text-danger">Подумайте, перед обновлением ;)</b>
                 </div>
                 <div class="modal-footer">
                     <select id="status_select" class="btn btn-success" name="state" required>
@@ -157,7 +158,7 @@
                         {% endfor %}
                     </select>
                     <button id="update_state_ok" class="btn btn-primary">Обновить</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
                     <input type="hidden" name="next" value="{{ request.path }}">
                 </div>
             </div>
@@ -169,8 +170,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+					<h1 class="h2"><i class="fas fa-exclamation text-primary"></i>&nbsp;Скачивание</h1>				
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Подтверждение</h4>
                 </div>
                 <div class="modal-body">
                     <div class="list-group">
@@ -180,7 +181,7 @@
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
                 </div>
             </div>
         </div>
@@ -191,8 +192,8 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+					<h1 class="h2"><i class="fas fa-exclamation text-primary"></i>&nbsp;Скачивание</h1>				
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Подтверждение</h4>
                 </div>
                 <div class="modal-body">
                     <div class="list-group">
@@ -202,7 +203,7 @@
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" name="next" value="{{ request.path }}">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
                 </div>
             </div>
         </div>
@@ -211,25 +212,39 @@
 
     <div id="ModalMessage" class="modal fade">
         <div class="modal-dialog">
-
             <div class="modal-content">
-
                 <div class="modal-header">
+					<h1 class="h2"><i class="fas fa-exclamation-circle text-danger"></i>&nbsp;Удаление рейсов</h1>				
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Удаление рейсов</h4>
                 </div>
-
                 <div id="id_modal_message" class="modal-body">
                 </div>
-
                 <div class="modal-footer">
-                    <button id="delete_race_ok" type="button" class="btn btn-success">Да</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Нет</button>
+                    <button id="delete_race_ok" type="button" class="btn btn-danger">Да</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Нет</button>
                 </div>
             </div>
 
         </div>
     </div>
+	
+    <div id="ModalMessageBox" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+					<h1 class="h2"><i class="fas fa-exclamation-triangle text-warning"></i>&nbsp;Предупреждение</h1>				
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div id="id_modal_message_box" class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+	
 {% else %}
 	</div>
     <div class="container-fluid">

@@ -2,28 +2,20 @@
 <div class="container">
 	<div class="table-responsive">
 		<div class="clearfix"></div>
-		<div id="toolbar_counting" role="toolbar">
-			<div class="form-inline">
-				<div class="btn-group">
-					<a href="{% url 'Race' %}" class="btn btn-default" title="Текущие рейсы">
-						<i class="glyphicon glyphicon-blackboard"></i></a>
-					{% include "dropdownmenu.html" %}
-					<a id="change_race" type="button" href="" class="btn btn-default"
-					   title="Изменить рейс"><i
-							class="glyphicon glyphicon-edit"></i></a>
-					<button id="update_state" data-url="{% url 'RaceUpdateAjax' %}"
-					        class="btn btn-default"
-					        title="Обновить статус"><i class="glyphicon glyphicon-bookmark"></i></button>
-					<a class="btn btn-default" href="{% url 'logout' %}" title="Выход">
-						<i class="glyphicon glyphicon-arrow-right"></i>
-					</a>
-				</div>
+		<div class="btn-toolbar mb-2 mb-md-0" id="toolbar_counting" role="toolbar">
+			<div class="btn-group mr-2">
+				<button id="change_race" href="" class="btn btn-secondary btn-sm"
+				   title="Изменить рейс">
+				   <i class="fas fa-edit"></i></button>
+				<button id="update_state_from_race" data-url="{% url 'RaceUpdateAjax' %}"  class="btn btn-secondary btn-sm"
+				   title="Обновить статус">
+				   <i class="fas fa-bookmark"></i></button>
 			</div>
 		</div>
 	</div>
 	<div class="table-responsive">
 		<table id="tab" class="data-table" data-toolbar="#toolbar_counting" data-id-field="id"
-                   data-toggle="table"
+                   data-toggle="table" data-search="true"
                    data-click-to-select="false" data-side-pagination="client"
                    data-classes="table table-sm table-hover table-small-font table-condensed table-no-bordered"
 				   data-buttons-class="secondary btn-sm">

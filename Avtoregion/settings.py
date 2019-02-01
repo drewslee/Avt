@@ -14,6 +14,8 @@ import os
 import hashlib
 import logging
 from envconf import Env
+import pytz
+from django.utils import timezone
 
 
 env = Env(DEBUG=(bool, False))
@@ -127,14 +129,12 @@ LOGIN_REDIRECT_URL = '/Race'
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'ru-RU'
-
 TIME_ZONE = 'Asia/Yekaterinburg'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
+
+timezone.activate(pytz.timezone(TIME_ZONE))
 
 
 def md5sum(filename):

@@ -238,7 +238,7 @@ class AvtrgnBot():
         self.send(str(abonent.telegram_id), msg)    # Отправляем сообщение
         abonent.state = next_state                  # Присваиваем следующий статус
         abonent.auth_try += try_increment
-        abonent.last_seen = timezone.now()
+        abonent.last_seen = timezone.localtime()
         if reset_auth_car:
             abonent.context = None          # Сбрасываем контекст
         abonent.save()
@@ -294,7 +294,7 @@ class AvtrgnBot():
         if abon.car is None:
             abon.state = START
             abon.auth_try = 0
-            abon.last_seen = timezone.now()
+            abon.last_seen = timezone.localtime()
             abon.save()
             self.move_auth(abon)
 
@@ -348,7 +348,7 @@ class AvtrgnBot():
                     a.save()
 
                     # Сохраняем в рейсе дату принятия
-                    race.race_date = timezone.now()
+                    race.race_date = timezone.localtime()
                     race.state = Race.ACCEPTED
                     race.save()
 
@@ -515,7 +515,7 @@ class AvtrgnBot():
         if a:
             a.race.weight_unload = int(data) / 1000
             a.race.state = Race.UNLOAD
-            a.race.arrival_time = timezone.now()
+            a.race.arrival_time = timezone.localtime()
             a.race.shoulder = a.race.e_milage - a.race.s_milage
             a.race.save()
             race_id = a.race.id_race
@@ -665,7 +665,7 @@ class AvtrgnBot():
                 # и не позднее RACE_DATE_RANGE от текущей даты
                 all = Race.objects.filter(driver_id=abon.driver.id_driver,
                                           state=Race.CREATE,
-                                          race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
+                                          race_date__gte=timezone.localtime()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
                 if len(all) > 0:
                     r = all[0]
                     r_id = r.id_race
@@ -709,7 +709,7 @@ class AvtrgnBot():
             # Выбираем будущие рейсы в статусе "Создан" и с датой начала не ранее X (2/3/7 - сколько нужно) дней от текущего
             future_races = Race.objects.filter( driver_id=abon.driver.id_driver,
                                                 state=Race.CREATE,
-                                                race_date__gte=timezone.now()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
+                                                race_date__gte=timezone.localtime()-timedelta(days=RACE_DATE_RANGE)).order_by('race_date')
 
             # Если текущий рейс из контекста, то удаляем его из выборки будущих рейсов
             if current_race_id:
@@ -765,12 +765,12 @@ class AvtrgnBot():
         if created:
             a.telegram_nick = name
             a.secret = BaseUserManager.make_random_password(self, length=8, allowed_chars='0123456789')
-            a.last_seen = timezone.now()
+            a.last_seen = timezone.localtime()
             a.save()
             self.admin_notify(a)
         else:
             a.telegram_nick = name
-            a.last_seen = timezone.now()
+            a.last_seen = timezone.localtime()
             a.save()
             
         if a.active:

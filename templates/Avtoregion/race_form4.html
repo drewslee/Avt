@@ -17,9 +17,10 @@
                 {% bootstrap_field field %}
             {% endfor %}
             {% buttons %}
-                <button class="btn btn-success"> {% icon "star" %} Добавить</button>
-		            <button type="button" id="reserv_add_race" onclick="reserv()" class="btn btn-default">Сохранить</button>
-		            <button type="button" id="reestablish_add_race" onclick="reestablish()" class="btn btn-info">Восстановить</button>
+                <button class="btn btn-success">{% icon "star" %}&nbsp;Добавить</button>
+		            <button type="button" id="reserv_add_race" onclick="reserv()" class="btn btn-outline-secondary">Сохранить</button>
+		            <button type="button" id="reestablish_add_race" onclick="reestablish()" class="btn btn-outline-secondary">Восстановить</button>
+					<button href="{{ request.path_info }}" class="btn btn-outline-secondary">Отмена</button>
             {% endbuttons %}
         </form>
 			</div>

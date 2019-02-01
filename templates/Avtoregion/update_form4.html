@@ -12,8 +12,8 @@
                 {% bootstrap_field field %}
             {% endfor %}
             {% buttons %}
-                <button class="btn btn-success"> {% icon "star" %}Обновить</button>
-	            <button href="{{ request.path_info }}" class="btn btn-outline-secondary">{% icon "left-arrow" %}Отмена</button>
+                <button class="btn btn-success">{% icon "star" %}&nbsp;Обновить</button>
+	            <button href="{{ request.path_info }}" class="btn btn-outline-secondary">Отмена</button>
             {% endbuttons %}
             <input type="hidden" name="previous" value="{{ request.META.HTTP_REFERER }}">
         </form>

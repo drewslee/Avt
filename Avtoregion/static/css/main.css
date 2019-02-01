@@ -77,7 +77,7 @@ body {
 }
 
 .calendar-shift {
-    bottom: 1px;
+    /* bottom: 1px;*/
 }
 
 .rotate {
@@ -102,6 +102,6 @@ body {
 .no-filter-control {
     height: 28px;
 }
-.bootstrap-table .form-control {
+.bootstrap-table .search>.form-control {
 	visibility: hidden;
 }

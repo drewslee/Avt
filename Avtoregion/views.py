@@ -325,6 +325,7 @@ class LoadPlaceViewList(LoginRequiredMixin, AliveListViewMixin, View):
         context['qLoadplace'] = self.model.objects.filter(supplier=supplier, has_deleted=False)
         context['form'] = LoadForm(initial={'supplier': supplier})
         context['supplier'] = supplier
+        context['supplier_name'] = Supplier.objects.get(pk=supplier).name
         return render(self.request, self.template_name, context)
 
 
@@ -838,6 +839,30 @@ class AjaxUpdateState(JSONRequestResponseMixin, View):
         return self.render_json_response({'data': 'success'})
 
 
+class AjaxCopyRace(JSONRequestResponseMixin, View):
+    require_json = True
+    model = Race
+
+    def post(self, request, *args, **kwargs):
+        ids = self.request_json.get('id_list')
+        if ids:
+            for id in ids:
+                races = self.model.objects.filter(pk=int(id))
+                for race in races:
+                    print(race)
+                    race.pk = None
+                    race.state = Race.CREATE
+                    race.race_date = timezone.datetime.now()
+                    race.arrival_time = race.race_date + timedelta(hours=1)
+                    race.s_milage = 0
+                    race.e_milage = 0
+                    race.weight_load = 0
+                    race.weight_unload = 0                    
+                    race.save()
+            messages.add_message(self.request, messages.SUCCESS, 'Рейс скопирован.')
+        return self.render_json_response({'data': 'success'})
+    
+    
 class PackingView(JSONRequestResponseMixin, View):
     require_json = True
 

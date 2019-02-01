@@ -1,0 +1,67 @@
+{% extends "index4.html" %}
+{% load bootstrap4 %}
+{% load icons %}
+{% block content %}
+    <div class="container">
+            <div class="table-responsive">
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <th><h1 class="h2">Место погрузки для: {{ supplier_name }}</h1></th>
+                    <th>&nbsp;</th>
+                    </thead>
+                    <tbody>
+                    {% if qLoadplace %}
+                    {% for q in qLoadplace %}
+                        <tr>
+                            <td>
+								<div class="input-group mb-3">
+									<input type="text" class="form-control" disabled="disabled" value="{{ q.address }}">
+								</div>                                
+                            </td>
+                            <td>
+								<div class="btn-toolbar mb-2 mb-md-0">
+									{% if perms.Avtoregion.change_loadingplace %}
+									<div class="form-group btn-group mr-2">
+										<form action="update/{{ q.pk }}/" method="get">
+											<button class="btn btn-secondary btn-sm form-control" title="Изменить"><i class="fas fa-edit"></i>&nbsp;Изменить</button>
+										</form>
+									</div>	
+									{% endif %}
+									<div class="form-group btn-group mr-2">
+										<form action="delete/" method="post">
+											{% csrf_token %}
+											<input type="hidden" name="pk" value="{{ q.pk }}">
+											<input type="hidden" name="supplier" value="{{ supplier }}">
+											<button class="btn btn-danger btn-sm form-control delete-confirmation" title="Удалить"><i class="fas fa-trash-alt"></i>&nbsp;Удалить</button>
+										</form>
+									</div>	
+								</div>	
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% if perms.Avtoregion.add_loadingplace %}
+        <div class="form-group">
+            <form action="add/" method="post">
+                {% csrf_token %}
+	            <input type="hidden" name="previous" value="{{ request.META.HTTP_REFERER }}">
+                <input hidden name="supplier" value="{{ supplier }}">
+                {% for field in form %}
+                    {% bootstrap_field field %}
+                {% endfor %}
+				{% buttons %}
+					<button class="btn btn-success">{% icon "star" %}&nbsp;Добавить</button>
+				{% endbuttons %}
+            </form>
+ 		    {% url 'SupplierList' as supplier_url %}
+            <form action="{{ supplier_url }}" method="get">
+			<button href="{{ supplier_url }}"  class="btn btn-outline-secondary">Отмена</button>
+			</form>
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}

@@ -153,9 +153,8 @@ class RaceForm(ModelForm):
     class Meta:
         model = Race
         fields = '__all__'
-        exclude = {'fulfill'}
+        exclude = {'fulfill', 'ttn_number', 'count'}
         labels = {
-            'ttn_number': 'Номер ТТН',
             'type_ship': 'Реализация',
             'order_type_race': 'Заказчик',
             'place_load': 'Место погрузки',
@@ -171,7 +170,6 @@ class RaceForm(ModelForm):
             'gas_given': 'Горючего выдано на рейс',
             'gas_start': 'Горючего остаток на начало рейса',
             'gas_end': 'Горючего остаток на конец рейса',
-            'count': 'Количество рейсов',
             'price': 'Цена рейса',
         }
 

@@ -1,0 +1,10 @@
+{% load staticfiles %}
+{% load custom_filters %}
+<div class="btn-toolbar mb-2 mb-md-0">
+  <div class="btn-group mb-3">
+	<a href="{% static zipfilename %}" class="btn btn-secondary btn-sm">Скачать всё</a>
+  </div>
+</div>
+{% for url, filename in urls|zip:filenames %}
+	<a href="{% static url %}" class="list-group-item">{{ name }} {{ forloop.counter }} {{ filename }}</a>
+{% endfor %}

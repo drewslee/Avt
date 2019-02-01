@@ -326,5 +326,5 @@ $(function ()
         {
             return '<span class="glyphicon glyphicon glyphicon-repeat glyphicon-animate"></span>'
         }
-    });	
+    });			
 });

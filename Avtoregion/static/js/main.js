@@ -257,9 +257,9 @@ $(function ()
         var rows = document.getElementsByClassName('selected');
         if (rows.length > 1)
         {
-            $('#id_modal_update').html('Выбрано слишком много рейсов, выбирать для редактирования можно только один!');
-            $race_table.bootstrapTable('uncheckAll');
-            $('#ModalUpdateRace').modal('show');
+            $('#id_modal_message_box').html('Выбрано слишком много рейсов, выбирать для редактирования можно только один!');
+            $('#race_table').bootstrapTable('uncheckAll');
+            $('#ModalMessageBox').modal('show');
         }
         else if (rows.length === 1)
         {
@@ -267,11 +267,47 @@ $(function ()
         }
     });
 
+
+    $(document).on('click', '#copy_race', function (event)
+    {
+        event.preventDefault();
+        var rows = document.getElementsByClassName('selected'),
+			url = $('#copy_race').attr('data-url'),
+            list = [];
+        if (rows.length > 1)
+        {
+            $('#id_modal_message_box').html('Выбрано слишком много рейсов, выбирать для копирования можно только один!');
+            $('#race_table').bootstrapTable('uncheckAll');
+            $('#ModalMessageBox').modal('show');
+        }
+        else if (rows.length === 1)
+        {
+			for (var i = 0; i < rows.length; ++i)
+			{
+				list.push(rows[i].id);
+			}
+			$.ajax(
+				{
+					url: url,
+					method: 'POST',
+					traditional: true,
+					data: JSON.stringify({"id_list": list}),
+					dataType: 'json',
+					success: function ()
+					{
+						$('#id_modal_message_box').html('<p>Рейс скопирован!</p>');
+						location.reload();
+					}
+				})
+        }
+    });
+
+	
     $(document).on("click", '#update_state_ok', function (event)
     {
         $('#update_state_ok')[0].disabled = true;
         event.preventDefault();
-        var url = $('#update_state').attr('data-url'),
+        var url = $('#update_state_from_race').attr('data-url'),
             rows = document.getElementsByClassName('selected'),
             list = [];
         for (var i = 0; i < rows.length; ++i)
@@ -292,6 +328,8 @@ $(function ()
                 }
             })
     });
+	
+	
     $(document).on("click", '#packing_list', function (event)
     {
         event.preventDefault();
@@ -316,6 +354,8 @@ $(function ()
                 }
             })
     });
+	
+	
     $(document).on("click", '#way_list', function (event)
     {
         event.preventDefault();
@@ -340,6 +380,8 @@ $(function ()
                 }
             })
     });
+	
+	
     $('#id_supplier').change(function ()
     {
         var url = $('#id_race_form').attr('data-form-supplier-url');
@@ -368,6 +410,7 @@ $(function ()
             });
     });
 
+	
     $("#id_customer").change(function ()
     {
         var url = $('#id_race_form').attr('data-form-customer-url');
@@ -392,7 +435,9 @@ $(function ()
                 }
             })
     });
-// Same behavior of enter like tab
+	
+	
+	// Same behavior of enter like tab
     $(document).keydown(function (e)
     {
 
@@ -434,11 +479,13 @@ $(function ()
         }
     });
 
+	
     $(document).on('click', '.delete-confirmation', function ()
     {
         return confirm('Вы уверены, что хотите удалить?');
     });
 
+	
     $('.dropdown-toggle').dropdown();
 	
 	
@@ -446,10 +493,24 @@ $(function ()
 		$('.bootstrap-table .table').bootstrapTable("resetSearch", $(this).val());
 	});
 	
-	$('#global_search')[0].value = $('.bootstrap-table .table')[0].value;
-	$('#global_search').keyup();
-/*	$('.bootstrap-table .table').bootstrapTable("resetSearch", ""); */
-		
+	
+	$('.data-table').on('search.bs.table', function (e, text) {
+		$('#global_search')[0].value = text;
+    });
+	
+	$('#clear-search-button').on('click', function(e) {
+		$('#global_search')[0].value = "";		
+		$('.data-table').bootstrapTable("resetSearch");
+	});
+	
+/*	$('#global_search')[0].value = $('.bootstrap-table .table')[0].value;
+	$('#global_search').keyup(); */
+/*	$searchText = $('.bootstrap-table .table').bootstrapTable("getCookies").searchText;
+	if ($searchText) {
+		$('#global_search')[0].value = $searchText;
+		$('.bootstrap-table .table').bootstrapTable("resetSearch");
+	}
+*/		
 });
 
 

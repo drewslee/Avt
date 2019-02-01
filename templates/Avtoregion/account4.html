@@ -1,0 +1,345 @@
+{% extends "index4.html" %}
+{% load bootstrap4 %}
+{% load icons %}
+{% load custom_filters %}
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+	<div class="toggle-toolbar collapse collapse-toggle">
+		<div class="container">
+			<div class="well col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-xs-4 col-xs-offset-4">
+				<form action="{% url 'Acc' %}" method="post" id="account-form">
+					{% csrf_token %}
+
+					<div class="row">
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+								<input name="daterange" type="text" class="form-control" id="account_daterange"/>
+							</div>
+						</div>
+						</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select id="account_type" class="form-control">
+								<option data-icon="fa-building" value="supplier">Поставщик</option>
+								<option data-icon="fa-credit-card" value="customer">Покупатель</option>
+								<option data-icon="fa-credit-card" value="mediator">Посредник</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select id="account_supplier" name="supplier" class="form-control icon-select">
+								<option></option>
+								{% for field in q_sup %}
+									<option data-icon="fa-building" value="{{ field.id_supplier }}">{{ field.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select class="form-control icon-select" id="account_load_place">
+								<option></option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select id="account_customer" class="form-control icon-select">
+								<option></option>
+								{% for field in q_cus %}
+									<option data-icon="fa-credit-card" value="{{ field.id_customer }}">{{ field.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select class="form-control icon-select" id="account_unload_place">
+								<option></option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select id="account_mediator" class="form-control icon-select">
+								<option></option>
+								{% for field in q_med %}
+									<option data-icon="fa-credit-card" value="{{ field.id_mediator }}">{{ field.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select id="account_service" name="service" class="form-control">
+								{% for field in race_type %}
+									<option value="{{ field }}">{{ field }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select id="account_state" name="state" class="form-control">
+								<option></option>
+								{% for field in state %}
+									<option value="{{ field }}">{{ field }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group">
+							<select name="product" multiple class="form-control" id="account_product">
+								{% for field in q_prod %}
+									<option value="{{ field.name }}">{{ field.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					{% buttons %}
+						<button class="btn btn-success btn-sm"> {% icon "star" %}Сформировать</button>
+					{% endbuttons %}
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="text-center">
+		<a id="link_toggle_toolbar" href="#" class="">
+			<div class="fas fa-arrow-circle-down fa-3x rotate"></div>
+		</a>
+	</div>
+	<script type="text/javascript">
+
+      $(function ()
+      {
+          $('.rotate').click(function ()
+          {
+              $('.toggle-toolbar').collapse('toggle');
+          });
+
+		  if (typeof(Storage) !== "undefined" && sessionStorage.length > 0)
+          {
+			  var $daterange = sessionStorage.getItem('daterange');
+			  var $type =  sessionStorage.getItem('type');
+			  var $service = sessionStorage.getItem('service');
+			  var $supplier =  sessionStorage.getItem('supplier');
+			  var $mediator = sessionStorage.getItem('mediator');
+			  var $customer = sessionStorage.getItem('customer');
+			  var $load_place =  sessionStorage.getItem('load_place');
+			  var $unload_place =  sessionStorage.getItem('unload_place');
+			  var $product =  sessionStorage.getItem('product');
+			  var $state =  sessionStorage.getItem('state');
+
+			  // Restoring saved in session values of filter fields
+			  var $drp = $('#account_daterange').data('daterangepicker');
+			  var $dr = $daterange.split(' - ');
+			  $drp.setStartDate($dr[0]);
+			  $drp.setEndDate($dr[1]);
+			  $('#account_type').val($type).trigger("chosen:updated");
+			  $('#account_type').trigger('change', {'selected':$type});
+			  if ($type == 'supplier') {
+					$('#account_supplier').val($supplier).trigger("chosen:updated");
+					$('#account_supplier').trigger('change', {'selected':$supplier});
+					$('#account_load_place').val($load_place).trigger("chosen:updated");
+					$('#account_load_place').trigger('change', {'selected':$load_place});
+			  }
+			  if ($type == 'customer') {
+					$('#account_customer').val($customer).trigger("chosen:updated");
+					$('#account_customer').trigger('change', {'selected':$customer});
+					$('#account_unload_place').val($unload_place).trigger("chosen:updated");
+					$('#account_unload_place').trigger('change', {'selected':$unload_place});
+			  }
+			  if ($type == 'mediator') {
+					$('#account_mediator').val($mediator).trigger("chosen:updated");
+					$('#account_mediator').trigger('change', {'selected':$mediator});
+			  }
+  			  $('#account_service').val($service).trigger("chosen:updated");
+			  $('#account_service').trigger('change', {'selected':$service});
+  			  $('#account_state').val($state).trigger("chosen:updated");
+			  $('#account_state').trigger('change', {'selected':$state});
+  			  $('#account_product').val($product).trigger("chosen:updated");
+			  $('#account_product').trigger('change', {'selected':$product});
+			  // ===
+
+			  var data = {
+					daterange: $daterange,
+					type: $type,
+					service: $service,
+					supplier: $supplier,
+					mediator: $mediator,
+					customer: $customer,
+					load_place: $load_place,
+					unload_place: $unload_place,
+					product: $product,
+					state: $state
+				};
+				$.post({
+					url: $('#account-form').attr('action'),
+					traditional: true,
+					data: JSON.stringify(data),
+					success: function (resp)
+					{
+						$('#tab_res').html(resp['data']);
+					}
+
+
+				});
+		  }
+
+          var id_customer = document.getElementById('account_customer');
+          var select_unload = document.getElementById('account_unload_place');
+          var cus = id_customer.value;
+          $.ajax(
+              {
+                  type: "GET",
+                  url: "{% url 'RaceAjaxCus' %}",
+                  data: {id: cus},
+                  dataType: 'json',
+                  success: function (resp)
+                  {
+                      while (select_unload.length > 1)
+                      {
+                          select_unload.remove(select_unload.length - 1)
+                      }
+                      for (var i = 0; i < resp.length; i++)
+                      {
+                          var option = document.createElement('option');
+                          option.text = resp[i].name;
+                          option.value = resp[i].id_shipment;
+                          select_unload.add(option);
+                          $('#account_unload_place').trigger("chosen:updated");
+                      }
+                  }
+              });
+
+          $('#account_customer').chosen().change(function ()
+          {
+              var cus = id_customer.value;
+              $.ajax(
+                  {
+                      type: "GET",
+                      url: "{% url 'RaceAjaxCus' %}",
+                      data: {id: cus},
+                      dataType: 'json',
+                      success: function (resp)
+                      {
+                          while (select_unload.length > 1)
+                          {
+                              select_unload.remove(select_unload.length - 1)
+                          }
+                          for (var i = 0; i < resp.length; i++)
+                          {
+                              var option = document.createElement('option');
+                              option.text = resp[i].name;
+                              option.value = resp[i].id_shipment;
+                              select_unload.add(option);
+                              $('#account_unload_place').trigger("chosen:updated");
+                          }
+                      }
+                  })
+
+          });
+
+          var id_supplier = document.getElementById('account_supplier');
+          var select_load = document.getElementById('account_load_place');
+          var sup = id_supplier.value;
+          $.ajax(
+              {
+                  type: "GET",
+                  url: "{% url 'RaceAjaxSup' %}",
+                  data: {id: sup},
+                  dataType: 'json',
+                  success: function (resp)
+                  {
+                      while (select_load.length > 1)
+                      {
+                          select_load.remove(select_load.length - 1)
+                      }
+                      for (var i = 0; i < resp.length; i++)
+                      {
+                          var option = document.createElement('option');
+                          option.text = resp[i].address;
+                          option.value = resp[i].id_load_place;
+                          select_load.add(option);
+                          $('#account_load_place').trigger("chosen:updated");
+                      }
+                  }
+              });
+
+          $('#account_supplier').chosen().change(function ()
+          {
+              var sup = id_supplier.value;
+              $.ajax(
+                  {
+                      type: "GET",
+                      url: "{% url 'RaceAjaxSup' %}",
+                      data: {id: sup},
+                      dataType: 'json',
+                      success: function (resp)
+                      {
+                          while (select_load.length > 1)
+                          {
+                              select_load.remove(select_load.length - 1)
+                          }
+                          for (var i = 0; i < resp.length; i++)
+                          {
+                              var option = document.createElement('option');
+                              option.text = resp[i].address;
+                              option.value = resp[i].id_load_place;
+                              select_load.add(option);
+                              $('#account_load_place').trigger("chosen:updated");
+                          }
+                      }
+                  })
+
+          });
+
+      });
+
+
+
+	</script>
+	<div id="tab_res">
+		{% include "table.html" %}
+	</div>
+	<div id="ModalAccountUpdate" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Подтверждение</h4>
+				</div>
+				<div id="modal-body-state" class="modal-body">
+					<p>Вы хотите обновить все выбранные статусы?</p>
+					<p class="text-warning">
+						<small>Подумайте, перед обновлением ;).</small>
+					</p>
+				</div>
+				<div class="modal-footer">
+					<select id="status_select" class="btn btn-success" name="state" required>
+						{% for row in select_state %}
+							<option value="{{ row }}">{{ row }}</option>
+						{% endfor %}
+					</select>
+					<button id="update_state_ok" class="btn btn-primary">Обновить</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+					<input type="hidden" name="next" value="{{ request.path }}">
+				</div>
+			</div>
+		</div>
+	</div>
+  </div>	
+{% endblock %}

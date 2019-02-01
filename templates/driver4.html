@@ -36,10 +36,10 @@
     <div class="container-fluid">
             <div class="table-responsive">
                 <div class="clearfix"></div>
-                <table id="driver_table" data-toolbar="#toolbar_driver" data-search="true" data-click-to-select="true"
+                <table id="driver_table" class="data-table" data-toolbar="#toolbar_driver" data-search="true" data-click-to-select="true"
                        data-id-field="id" data-single-select="true"
                        data-classes="table table-hover table-small-font table-condensed table-no-bordered"
-					   data-buttons-class="sm" data-search-text="тест">
+					   data-buttons-class="secondary btn-sm">
                     <thead>
                         <th data-field="checkbox" data-checkbox="true"></th>
                         <th data-field="id" data-visible="false">id</th>
@@ -77,6 +77,8 @@
 								{% bootstrap_field field %}
 							{% endfor %}
 							<button class="btn btn-success">Добавить</button>
+							<input type="hidden" name="next" value="{{ request.path }}">
+							<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
 						</form>
 					</div>
 				</div>
